@@ -1,0 +1,86 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Display name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Anzeigename" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Display name" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Nombre visible" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom affiché" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "表示名" } }
+      }
+    },
+    "Edit DemoConfig.swift or set the FEDDY_API_KEY env var on the Run scheme." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bearbeiten Sie DemoConfig.swift oder setzen Sie die Umgebungsvariable FEDDY_API_KEY im Run-Schema." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Edit DemoConfig.swift or set the FEDDY_API_KEY env var on the Run scheme." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Edita DemoConfig.swift o establece la variable de entorno FEDDY_API_KEY en el esquema de ejecución." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Modifiez DemoConfig.swift ou définissez la variable d'environnement FEDDY_API_KEY dans le schéma d'exécution." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "DemoConfig.swift を編集するか、Run スキームに FEDDY_API_KEY 環境変数を設定してください。" } }
+      }
+    },
+    "Email" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "E-Mail" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Email" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Correo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "E-mail" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "メール" } }
+      }
+    },
+    "External user ID" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Externe Benutzer-ID" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "External user ID" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "ID de usuario externo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "ID utilisateur externe" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "外部ユーザー ID" } }
+      }
+    },
+    "Feddy.identify(…) ran in the host app on launch with the values above. Open dashboard.feddy.app to confirm this user appeared." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Feddy.identify(…) wurde beim Start in der Host-App mit den obigen Werten ausgeführt. Öffnen Sie dashboard.feddy.app, um zu bestätigen, dass dieser Benutzer erschienen ist." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Feddy.identify(…) ran in the host app on launch with the values above. Open dashboard.feddy.app to confirm this user appeared." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Feddy.identify(…) se ejecutó al iniciar la app host con los valores anteriores. Abre dashboard.feddy.app para confirmar que este usuario apareció." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Feddy.identify(…) s'est exécuté au lancement dans l'application hôte avec les valeurs ci-dessus. Ouvrez dashboard.feddy.app pour confirmer que cet utilisateur est apparu." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "Feddy.identify(…) は起動時にホストアプリで上記の値で実行されました。dashboard.feddy.app を開いて、このユーザーが追加されたことを確認してください。" } }
+      }
+    },
+    "Identity sent to Feddy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "An Feddy übermittelte Identität" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Identity sent to Feddy" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Identidad enviada a Feddy" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Identité envoyée à Feddy" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "Feddy に送信した情報" } }
+      }
+    },
+    "Profile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Profile" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Perfil" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "プロフィール" } }
+      }
+    },
+    "Set FEDDY_API_KEY to run the demo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "FEDDY_API_KEY setzen, um die Demo auszuführen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Set FEDDY_API_KEY to run the demo" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Establece FEDDY_API_KEY para ejecutar la demo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Définissez FEDDY_API_KEY pour exécuter la démo" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "デモを実行するには FEDDY_API_KEY を設定してください" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

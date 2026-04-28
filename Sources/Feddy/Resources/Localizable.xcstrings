@@ -1,0 +1,72 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "feddy.action.cancel" : {
+      "comment" : "Generic cancel button label used across Feddy SDK UI components.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Abbrechen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cancelar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuler" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "キャンセル" } }
+      }
+    },
+    "feddy.action.retry" : {
+      "comment" : "Retry button shown after a failed request.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Erneut versuchen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Try again" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Reintentar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Réessayer" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "再試行" } }
+      }
+    },
+    "feddy.action.submit" : {
+      "comment" : "Generic submit button label used in feedback / wish forms.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Senden" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Submit" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Enviar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Envoyer" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "送信" } }
+      }
+    },
+    "feddy.error.generic" : {
+      "comment" : "Catch-all message when a request fails for an unknown reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Etwas ist schiefgelaufen." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Something went wrong." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Algo salió mal." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Une erreur s'est produite." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "エラーが発生しました。" } }
+      }
+    },
+    "feddy.error.network" : {
+      "comment" : "Shown when a request fails because the device cannot reach the API.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Netzwerkfehler. Verbindung prüfen und erneut versuchen." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Network error. Check your connection and try again." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Error de red. Comprueba tu conexión e inténtalo de nuevo." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur réseau. Vérifiez votre connexion et réessayez." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ネットワークエラーが発生しました。接続を確認してもう一度お試しください。" } }
+      }
+    },
+    "feddy.status.loading" : {
+      "comment" : "Loading indicator label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wird geladen…" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Loading…" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cargando…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Chargement…" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "読み込み中…" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

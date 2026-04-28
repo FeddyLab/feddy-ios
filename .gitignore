@@ -20,8 +20,12 @@ xcuserdata/
 Packages/
 Package.pins
 Package.resolved
-*.xcodeproj
 .swiftpm/
+# Note: we intentionally do NOT ignore *.xcodeproj at repo level — the
+# example app under Examples/ ships its xcodeproj so users can clone
+# and run it without recreating the project. SPM-generated transient
+# xcodeproj files live in DerivedData (already excluded) and never
+# appear in the working tree.
 
 ## CocoaPods (if ever used)
 Pods/
@@ -31,3 +35,8 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+## Internal-only
+# Task / planning docs are local development context and must not ship in
+# the public SDK repo. Keep on disk for local reference; never commit.
+docs/
