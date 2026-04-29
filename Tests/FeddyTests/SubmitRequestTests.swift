@@ -28,7 +28,7 @@ final class SubmitRequestTests: XCTestCase {
         try await client.submitRequest(
             title: "Add dark mode",
             description: "Please support OLED dark theme",
-            type: Feddy.RequestType.feature
+            boardKey: "features"
         )
 
         let req = try XCTUnwrap(MockURLProtocol.capturedRequests.first)
@@ -49,7 +49,7 @@ final class SubmitRequestTests: XCTestCase {
             json["description"] as? String,
             "Please support OLED dark theme"
         )
-        XCTAssertEqual(json["request_type"] as? String, "feature")
+        XCTAssertEqual(json["board_key"] as? String, "features")
     }
 
     func test_submitRequest_fallsBackToAnonymousToken() async throws {
@@ -70,7 +70,7 @@ final class SubmitRequestTests: XCTestCase {
         try await client.submitRequest(
             title: "Crash on launch",
             description: nil,
-            type: Feddy.RequestType.bug
+            boardKey: "bugs"
         )
 
         let req = try XCTUnwrap(MockURLProtocol.capturedRequests.first)
@@ -79,10 +79,10 @@ final class SubmitRequestTests: XCTestCase {
         )
         XCTAssertNil(json["external_user_id"])
         XCTAssertEqual(json["anonymous_token"] as? String, "anon-fixed")
-        XCTAssertEqual(json["request_type"] as? String, "bug")
+        XCTAssertEqual(json["board_key"] as? String, "bugs")
     }
 
-    func test_submitRequest_omitsTypeWhenNil() async throws {
+    func test_submitRequest_omitsBoardKeyWhenNil() async throws {
         let session = MockURLProtocol.makeSession()
         let client = makeClient(
             session: session,
@@ -99,14 +99,14 @@ final class SubmitRequestTests: XCTestCase {
         try await client.submitRequest(
             title: "No type",
             description: nil,
-            type: nil
+            boardKey: nil
         )
 
         let req = try XCTUnwrap(MockURLProtocol.capturedRequests.first)
         let json = try XCTUnwrap(
             JSONSerialization.jsonObject(with: req.httpBody!) as? [String: Any]
         )
-        XCTAssertNil(json["request_type"])
+        XCTAssertNil(json["board_key"])
     }
 
     func test_submitRequest_5xx_enqueuesForRetry() async {
@@ -128,7 +128,7 @@ final class SubmitRequestTests: XCTestCase {
         await client.submitRequestFireAndForget(
             title: "Server hiccup",
             description: nil,
-            type: nil
+            boardKey: nil
         )
 
         XCTAssertEqual(queue.count, 1, "5xx must enqueue for retry")
@@ -153,7 +153,7 @@ final class SubmitRequestTests: XCTestCase {
         await client.submitRequestFireAndForget(
             title: "Bad payload",
             description: nil,
-            type: nil
+            boardKey: nil
         )
 
         XCTAssertTrue(queue.isEmpty, "4xx must not enqueue (would loop forever)")
@@ -175,7 +175,7 @@ final class SubmitRequestTests: XCTestCase {
         await client.submitRequestFireAndForget(
             title: "Offline submit",
             description: nil,
-            type: nil
+            boardKey: nil
         )
 
         XCTAssertEqual(queue.count, 1, "URLError must enqueue for retry")
@@ -187,7 +187,7 @@ final class SubmitRequestTests: XCTestCase {
 
     func test_publicAPI_withoutConfigure_doesNotCrash() {
         Feddy.reset()
-        Feddy.submitRequest(title: "Anything", description: nil, type: nil)
+        Feddy.submitRequest(title: "Anything", description: nil, boardKey: nil)
     }
 
     // MARK: - helpers

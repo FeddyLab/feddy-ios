@@ -34,6 +34,17 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "送信" } }
       }
     },
+    "feddy.compose.descriptionField.label" : {
+      "comment" : "Section header above the description editor in RequestComposeView.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Beschreibung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Description" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Descripción" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Description" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "説明" } }
+      }
+    },
     "feddy.compose.descriptionField.placeholder" : {
       "comment" : "Placeholder text for the multi-line description field in RequestComposeView.",
       "extractionState" : "manual",
@@ -67,6 +78,17 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "フィードバックを送る" } }
       }
     },
+    "feddy.compose.titleField.label" : {
+      "comment" : "Section header above the title field in RequestComposeView.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Titel" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Title" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Título" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Titre" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "タイトル" } }
+      }
+    },
     "feddy.compose.titleField.placeholder" : {
       "comment" : "Placeholder text for the title field in RequestComposeView.",
       "extractionState" : "manual",
@@ -78,48 +100,37 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "ご意見をお聞かせください" } }
       }
     },
-    "feddy.compose.type.bug" : {
-      "comment" : "Picker option label for the 'bug' request type.",
+    "feddy.compose.board.bugs" : {
+      "comment" : "Display name for the default 'bugs' board. Single word to fit picker chip width.",
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fehlerbericht" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Bug report" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Reporte de error" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Rapport de bug" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "不具合の報告" } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fehler" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Bug" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Error" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Bug" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "バグ" } }
       }
     },
-    "feddy.compose.type.feature" : {
-      "comment" : "Picker option label for the 'feature' request type.",
+    "feddy.compose.board.features" : {
+      "comment" : "Display name for the default 'features' board. Single word to fit picker chip width.",
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Funktionswunsch" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Feature request" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Solicitud de función" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Demande de fonctionnalité" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "機能リクエスト" } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Funktion" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Feature" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Función" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Fonction" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "機能" } }
       }
     },
-    "feddy.compose.type.label" : {
-      "comment" : "Form section / picker label for the request type selector.",
+    "feddy.compose.board.label" : {
+      "comment" : "Form section / picker label for the board selector.",
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Typ" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Type" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tipo" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Type" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "種類" } }
-      }
-    },
-    "feddy.compose.type.other" : {
-      "comment" : "Picker option label for the 'other' request type.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Sonstiges" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Other" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Otro" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Autre" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "その他" } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kategorie" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Category" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Categoría" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Catégorie" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "カテゴリ" } }
       }
     },
     "feddy.error.generic" : {

@@ -107,13 +107,15 @@ public enum Feddy {
     ///     Required; trimmed empty titles are rejected client-side.
     ///   - description: Longer body text. Optional; up to ~5000 chars
     ///     server-side.
-    ///   - type: Optional grouping tag. Use ``RequestType/feature``,
-    ///     ``RequestType/bug``, ``RequestType/other``, or any custom
-    ///     lowercase tag. Server falls back to `"feature"` when omitted.
+    ///   - boardKey: Which dashboard board the request lands in. Use the
+    ///     `key` of any board you can see in `dashboard.feddy.app/w/<ws>`
+    ///     — for the default workspace those are `"features"` and
+    ///     `"bugs"`. Server falls back to the workspace's primary board
+    ///     when omitted.
     public static func submitRequest(
         title: String,
         description: String? = nil,
-        type: String? = nil
+        boardKey: String? = nil
     ) {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else {
@@ -132,7 +134,7 @@ public enum Feddy {
                 await client.submitRequestFireAndForget(
                     title: trimmedTitle,
                     description: description,
-                    type: type
+                    boardKey: boardKey
                 )
             }
         }

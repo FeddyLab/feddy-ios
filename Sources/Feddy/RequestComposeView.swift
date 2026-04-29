@@ -1,32 +1,53 @@
 #if canImport(SwiftUI)
 import SwiftUI
 
-/// A SwiftUI sheet for collecting feedback / feature requests / bug
-/// reports. Drop into your view hierarchy with `.sheet(isPresented:)`:
+/// A SwiftUI sheet for collecting feedback. Drop into your view hierarchy
+/// with `.sheet(isPresented:)`:
 ///
 /// ```swift
+/// // Default: shows the workspace's two system boards (Feature, Bug)
 /// .sheet(isPresented: $showFeedback) {
 ///     RequestComposeView()
 /// }
+///
+/// // Custom: pass your dashboard boards explicitly
+/// .sheet(isPresented: $showFeedback) {
+///     RequestComposeView(boards: [
+///         .featureRequest,
+///         .bugReport,
+///         .init(key: "discussions",
+///               name: NSLocalizedString("Discussions", comment: "")),
+///     ])
+/// }
 /// ```
 ///
-/// On Submit, the form calls ``Feddy/submitRequest(title:description:type:)``
+/// On Submit, the form calls ``Feddy/submitRequest(title:description:boardKey:)``
 /// — fire-and-forget — and dismisses. Failures are handled by the SDK's
 /// offline retry queue; the user does not see a network spinner blocking
 /// the dismiss.
 ///
 /// Localized in English / Spanish / Japanese / German / French via the
-/// SDK's bundled string catalog.
+/// SDK's bundled string catalog. Custom board display names are the
+/// caller's responsibility — the SDK does not know about them.
 @available(iOS 15.0, macOS 12.0, *)
 public struct RequestComposeView: View {
     @Environment(\.dismiss) private var dismiss
 
+    private let boards: [FeedbackBoard]
+
     @State private var title: String = ""
     @State private var details: String = ""
-    @State private var selectedType: String = Feddy.RequestType.feature
+    @State private var selectedBoardKey: String
     @FocusState private var titleFieldFocused: Bool
 
-    public init() {}
+    public init(boards: [FeedbackBoard] = FeedbackBoard.systemDefaults) {
+        precondition(
+            !boards.isEmpty,
+            "RequestComposeView requires at least one board"
+        )
+        self.boards = boards
+        self._selectedBoardKey = State(initialValue: boards[0].key)
+    }
 
     public var body: some View {
         navigationContainer {
@@ -43,10 +64,22 @@ public struct RequestComposeView: View {
                     titleFieldFocused = true
                 }
                 .toolbar {
+                    // Icon-only cancel: localized labels for "Cancel" range
+                    // from 6 chars (en) to 16+ (de "Abbrechen", ja "キャンセル"
+                    // measured wide). On narrow nav bars the longest variants
+                    // truncate; an SF Symbol stays compact across all locales.
+                    // The `accessibilityLabel` keeps the localized word for
+                    // VoiceOver, so the affordance is still announced as
+                    // "Cancel" (or its translation) to assistive tech.
                     ToolbarItem(placement: .cancellationAction) {
-                        Button(Localization.string("feddy.action.cancel")) {
+                        Button {
                             dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
                         }
+                        .accessibilityLabel(
+                            Localization.string("feddy.action.cancel")
+                        )
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button(Localization.string("feddy.action.submit")) {
@@ -86,23 +119,29 @@ public struct RequestComposeView: View {
                 )
                 .focused($titleFieldFocused)
                 .submitLabel(.next)
+            } header: {
+                Text(Localization.string("feddy.compose.titleField.label"))
             }
 
             Section {
                 detailsEditor
+            } header: {
+                Text(Localization.string("feddy.compose.descriptionField.label"))
             }
 
-            Section {
-                Picker(
-                    Localization.string("feddy.compose.type.label"),
-                    selection: $selectedType
-                ) {
-                    Text(Localization.string("feddy.compose.type.feature"))
-                        .tag(Feddy.RequestType.feature)
-                    Text(Localization.string("feddy.compose.type.bug"))
-                        .tag(Feddy.RequestType.bug)
-                    Text(Localization.string("feddy.compose.type.other"))
-                        .tag(Feddy.RequestType.other)
+            // Hide the picker entirely when the host app passed a single
+            // board — the user has nothing to choose, and an unselectable
+            // picker is just visual noise.
+            if boards.count > 1 {
+                Section {
+                    Picker(
+                        Localization.string("feddy.compose.board.label"),
+                        selection: $selectedBoardKey
+                    ) {
+                        ForEach(boards) { board in
+                            Text(board.name).tag(board.key)
+                        }
+                    }
                 }
             }
         }
@@ -143,7 +182,7 @@ public struct RequestComposeView: View {
         Feddy.submitRequest(
             title: titleValue,
             description: trimmedDetails,
-            type: selectedType
+            boardKey: selectedBoardKey
         )
         dismiss()
     }

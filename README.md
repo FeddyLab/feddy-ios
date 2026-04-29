@@ -114,7 +114,7 @@ End users submit feature requests, bug reports, and general feedback through `Fe
 
 ### SwiftUI Sheet
 
-Drop `RequestComposeView` into your view hierarchy. It's a fully-localized form with title / description / type fields wired to the SDK:
+Drop `RequestComposeView` into your view hierarchy. It's a fully-localized form with title / description / category fields wired to the SDK:
 
 ```swift
 import SwiftUI
@@ -128,9 +128,29 @@ struct ProfileView: View {
             showFeedback = true
         }
         .sheet(isPresented: $showFeedback) {
+            // Default: shows the workspace's two system boards
+            // (Feature, Bug), localized in 5 languages.
             RequestComposeView()
         }
     }
+}
+```
+
+To surface custom boards (anything you added in
+`dashboard.feddy.app/w/<ws>/boards`), pass them explicitly. You're
+responsible for the display name's localization — the SDK does not
+know about your custom boards:
+
+```swift
+.sheet(isPresented: $showFeedback) {
+    RequestComposeView(boards: [
+        .featureRequest,                       // SDK-localized "Feature"
+        .bugReport,                            // SDK-localized "Bug"
+        .init(
+            key: "discussions",                // matches dashboard board.key
+            name: NSLocalizedString("Discussions", comment: "")
+        ),
+    ])
 }
 ```
 
@@ -139,22 +159,26 @@ struct ProfileView: View {
 If you have your own UI, call `Feddy.submitRequest(...)` directly. Like the rest of the API it's **synchronous, fire-and-forget, and never throws**:
 
 ```swift
+// Lands in the workspace's primary board when boardKey is omitted.
 Feddy.submitRequest(title: "Add dark mode")
 
+// Pin to a specific board. The two system boards every workspace ships
+// with are "features" and "bugs":
 Feddy.submitRequest(
     title: "Crash on launch",
     description: "Happens after entering passcode on iPhone 15 Pro / iOS 17.4",
-    type: Feddy.RequestType.bug
+    boardKey: "bugs"
 )
 
-// Custom grouping tag — anything matching ^[a-z][a-z0-9_]{0,31}$
+// Workspace-specific custom board (configure these in
+// dashboard.feddy.app/w/<ws>/boards):
 Feddy.submitRequest(
     title: "Confusing onboarding step 3",
-    type: "onboarding"
+    boardKey: "ux-research"
 )
 ```
 
-`type` accepts `Feddy.RequestType.feature` / `.bug` / `.other` (the most common values) or any custom lowercase tag. Server-side it's a free-form grouping hint; the dashboard organizes feedback primarily by board.
+`boardKey` is the `key` of any board visible in your dashboard.
 
 ### Offline Retry Queue
 

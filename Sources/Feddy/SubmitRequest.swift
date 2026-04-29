@@ -1,18 +1,70 @@
 import Foundation
 
-extension Feddy {
-    /// Common values for the `type` parameter of ``Feddy/submitRequest(title:description:type:)``.
-    ///
-    /// `type` is a free-form lowercase tag (server-side regex
-    /// `^[a-z][a-z0-9_]{0,31}$`) used purely as a grouping hint in the
-    /// dashboard. These constants cover the three cases most apps need;
-    /// callers can pass any conforming string for product-specific tags
-    /// (e.g. `"pricing"`, `"onboarding"`).
-    public enum RequestType {
-        public static let feature = "feature"
-        public static let bug = "bug"
-        public static let other = "other"
+/// A board to display in ``RequestComposeView``'s picker. The `key` is
+/// what the SDK writes to `request.board_key` on submit; the `name` is
+/// what the user sees.
+///
+/// For the workspace's default boards, use the convenience constants on
+/// this type — they ship with the SDK's bundled localizations:
+///
+/// ```swift
+/// RequestComposeView()  // [.featureRequest, .bugReport]
+/// ```
+///
+/// For workspace-specific custom boards (anything you added via
+/// `dashboard.feddy.app/w/<ws>/boards`), pass them explicitly. You're
+/// responsible for the display name's localization — the SDK does not
+/// know about your custom boards.
+///
+/// ```swift
+/// RequestComposeView(boards: [
+///     .featureRequest,
+///     .bugReport,
+///     .init(key: "discussions", name: NSLocalizedString("Discussions", comment: "")),
+/// ])
+/// ```
+public struct FeedbackBoard: Sendable, Hashable, Identifiable {
+    /// Maps to `board.key` in the dashboard. Sent as `request.board_key`
+    /// on submit.
+    public let key: String
+
+    /// Display label used in the picker. Caller is responsible for
+    /// localization unless this came from one of the static factories.
+    public let name: String
+
+    public init(key: String, name: String) {
+        self.key = key
+        self.name = name
     }
+
+    public var id: String { key }
+}
+
+extension FeedbackBoard {
+    /// Default board for feature requests / suggestions. Created
+    /// automatically when a workspace is provisioned. The display name
+    /// is pulled from the SDK's bundled localization catalog.
+    public static var featureRequest: FeedbackBoard {
+        FeedbackBoard(
+            key: "features",
+            name: Localization.string("feddy.compose.board.features")
+        )
+    }
+
+    /// Default board for bug reports. Created automatically when a
+    /// workspace is provisioned.
+    public static var bugReport: FeedbackBoard {
+        FeedbackBoard(
+            key: "bugs",
+            name: Localization.string("feddy.compose.board.bugs")
+        )
+    }
+
+    /// The two system boards every Feddy workspace ships with.
+    public static let systemDefaults: [FeedbackBoard] = [
+        .featureRequest,
+        .bugReport,
+    ]
 }
 
 extension FeddyClient {
@@ -20,14 +72,14 @@ extension FeddyClient {
     func submitRequest(
         title: String,
         description: String?,
-        type: String?
+        boardKey: String?
     ) async throws {
         let body = SubmitRequestBody(
             externalUserId: lastExternalUserId,
             anonymousToken: lastExternalUserId == nil ? anonymousToken : nil,
             title: title,
             description: description,
-            requestType: type
+            boardKey: boardKey
         )
         _ = try await postRaw(path: "/v1/requests", body: body)
     }
@@ -41,14 +93,14 @@ extension FeddyClient {
     func submitRequestFireAndForget(
         title: String,
         description: String?,
-        type: String?
+        boardKey: String?
     ) async {
         let body = SubmitRequestBody(
             externalUserId: lastExternalUserId,
             anonymousToken: lastExternalUserId == nil ? anonymousToken : nil,
             title: title,
             description: description,
-            requestType: type
+            boardKey: boardKey
         )
         do {
             _ = try await postRaw(path: "/v1/requests", body: body)
@@ -132,13 +184,13 @@ struct SubmitRequestBody: Encodable {
     let anonymousToken: String?
     let title: String
     let description: String?
-    let requestType: String?
+    let boardKey: String?
 
     enum CodingKeys: String, CodingKey {
         case externalUserId = "external_user_id"
         case anonymousToken = "anonymous_token"
         case title
         case description
-        case requestType = "request_type"
+        case boardKey = "board_key"
     }
 }
