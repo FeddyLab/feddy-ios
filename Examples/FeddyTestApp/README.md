@@ -14,23 +14,25 @@ wired up — exactly the shape your own app's integration will take.
 
 1. Open `FeddyTestApp.xcodeproj` in Xcode.
 2. The local `Feddy` package is wired up via a relative path (`../..`).
-3. Set your `fed_pk_…` API key (see "API key" below) and ⌘R on an
+3. Set your Project ID (see "Project ID" below) and ⌘R on an
    iOS 17+ simulator.
 
-## API key
+## Project ID
 
 Set one of:
 
 1. **Scheme env var** (recommended for local dev) — Edit Scheme → Run →
-   Arguments → Environment Variables → `FEDDY_API_KEY = fed_pk_…`
+   Arguments → Environment Variables → `FEDDY_API_KEY = fed_xxxxxxxxxxxx`
 2. **`DemoConfig.swift`** — replace `defaultApiKey` with your own
-   `fed_pk_*`. Best for screen-recordings.
+   `fed_xxxxxxxxxxxx`. Best for screen-recordings.
 
 If neither is set, the app shows a "Set FEDDY_API_KEY to run the demo"
 state instead of crashing.
 
-> Each project has exactly one key (no test/live split). Get yours from
-> `dashboard.feddy.app` → Project → Settings → API Keys.
+> Each project has exactly one Project ID. Get yours from
+> `dashboard.feddy.app` → onboarding screen, or Settings → API Keys
+> later. Server-to-server keys (`fed_sk_*`) are different — those
+> stay on your backend, never embed them in this app.
 
 ## What this demo teaches (v0.1)
 
@@ -94,8 +96,8 @@ translations.
 
 - **Stuck on "Set FEDDY_API_KEY to run the demo"** — neither the
   scheme env var nor `DemoConfig.swift` was updated.
-- **HTTP 401** in the dashboard — the key is rejected by the server.
-  Check that it isn't revoked and that its scopes include
-  `identify:write`.
-- **Configuration error: Secret keys (fed_sk_*)…** — you pasted a
-  secret key. Switch to your project's `fed_pk_*` publishable key.
+- **HTTP 401** in the dashboard — the Project ID is rejected by the
+  server. Check that it wasn't rotated since you copied it.
+- **Configuration error: Server API keys (fed_sk_*)…** — you pasted
+  a server-only key. Switch to your Project ID (`fed_xxxxxxxxxxxx`,
+  no `sk_` segment).

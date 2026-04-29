@@ -1,6 +1,6 @@
 # Feddy Swift SDK
 
-> **Beta Notice**: This SDK is currently in beta (v0.1.0). The API may change before the 1.0 release.
+> **Beta Notice**: This SDK is currently in beta (v0.2.0). The API may change before the 1.0 release.
 
 A Swift SDK for integrating [Feddy](https://feddy.app) feedback, roadmap, and changelog features into your iOS and macOS applications.
 
@@ -12,7 +12,7 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.1.0")
+    .package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.2.0")
 ]
 ```
 
@@ -25,13 +25,13 @@ Or in Xcode:
 
 ### 1. Setup
 
-Initialize Feddy with your project's publishable API key (found in your Feddy dashboard, prefixed with `fed_pk_`):
+Initialize Feddy with your **Project ID** (a `fed_` followed by 12 alphanumeric characters, copied from your Feddy dashboard):
 
 ```swift
 import Feddy
 
 // In your AppDelegate or App struct
-Feddy.configure(apiKey: "fed_pk_your_project_key")
+Feddy.configure(apiKey: "fed_xxxxxxxxxxxx")
 ```
 
 ### 2. Identify Users
@@ -79,7 +79,7 @@ import Feddy
 @main
 struct MyApp: App {
     init() {
-        Feddy.configure(apiKey: "fed_pk_your_project_key")
+        Feddy.configure(apiKey: "fed_xxxxxxxxxxxx")
     }
 
     var body: some Scene {
@@ -102,11 +102,65 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        Feddy.configure(apiKey: "fed_pk_your_project_key")
+        Feddy.configure(apiKey: "fed_xxxxxxxxxxxx")
         return true
     }
 }
 ```
+
+## Submit Feedback
+
+End users submit feature requests, bug reports, and general feedback through `Feddy.submitRequest(...)` or the bundled `RequestComposeView` SwiftUI sheet. Feddy never asks the end user to "log in" — submissions attribute to whichever identity you last passed to `Feddy.identify(...)`, falling back to a per-install anonymous token if you haven't called `identify` yet.
+
+### SwiftUI Sheet
+
+Drop `RequestComposeView` into your view hierarchy. It's a fully-localized form with title / description / type fields wired to the SDK:
+
+```swift
+import SwiftUI
+import Feddy
+
+struct ProfileView: View {
+    @State private var showFeedback = false
+
+    var body: some View {
+        Button("Send Feedback") {
+            showFeedback = true
+        }
+        .sheet(isPresented: $showFeedback) {
+            RequestComposeView()
+        }
+    }
+}
+```
+
+### Programmatic Submit
+
+If you have your own UI, call `Feddy.submitRequest(...)` directly. Like the rest of the API it's **synchronous, fire-and-forget, and never throws**:
+
+```swift
+Feddy.submitRequest(title: "Add dark mode")
+
+Feddy.submitRequest(
+    title: "Crash on launch",
+    description: "Happens after entering passcode on iPhone 15 Pro / iOS 17.4",
+    type: Feddy.RequestType.bug
+)
+
+// Custom grouping tag — anything matching ^[a-z][a-z0-9_]{0,31}$
+Feddy.submitRequest(
+    title: "Confusing onboarding step 3",
+    type: "onboarding"
+)
+```
+
+`type` accepts `Feddy.RequestType.feature` / `.bug` / `.other` (the most common values) or any custom lowercase tag. Server-side it's a free-form grouping hint; the dashboard organizes feedback primarily by board.
+
+### Offline Retry Queue
+
+Submissions that hit a network failure or 5xx server error are persisted to a local FIFO queue and replayed automatically on the next `Feddy.configure(...)` call. 4xx responses are not retried (replaying bad payloads would loop forever) and are dropped after a console log.
+
+The queue is bounded (100 entries) and survives app restarts; the host app does not need to manage it.
 
 ## Advanced Usage
 
@@ -116,7 +170,7 @@ You can collect feedback **before** users sign in. When `identify` is omitted, F
 
 ```swift
 // At app launch — user not signed in yet
-Feddy.configure(apiKey: "fed_pk_…")
+Feddy.configure(apiKey: "fed_xxxxxxxxxxxx")
 
 // Later, when the user signs in
 Feddy.identify(userId: "user123", email: "user@example.com")
@@ -156,11 +210,12 @@ Feddy.identify(
 
 ## Features
 
-- **Simple Integration**: Two method calls to get started — `Feddy.configure(apiKey:)` and `Feddy.identify(userId:)`
+- **Simple Integration**: Three method calls to get going — `Feddy.configure(apiKey:)`, `Feddy.identify(userId:)`, and `Feddy.submitRequest(title:)`
+- **SwiftUI-First UI**: `RequestComposeView` ships as a drop-in `.sheet` form — fully localized, no extra setup
+- **Offline-Aware**: Failed submissions persist to a local retry queue and replay automatically when the network returns
 - **Cross-Platform**: Native support for both iOS and macOS
-- **Anonymous Fallback**: Collect feedback before users sign in via a per-install anonymous token
+- **Anonymous Fallback**: Collect feedback before users sign in via a per-install anonymous token — end users never need a Feddy account
 - **Fire-and-Forget API**: No `try` / `await` boilerplate at the call site — the SDK handles retries and logging internally
-- **Type-Safe**: Full Swift type safety with explicit `ProfileValue` cases for custom traits
 - **Localized**: Built-in `en` / `es` / `ja` / `de` / `fr` translations for end-user-facing strings
 - **Open Source**: MIT licensed; no proprietary runtime dependencies
 

@@ -2,8 +2,8 @@ import XCTest
 @testable import Feddy
 
 final class FeddyConfigurationTests: XCTestCase {
-    func test_acceptsPublishableKey() {
-        XCTAssertNoThrow(try FeddyConfiguration(apiKey: "fed_pk_abc123"))
+    func test_acceptsProjectId() {
+        XCTAssertNoThrow(try FeddyConfiguration(apiKey: "fed_abc123ABC012"))
     }
 
     func test_rejectsKeyWithWrongPrefix() {
@@ -14,13 +14,37 @@ final class FeddyConfigurationTests: XCTestCase {
         }
     }
 
+    func test_rejectsLegacyPublishableKey() {
+        XCTAssertThrowsError(try FeddyConfiguration(apiKey: "fed_pk_abc123def456ghi789jk")) { error in
+            guard case FeddyError.invalidAPIKey = error else {
+                return XCTFail("expected invalidAPIKey, got \(error)")
+            }
+        }
+    }
+
     func test_rejectsSecretKey() {
-        XCTAssertThrowsError(try FeddyConfiguration(apiKey: "fed_sk_abc123")) { error in
+        XCTAssertThrowsError(try FeddyConfiguration(apiKey: "fed_sk_abc123ABC012")) { error in
             guard
                 case FeddyError.invalidAPIKey(let reason) = error,
-                reason.lowercased().contains("secret")
+                reason.lowercased().contains("server")
             else {
-                return XCTFail("expected invalidAPIKey mentioning 'secret', got \(error)")
+                return XCTFail("expected invalidAPIKey mentioning 'server', got \(error)")
+            }
+        }
+    }
+
+    func test_rejectsBodyWithSymbols() {
+        XCTAssertThrowsError(try FeddyConfiguration(apiKey: "fed_abc-123ABC0")) { error in
+            guard case FeddyError.invalidAPIKey = error else {
+                return XCTFail("expected invalidAPIKey, got \(error)")
+            }
+        }
+    }
+
+    func test_rejectsBodyWrongLength() {
+        XCTAssertThrowsError(try FeddyConfiguration(apiKey: "fed_abc")) { error in
+            guard case FeddyError.invalidAPIKey = error else {
+                return XCTFail("expected invalidAPIKey, got \(error)")
             }
         }
     }
@@ -69,7 +93,7 @@ final class FeddyIdentifyTests: XCTestCase {
 
         XCTAssertEqual(req.httpMethod, "POST")
         XCTAssertEqual(req.url?.path, "/v1/identify")
-        XCTAssertEqual(req.value(forHTTPHeaderField: "Authorization"), "Bearer fed_pk_abc123")
+        XCTAssertEqual(req.value(forHTTPHeaderField: "Authorization"), "Bearer fed_abc123ABC012")
         XCTAssertEqual(req.value(forHTTPHeaderField: "Content-Type"), "application/json")
         XCTAssertTrue(
             (req.value(forHTTPHeaderField: "User-Agent") ?? "").hasPrefix("Feddy-iOS/")
@@ -147,7 +171,7 @@ final class FeddyIdentifyTests: XCTestCase {
 
     private func makeClient(
         session: URLSession,
-        apiKey: String = "fed_pk_abc123",
+        apiKey: String = "fed_abc123ABC012",
         anonymousToken: String = "anon-test"
     ) -> FeddyClient {
         let config = try! FeddyConfiguration(
@@ -155,14 +179,14 @@ final class FeddyIdentifyTests: XCTestCase {
             baseURL: URL(string: "https://api.test.feddy.app")!
         )
         let suite = UserDefaults(suiteName: "feddy.tests.\(UUID().uuidString)")!
-        let store = AnonymousTokenStore(
+        let store = IdentityStore(
             defaults: suite,
             generator: { anonymousToken }
         )
         return FeddyClient(
             configuration: config,
             session: session,
-            anonymousTokens: store
+            identityStore: store
         )
     }
 }

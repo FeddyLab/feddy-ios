@@ -38,6 +38,10 @@ extension FeddyClient {
             avatarURL: avatarURL?.absoluteString,
             profile: profile
         )
+        // Persist the userId before the network call so a queued
+        // submitRequest replay after a process restart still attributes
+        // correctly even if the network call below fails.
+        identityStore.setLastExternalUserId(externalUserId)
         _ = try await postRaw(path: "/v1/identify", body: body)
     }
 }

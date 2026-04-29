@@ -6,7 +6,7 @@ import Foundation
 ///
 /// ```swift
 /// // 1. Once at app launch:
-/// Feddy.configure(apiKey: "fed_pk_…")
+/// Feddy.configure(apiKey: "fed_xxxxxxxxxxxx")
 ///
 /// // 2. After your auth handler runs:
 /// Feddy.identify(userId: user.id, email: user.email, displayName: user.name)
@@ -20,19 +20,29 @@ import Foundation
 public enum Feddy {
     private static let state = Locked<FeddyClient?>(nil)
 
-    /// Configure the SDK once at app launch with your project's
-    /// publishable key (`fed_pk_…`). Safe to call from
-    /// `@main App.init()` or `application(_:didFinishLaunchingWithOptions:)`.
+    /// Configure the SDK once at app launch with your **Project ID**
+    /// (`fed_xxxxxxxxxxxx`, copied from your Feddy dashboard). Safe to
+    /// call from `@main App.init()` or
+    /// `application(_:didFinishLaunchingWithOptions:)`.
     ///
-    /// Invalid keys (wrong prefix, empty, or `fed_sk_*`) are rejected
-    /// with a console log + debug-build assertion. Subsequent calls
-    /// to `identify` will then silently no-op — same as if you never
-    /// called `configure`.
+    /// Invalid IDs (wrong prefix, empty, or a server `fed_sk_*` key)
+    /// are rejected with a console log + debug-build assertion.
+    /// Subsequent calls to `identify` / `submitRequest` will then
+    /// silently no-op — same as if you never called `configure`.
+    ///
+    /// On success, any `submitRequest` payloads queued during a prior
+    /// offline session replay in the background.
     public static func configure(apiKey: String) {
         do {
             let configuration = try FeddyConfiguration(apiKey: apiKey)
             let client = FeddyClient(configuration: configuration)
             state.write { $0 = client }
+
+            if #available(iOS 15.0, macOS 12.0, *) {
+                Task {
+                    await client.replayQueue()
+                }
+            }
         } catch {
             let message = (error as? LocalizedError)?.errorDescription
                 ?? String(describing: error)
@@ -82,10 +92,64 @@ public enum Feddy {
         }
     }
 
-    /// Drops any previously configured client. Useful for tests and
-    /// for "log out" flows that should stop attributing writes to a
-    /// known user.
+    /// Submit a feedback / feature request / bug report on behalf of the
+    /// current end user. Fire-and-forget: the network call runs in the
+    /// background; failures are logged + persisted to a local retry queue
+    /// so they replay automatically on the next ``configure(apiKey:)`` or
+    /// the next successful submit.
+    ///
+    /// The SDK uses ``identify(userId:email:displayName:avatarURL:profile:)``'s
+    /// last `userId` if known, otherwise a per-install anonymous token —
+    /// end users never need to "log in" to Feddy for this to work.
+    ///
+    /// - Parameters:
+    ///   - title: Short summary shown as the row title in the dashboard.
+    ///     Required; trimmed empty titles are rejected client-side.
+    ///   - description: Longer body text. Optional; up to ~5000 chars
+    ///     server-side.
+    ///   - type: Optional grouping tag. Use ``RequestType/feature``,
+    ///     ``RequestType/bug``, ``RequestType/other``, or any custom
+    ///     lowercase tag. Server falls back to `"feature"` when omitted.
+    public static func submitRequest(
+        title: String,
+        description: String? = nil,
+        type: String? = nil
+    ) {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty else {
+            print("[Feddy] submitRequest ignored — title is empty")
+            assertionFailure("[Feddy] submitRequest title must not be empty")
+            return
+        }
+
+        guard let client = state.read({ $0 }) else {
+            print("[Feddy] submitRequest called before configure — ignoring")
+            return
+        }
+
+        if #available(iOS 15.0, macOS 12.0, *) {
+            Task {
+                await client.submitRequestFireAndForget(
+                    title: trimmedTitle,
+                    description: description,
+                    type: type
+                )
+            }
+        }
+    }
+
+    /// Drops any previously configured client and forgets the last
+    /// identified user. Useful for tests and for "log out" flows that
+    /// should stop attributing writes to a known user.
+    ///
+    /// The offline retry queue is intentionally **not** cleared — pending
+    /// payloads still replay against the next configured client (using
+    /// whatever identity was attached at enqueue time, including the
+    /// anonymous token).
     public static func reset() {
+        if let client = state.read({ $0 }) {
+            client.identityStore.setLastExternalUserId(nil)
+        }
         state.write { $0 = nil }
     }
 

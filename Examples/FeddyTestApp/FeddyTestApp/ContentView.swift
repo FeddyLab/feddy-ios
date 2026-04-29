@@ -1,6 +1,9 @@
+import Feddy
 import SwiftUI
 
 struct ContentView: View {
+    @State private var showFeedbackSheet = false
+
     var body: some View {
         NavigationStack {
             if DemoConfig.isPlaceholder {
@@ -46,6 +49,14 @@ struct ContentView: View {
                 LabeledContent("Display name", value: DemoUser.displayName)
             }
 
+            Section("Feedback") {
+                Button {
+                    showFeedbackSheet = true
+                } label: {
+                    Label("Send Feedback", systemImage: "bubble.left.and.bubble.right")
+                }
+            }
+
             Section {
                 Text("Feddy.identify(…) ran in the host app on launch with the values above. Open dashboard.feddy.app to confirm this user appeared.")
                     .font(.callout)
@@ -53,6 +64,9 @@ struct ContentView: View {
             }
         }
         .navigationTitle("Profile")
+        .sheet(isPresented: $showFeedbackSheet) {
+            RequestComposeView()
+        }
     }
 
     private var avatarBubble: some View {

@@ -3,22 +3,29 @@ import Foundation
 /// Performs HTTP requests against `feddy-api`. One instance per `configure`
 /// call; held via `Feddy`'s lock-guarded state.
 actor FeddyClient {
-    let configuration: FeddyConfiguration
-    let session: URLSession
-    let anonymousTokens: AnonymousTokenStore
+    nonisolated let configuration: FeddyConfiguration
+    nonisolated let session: URLSession
+    nonisolated let identityStore: IdentityStore
+    nonisolated let requestQueue: RequestQueue
 
     init(
         configuration: FeddyConfiguration,
         session: URLSession = .shared,
-        anonymousTokens: AnonymousTokenStore = AnonymousTokenStore()
+        identityStore: IdentityStore = IdentityStore(),
+        requestQueue: RequestQueue = RequestQueue()
     ) {
         self.configuration = configuration
         self.session = session
-        self.anonymousTokens = anonymousTokens
+        self.identityStore = identityStore
+        self.requestQueue = requestQueue
     }
 
     nonisolated var anonymousToken: String {
-        anonymousTokens.tokenOrCreate()
+        identityStore.tokenOrCreate()
+    }
+
+    nonisolated var lastExternalUserId: String? {
+        identityStore.lastExternalUserId
     }
 
     @available(iOS 15.0, macOS 12.0, *)
@@ -40,6 +47,23 @@ actor FeddyClient {
         path: String,
         body: Body
     ) async throws -> Data {
+        let encoded: Data
+        do {
+            encoded = try JSONEncoder.feddy.encode(body)
+        } catch {
+            throw FeddyError.invalidPayload(reason: String(describing: error))
+        }
+        return try await postRawData(path: path, encodedBody: encoded)
+    }
+
+    /// Lower-level POST that takes already-encoded JSON bytes. Used by
+    /// the offline-queue replay path where the body was serialized once
+    /// at enqueue time and shouldn't be re-encoded on every retry.
+    @available(iOS 15.0, macOS 12.0, *)
+    func postRawData(
+        path: String,
+        encodedBody: Data
+    ) async throws -> Data {
         let url = configuration.baseURL.appendingPathComponent(path)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -47,12 +71,7 @@ actor FeddyClient {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("Bearer \(configuration.apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue(SDKVersion.userAgent, forHTTPHeaderField: "User-Agent")
-
-        do {
-            request.httpBody = try JSONEncoder.feddy.encode(body)
-        } catch {
-            throw FeddyError.invalidPayload(reason: String(describing: error))
-        }
+        request.httpBody = encodedBody
 
         let data: Data
         let response: URLResponse

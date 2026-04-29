@@ -41,6 +41,26 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "外部ユーザー ID" } }
       }
     },
+    "Feedback" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Feedback" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Feedback" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Comentarios" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Commentaires" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "フィードバック" } }
+      }
+    },
+    "Send Feedback" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Feedback senden" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Send Feedback" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Enviar comentarios" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Envoyer un commentaire" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "フィードバックを送る" } }
+      }
+    },
     "Feddy.identify(…) ran in the host app on launch with the values above. Open dashboard.feddy.app to confirm this user appeared." : {
       "extractionState" : "manual",
       "localizations" : {

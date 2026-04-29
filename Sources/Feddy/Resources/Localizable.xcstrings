@@ -34,6 +34,94 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "送信" } }
       }
     },
+    "feddy.compose.descriptionField.placeholder" : {
+      "comment" : "Placeholder text for the multi-line description field in RequestComposeView.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Details hinzufügen (optional)" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add details (optional)" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Añade detalles (opcional)" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajouter des détails (optionnel)" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "詳細を追加（任意）" } }
+      }
+    },
+    "feddy.compose.queued" : {
+      "comment" : "Toast / status shown when a submission is enqueued for retry while offline.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wir senden es, sobald du wieder online bist." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "We'll send it once you're back online." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Lo enviaremos cuando vuelvas a estar en línea." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nous l'enverrons dès que vous serez de nouveau en ligne." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "オンラインに戻ったら送信します。" } }
+      }
+    },
+    "feddy.compose.title" : {
+      "comment" : "Navigation bar title for the feedback compose sheet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Feedback senden" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Send feedback" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Enviar comentarios" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Envoyer un commentaire" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "フィードバックを送る" } }
+      }
+    },
+    "feddy.compose.titleField.placeholder" : {
+      "comment" : "Placeholder text for the title field in RequestComposeView.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Was beschäftigt dich?" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What's on your mind?" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¿Qué tienes en mente?" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Qu'avez-vous en tête ?" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ご意見をお聞かせください" } }
+      }
+    },
+    "feddy.compose.type.bug" : {
+      "comment" : "Picker option label for the 'bug' request type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fehlerbericht" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Bug report" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Reporte de error" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Rapport de bug" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "不具合の報告" } }
+      }
+    },
+    "feddy.compose.type.feature" : {
+      "comment" : "Picker option label for the 'feature' request type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Funktionswunsch" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Feature request" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Solicitud de función" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Demande de fonctionnalité" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "機能リクエスト" } }
+      }
+    },
+    "feddy.compose.type.label" : {
+      "comment" : "Form section / picker label for the request type selector.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Typ" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Type" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tipo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Type" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "種類" } }
+      }
+    },
+    "feddy.compose.type.other" : {
+      "comment" : "Picker option label for the 'other' request type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Sonstiges" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Other" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Otro" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Autre" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "その他" } }
+      }
+    },
     "feddy.error.generic" : {
       "comment" : "Catch-all message when a request fails for an unknown reason.",
       "extractionState" : "manual",
@@ -54,6 +142,17 @@
         "es" : { "stringUnit" : { "state" : "translated", "value" : "Error de red. Comprueba tu conexión e inténtalo de nuevo." } },
         "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur réseau. Vérifiez votre connexion et réessayez." } },
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "ネットワークエラーが発生しました。接続を確認してもう一度お試しください。" } }
+      }
+    },
+    "feddy.error.title.required" : {
+      "comment" : "Inline validation message shown when the user tries to submit an empty title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Titel ist erforderlich." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Title is required." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "El título es obligatorio." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Le titre est obligatoire." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "タイトルを入力してください。" } }
       }
     },
     "feddy.status.loading" : {
