@@ -27,6 +27,15 @@ Package.resolved
 # xcodeproj files live in DerivedData (already excluded) and never
 # appear in the working tree.
 
+# The example app's shared scheme can carry a `FEDDY_API_KEY`
+# environment variable for local testing. Xcode persists scheme-level
+# launch env vars only in the *shared* scheme (user schemes don't
+# override them), so any contributor wiring a real Project ID for
+# local runs would otherwise stage it for commit. Keep the example's
+# shared schemes out of git entirely; Xcode auto-generates a working
+# scheme on first open for new clones.
+Examples/*/FeddyTestApp.xcodeproj/xcshareddata/xcschemes/
+
 ## CocoaPods (if ever used)
 Pods/
 
