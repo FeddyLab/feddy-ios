@@ -1,24 +1,29 @@
 import SwiftUI
 
-/// Drop-in roadmap viewer: paginated list of public-roadmap requests
-/// with a board picker, pull-to-refresh, infinite scroll, and an
-/// inline upvote button on each row. Tapping a row pushes
-/// ``RequestDetailView``.
+/// Drop-in feedback list — every public-roadmap request in the
+/// workspace, paginated, with an inline upvote button and tap-to-detail
+/// navigation. The board axis is exposed as a top-bar filter menu (with
+/// an "All" entry); status is shown as a per-card chip rather than a
+/// filter, since this view is positioned as the "everything" surface.
+/// For a status-grouped, kanban-style presentation, use
+/// ``RoadmapView`` instead.
 ///
-/// Present this as a sheet or push it onto a navigation stack:
+/// Present as a sheet or push onto a navigation stack:
 ///
 /// ```swift
-/// .sheet(isPresented: $showRoadmap) {
+/// .sheet(isPresented: $showFeedback) {
 ///     RequestListView()
 /// }
 /// ```
 ///
-/// To restrict to specific boards, pass the workspace's board keys
-/// (matches what you see in `dashboard.feddy.app/w/<ws>/boards`):
+/// Pass the workspace's board catalog if you have custom boards; the
+/// menu pulls display names from these entries. When omitted, only the
+/// two system boards (`features` / `bugs`) appear in the filter.
 ///
 /// ```swift
 /// RequestListView(boards: [
 ///     .featureRequest,
+///     .bugReport,
 ///     .init(key: "discussions", name: "Discussions"),
 /// ])
 /// ```
@@ -26,7 +31,7 @@ import SwiftUI
 public struct RequestListView: View {
     private let boards: [FeedbackBoard]
 
-    @State private var selectedBoardKey: String?
+    @State private var selectedBoardKey: String? = nil  // nil = All boards
     @State private var items: [Feddy.FeedbackRequest] = []
     @State private var nextCursor: String? = nil
     @State private var isInitialLoading = true
@@ -39,26 +44,20 @@ public struct RequestListView: View {
 
     public init(boards: [FeedbackBoard] = FeedbackBoard.systemDefaults) {
         self.boards = boards
-        // Default to the first board if any were provided. nil means
-        // "all boards in the workspace" (server defaults the union).
-        _selectedBoardKey = State(initialValue: boards.first?.key)
     }
 
     public var body: some View {
         navigationContainer {
-            VStack(spacing: 0) {
-                if boards.count > 1 {
-                    boardPicker
-                        .padding(.horizontal)
-                        .padding(.top, 8)
-                        .padding(.bottom, 4)
-                }
-                content
-            }
+            content
                 .navigationTitle(Localization.string("feddy.list.title"))
                 #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        filterMenu
+                    }
+                }
                 .task(id: selectedBoardKey) {
                     await loadInitial()
                 }
@@ -79,9 +78,6 @@ public struct RequestListView: View {
         }
     }
 
-    /// Use NavigationStack on iOS 16+/macOS 13+; fall back to
-    /// NavigationView on the iOS 15 / macOS 12 floor declared by
-    /// Package.swift. Same pattern as RequestComposeView.
     @ViewBuilder
     private func navigationContainer<Content: View>(
         @ViewBuilder _ content: () -> Content
@@ -125,34 +121,45 @@ public struct RequestListView: View {
         }
     }
 
-    private var boardPicker: some View {
-        Picker(
-            Localization.string("feddy.compose.board.label"),
-            selection: Binding<String?>(
-                get: { selectedBoardKey },
-                set: { selectedBoardKey = $0 }
-            )
-        ) {
-            ForEach(boards) { board in
-                Text(board.name).tag(Optional(board.key))
+    private var filterMenu: some View {
+        Menu {
+            Button {
+                selectedBoardKey = nil
+            } label: {
+                Label(
+                    Localization.string("feddy.filter.allBoards"),
+                    systemImage: selectedBoardKey == nil ? "checkmark" : ""
+                )
             }
+            ForEach(boards) { board in
+                Button {
+                    selectedBoardKey = board.key
+                } label: {
+                    Label(
+                        board.name,
+                        systemImage: selectedBoardKey == board.key ? "checkmark" : ""
+                    )
+                }
+            }
+        } label: {
+            Label(
+                Localization.string("feddy.action.filter"),
+                systemImage: "line.3.horizontal.decrease.circle"
+            )
         }
-        .pickerStyle(.segmented)
-        .frame(maxWidth: 320)
     }
 
     private var list: some View {
         List {
             ForEach(items) { item in
-                // Inline-destination NavigationLink (works on both
-                // NavigationView and NavigationStack); the value-based
-                // .navigationDestination(for:) is iOS 16+ only.
                 NavigationLink(destination: RequestDetailView(requestId: item.id)) {
                     RequestRow(
                         request: item,
+                        boardName: boardDisplayName(for: item.boardKey),
                         voteOverlay: voteOverlays[item.id],
                         voted: votedIds.contains(item.id),
                         votePending: pendingVoteIds.contains(item.id),
+                        showStatusChip: true,
                         onVoteTap: { handleVoteTap(for: item) }
                     )
                 }
@@ -176,6 +183,10 @@ public struct RequestListView: View {
         .listStyle(.plain)
     }
 
+    private func boardDisplayName(for key: String) -> String {
+        boards.first(where: { $0.key == key })?.name ?? key.capitalized
+    }
+
     @MainActor
     private func loadInitial() async {
         isInitialLoading = true
@@ -184,6 +195,7 @@ public struct RequestListView: View {
         do {
             let page = try await Feddy.fetchRequests(
                 boardKey: selectedBoardKey,
+                status: nil,
                 limit: 20,
                 cursor: nil
             )
@@ -203,6 +215,7 @@ public struct RequestListView: View {
         do {
             let page = try await Feddy.fetchRequests(
                 boardKey: selectedBoardKey,
+                status: nil,
                 limit: 20,
                 cursor: cursor
             )
@@ -218,7 +231,6 @@ public struct RequestListView: View {
         guard !pendingVoteIds.contains(item.id) else { return }
         let wasVoted = votedIds.contains(item.id)
         let baseline = voteOverlays[item.id] ?? item.voteCount
-        // Optimistic toggle.
         if wasVoted {
             votedIds.remove(item.id)
             voteOverlays[item.id] = max(baseline - 1, 0)
@@ -241,7 +253,6 @@ public struct RequestListView: View {
                 }
             } catch {
                 await MainActor.run {
-                    // Rollback to the prior state.
                     if wasVoted {
                         votedIds.insert(item.id)
                     } else {
@@ -256,12 +267,17 @@ public struct RequestListView: View {
     }
 }
 
+/// Shared row for both ``RequestListView`` and ``RoadmapView``. The
+/// `showStatusChip` flag lets the host hide the status chip when the
+/// containing view already groups by status (RoadmapView's tabs).
 @available(iOS 15.0, macOS 12.0, *)
-private struct RequestRow: View {
+struct RequestRow: View {
     let request: Feddy.FeedbackRequest
+    let boardName: String
     let voteOverlay: Int?
     let voted: Bool
     let votePending: Bool
+    let showStatusChip: Bool
     let onVoteTap: () -> Void
 
     var body: some View {
@@ -296,7 +312,10 @@ private struct RequestRow: View {
                         .lineLimit(2)
                 }
                 HStack(spacing: 6) {
-                    statusChip
+                    boardChip
+                    if showStatusChip {
+                        statusChip
+                    }
                     if !request.attachments.isEmpty {
                         Label(
                             "\(request.attachments.count)",
@@ -312,30 +331,37 @@ private struct RequestRow: View {
         .padding(.vertical, 4)
     }
 
+    private var boardChip: some View {
+        Text(boardName)
+            .font(.caption2.weight(.medium))
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(Color.secondary.opacity(0.12), in: Capsule())
+            .foregroundStyle(.secondary)
+    }
+
     private var statusChip: some View {
-        Text(localizedStatus(request.status))
+        Text(localizedStatusLabel(request.status))
             .font(.caption2.weight(.medium))
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(
-                statusColor(request.status).opacity(0.15),
+                statusChipColor(request.status).opacity(0.15),
                 in: Capsule()
             )
-            .foregroundStyle(statusColor(request.status))
+            .foregroundStyle(statusChipColor(request.status))
     }
 }
 
 @available(iOS 15.0, macOS 12.0, *)
-private func localizedStatus(_ status: String) -> String {
+func localizedStatusLabel(_ status: String) -> String {
     let key = "feddy.status.\(status)"
     let value = Localization.string(key)
-    // Fallback to the raw key if no translation matches (e.g. a future
-    // status string the SDK doesn't know about yet).
     return value == key ? status.capitalized : value
 }
 
 @available(iOS 15.0, macOS 12.0, *)
-private func statusColor(_ status: String) -> Color {
+func statusChipColor(_ status: String) -> Color {
     switch status {
     case "completed": return .green
     case "in_progress": return .blue

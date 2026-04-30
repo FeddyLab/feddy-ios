@@ -32,6 +32,7 @@ final class FetchRequestsTests: XCTestCase {
 
         _ = try await client.fetchRequests(
             boardKey: "features",
+            status: .planned,
             limit: 10,
             cursor: "abc"
         )
@@ -48,8 +49,43 @@ final class FetchRequestsTests: XCTestCase {
             }
         )
         XCTAssertEqual(query["board_key"], "features")
+        XCTAssertEqual(query["status"], "planned")
         XCTAssertEqual(query["limit"], "10")
         XCTAssertEqual(query["cursor"], "abc")
+    }
+
+    func test_fetchRequests_inProgressStatusUsesSnakeCaseWire() async throws {
+        let session = MockURLProtocol.makeSession()
+        let client = makeClient(session: session)
+
+        MockURLProtocol.setHandler { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )!
+            return (response, Data("""
+            {"items": [], "next_cursor": null}
+            """.utf8))
+        }
+
+        _ = try await client.fetchRequests(
+            boardKey: nil,
+            status: .inProgress,
+            limit: 20,
+            cursor: nil
+        )
+
+        let req = try XCTUnwrap(MockURLProtocol.capturedRequests.first)
+        let components = try XCTUnwrap(
+            URLComponents(url: req.url!, resolvingAgainstBaseURL: false)
+        )
+        let statusValue = (components.queryItems ?? [])
+            .first(where: { $0.name == "status" })?.value
+        // RoadmapStatus.inProgress must serialise as `in_progress` (server
+        // wire format) rather than the camelCase Swift case name.
+        XCTAssertEqual(statusValue, "in_progress")
     }
 
     func test_fetchRequests_omitsNilQueryParams() async throws {
@@ -68,7 +104,7 @@ final class FetchRequestsTests: XCTestCase {
             """.utf8))
         }
 
-        _ = try await client.fetchRequests(boardKey: nil, limit: 20, cursor: nil)
+        _ = try await client.fetchRequests(boardKey: nil, status: nil, limit: 20, cursor: nil)
 
         let req = try XCTUnwrap(MockURLProtocol.capturedRequests.first)
         let components = try XCTUnwrap(
@@ -116,6 +152,7 @@ final class FetchRequestsTests: XCTestCase {
 
         let page = try await client.fetchRequests(
             boardKey: nil,
+            status: nil,
             limit: 20,
             cursor: nil
         )

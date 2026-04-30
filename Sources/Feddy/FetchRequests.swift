@@ -9,6 +9,7 @@ extension FeddyClient {
     @available(iOS 15.0, macOS 12.0, *)
     func fetchRequests(
         boardKey: String?,
+        status: Feddy.RoadmapStatus?,
         limit: Int,
         cursor: String?
     ) async throws -> Feddy.RequestList {
@@ -17,6 +18,7 @@ extension FeddyClient {
             path: "/v1/requests",
             query: [
                 "board_key": boardKey,
+                "status": status?.rawValue,
                 "limit": String(clamped),
                 "cursor": cursor,
             ]

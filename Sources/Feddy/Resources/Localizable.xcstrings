@@ -37,6 +37,42 @@
         }
       }
     },
+    "feddy.action.filter": {
+      "comment": "Toolbar button label that opens the filter dropdown.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtern"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtrar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtrer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "絞り込み"
+          }
+        }
+      }
+    },
     "feddy.action.refresh": {
       "comment": "Pull-to-refresh label for the list view.",
       "extractionState": "manual",
@@ -937,6 +973,42 @@
         }
       }
     },
+    "feddy.filter.allBoards": {
+      "comment": "Board filter option that shows requests from every board.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Boards"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All boards"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas las áreas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les catégories"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべてのボード"
+          }
+        }
+      }
+    },
     "feddy.list.empty.body": {
       "comment": "Empty-state body copy nudging the user to be the first to post.",
       "extractionState": "manual",
@@ -1113,6 +1185,114 @@
           "stringUnit": {
             "state": "translated",
             "value": "フィードバック"
+          }
+        }
+      }
+    },
+    "feddy.roadmap.empty.body": {
+      "comment": "Empty-state body shared across roadmap tabs.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schau später noch einmal vorbei oder ziehe zum Aktualisieren."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check back later or pull to refresh."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vuelve más tarde o desliza para actualizar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revenez plus tard ou tirez pour actualiser."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "後ほどご確認いただくか、引っ張って更新してください。"
+          }
+        }
+      }
+    },
+    "feddy.roadmap.empty.titleFormat": {
+      "comment": "Empty-state headline per status tab; '{status}' is replaced by the localized status label.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Einträge in {status}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No {status} items yet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay elementos en {status}"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun élément dans {status} pour le moment"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{status}の項目はまだありません"
+          }
+        }
+      }
+    },
+    "feddy.roadmap.title": {
+      "comment": "Title of the roadmap view that groups items by status into tabs.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roadmap"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roadmap"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoja de ruta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feuille de route"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ロードマップ"
           }
         }
       }

@@ -149,18 +149,24 @@ public enum Feddy {
     /// - Parameters:
     ///   - boardKey: Restrict to one board (e.g. `"features"` /
     ///     `"bugs"`). Omit to span every active board in the workspace.
+    ///   - status: Restrict to a single roadmap status — used by
+    ///     ``RoadmapView`` to populate one tab. Omit to return the
+    ///     full public-roadmap subset (planned + in_progress + completed
+    ///     interleaved by recency).
     ///   - limit: Page size, 1...100. Defaults to 20 to match
-    ///     `RequestListView`'s rendering.
+    ///     ``RequestListView``'s rendering.
     ///   - cursor: Opaque cursor from a prior page's `nextCursor`.
     @available(iOS 15.0, macOS 12.0, *)
     public static func fetchRequests(
         boardKey: String? = nil,
+        status: Feddy.RoadmapStatus? = nil,
         limit: Int = 20,
         cursor: String? = nil
     ) async throws -> Feddy.RequestList {
         let client = try currentClient()
         return try await client.fetchRequests(
             boardKey: boardKey,
+            status: status,
             limit: limit,
             cursor: cursor
         )

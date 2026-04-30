@@ -9,6 +9,16 @@ import Foundation
 /// initialisms like `URL` and `ID`).
 
 extension Feddy {
+    /// The three publicly-visible roadmap statuses, used by
+    /// ``RoadmapView`` as horizontal tabs and by `fetchRequests(status:...)`
+    /// as a single-value filter. Backend rejects any other value as
+    /// `invalid_query` so internal triage state never leaks.
+    public enum RoadmapStatus: String, Sendable, CaseIterable {
+        case planned
+        case inProgress = "in_progress"
+        case completed
+    }
+
     /// A single roadmap item — what `getWorkspaceRequestDetail` returns
     /// in the dashboard, plus the `attachments[]` array. Returned by
     /// `fetchRequest(id:)`. Matches `GET /v1/requests/:id`.
@@ -25,6 +35,11 @@ extension Feddy {
         public let status: String
         public let priority: String
         public let boardId: String
+        /// Stable workspace-scoped key (e.g. `"features"` / `"bugs"`)
+        /// usable as the input to `Feddy.fetchRequests(boardKey:...)`
+        /// and to look up a display name in the host app's
+        /// `[FeedbackBoard]` array.
+        public let boardKey: String
         public let officialReply: String?
         public let voteCount: Int
         public let createdAt: Date
@@ -38,6 +53,7 @@ extension Feddy {
             status: String,
             priority: String,
             boardId: String,
+            boardKey: String,
             officialReply: String?,
             voteCount: Int,
             createdAt: Date,
@@ -50,6 +66,7 @@ extension Feddy {
             self.status = status
             self.priority = priority
             self.boardId = boardId
+            self.boardKey = boardKey
             self.officialReply = officialReply
             self.voteCount = voteCount
             self.createdAt = createdAt
@@ -60,6 +77,7 @@ extension Feddy {
             case id, title, description, status, priority
             case requestType = "request_type"
             case boardId = "board_id"
+            case boardKey = "board_key"
             case officialReply = "official_reply"
             case voteCount = "vote_count"
             case createdAt = "created_at"
@@ -75,6 +93,7 @@ extension Feddy {
             self.status = try c.decode(String.self, forKey: .status)
             self.priority = try c.decodeIfPresent(String.self, forKey: .priority) ?? "medium"
             self.boardId = try c.decode(String.self, forKey: .boardId)
+            self.boardKey = try c.decodeIfPresent(String.self, forKey: .boardKey) ?? ""
             self.officialReply = try c.decodeIfPresent(String.self, forKey: .officialReply)
             self.voteCount = try c.decodeIfPresent(Int.self, forKey: .voteCount) ?? 0
             self.createdAt = try c.decode(Date.self, forKey: .createdAt)
