@@ -410,9 +410,7 @@ struct RequestRow: View {
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(
-                        voted
-                            ? Color.accentColor
-                            : Color.secondary.opacity(0.12)
+                        voted ? Color.orange : Color.secondary.opacity(0.12)
                     )
             )
             .overlay(
@@ -430,7 +428,6 @@ struct RequestRow: View {
                 : Localization.string("feddy.action.upvote")
         )
         .disabled(votePending)
-        .opacity(votePending ? 0.6 : 1)
     }
 
     private var boardChip: some View {

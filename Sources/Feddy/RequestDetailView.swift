@@ -138,9 +138,7 @@ public struct RequestDetailView: View {
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(
-                        voted
-                            ? Color.accentColor
-                            : Color.secondary.opacity(0.12)
+                        voted ? Color.orange : Color.secondary.opacity(0.12)
                     )
             )
             .overlay(
@@ -153,7 +151,6 @@ public struct RequestDetailView: View {
         }
         .buttonStyle(.plain)
         .disabled(votePending)
-        .opacity(votePending ? 0.6 : 1)
         .accessibilityLabel(
             voted
                 ? Localization.string("feddy.action.upvoted")
