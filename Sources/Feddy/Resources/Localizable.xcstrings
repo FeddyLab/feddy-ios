@@ -1,182 +1,1410 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "feddy.action.cancel" : {
-      "comment" : "Generic cancel button label used across Feddy SDK UI components.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Abbrechen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cancelar" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuler" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "キャンセル" } }
+  "sourceLanguage": "en",
+  "strings": {
+    "feddy.action.cancel": {
+      "comment": "Generic cancel button label used across Feddy SDK UI components.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャンセル"
+          }
+        }
       }
     },
-    "feddy.action.retry" : {
-      "comment" : "Retry button shown after a failed request.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Erneut versuchen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Try again" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Reintentar" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Réessayer" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "再試行" } }
+    "feddy.action.refresh": {
+      "comment": "Pull-to-refresh label for the list view.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisieren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualiser"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新"
+          }
+        }
       }
     },
-    "feddy.action.submit" : {
-      "comment" : "Generic submit button label used in feedback / wish forms.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Senden" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Submit" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Enviar" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Envoyer" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "送信" } }
+    "feddy.action.retry": {
+      "comment": "Retry button shown after a failed request.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut versuchen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reintentar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再試行"
+          }
+        }
       }
     },
-    "feddy.compose.descriptionField.label" : {
-      "comment" : "Section header above the description editor in RequestComposeView.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Beschreibung" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Description" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Descripción" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Description" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "説明" } }
+    "feddy.action.send": {
+      "comment": "Send button label in the comment composer.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "送信"
+          }
+        }
       }
     },
-    "feddy.compose.descriptionField.placeholder" : {
-      "comment" : "Placeholder text for the multi-line description field in RequestComposeView.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Details hinzufügen (optional)" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add details (optional)" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Añade detalles (opcional)" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajouter des détails (optionnel)" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "詳細を追加（任意）" } }
+    "feddy.action.submit": {
+      "comment": "Generic submit button label used in feedback / wish forms.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Submit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "送信"
+          }
+        }
       }
     },
-    "feddy.compose.queued" : {
-      "comment" : "Toast / status shown when a submission is enqueued for retry while offline.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wir senden es, sobald du wieder online bist." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "We'll send it once you're back online." } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Lo enviaremos cuando vuelvas a estar en línea." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nous l'enverrons dès que vous serez de nouveau en ligne." } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "オンラインに戻ったら送信します。" } }
+    "feddy.action.upvote": {
+      "comment": "Accessibility label / button label for casting an upvote.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hochstimmen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upvote"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voter pour"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "賛成"
+          }
+        }
       }
     },
-    "feddy.compose.title" : {
-      "comment" : "Navigation bar title for the feedback compose sheet.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Feedback senden" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Send feedback" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Enviar comentarios" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Envoyer un commentaire" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "フィードバックを送る" } }
+    "feddy.action.upvoted": {
+      "comment": "Accessibility label / button label when the current user has already voted.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hochgestimmt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upvoted"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voté"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "賛成済み"
+          }
+        }
       }
     },
-    "feddy.compose.titleField.label" : {
-      "comment" : "Section header above the title field in RequestComposeView.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Titel" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Title" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Título" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Titre" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "タイトル" } }
+    "feddy.compose.board.bugs": {
+      "comment": "Display name for the default 'bugs' board. Single word to fit picker chip width.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehler"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bug"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bug"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "バグ"
+          }
+        }
       }
     },
-    "feddy.compose.titleField.placeholder" : {
-      "comment" : "Placeholder text for the title field in RequestComposeView.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Was beschäftigt dich?" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "What's on your mind?" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "¿Qué tienes en mente?" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Qu'avez-vous en tête ?" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ご意見をお聞かせください" } }
+    "feddy.compose.board.features": {
+      "comment": "Display name for the default 'features' board. Single word to fit picker chip width.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funktion"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feature"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Función"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fonction"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "機能"
+          }
+        }
       }
     },
-    "feddy.compose.board.bugs" : {
-      "comment" : "Display name for the default 'bugs' board. Single word to fit picker chip width.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fehler" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Bug" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Error" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Bug" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "バグ" } }
+    "feddy.compose.board.label": {
+      "comment": "Form section / picker label for the board selector.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategorie"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Categoría"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Catégorie"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カテゴリ"
+          }
+        }
       }
     },
-    "feddy.compose.board.features" : {
-      "comment" : "Display name for the default 'features' board. Single word to fit picker chip width.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Funktion" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Feature" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Función" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Fonction" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "機能" } }
+    "feddy.compose.descriptionField.label": {
+      "comment": "Section header above the description editor in RequestComposeView.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beschreibung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Description"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descripción"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Description"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "説明"
+          }
+        }
       }
     },
-    "feddy.compose.board.label" : {
-      "comment" : "Form section / picker label for the board selector.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kategorie" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Category" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Categoría" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Catégorie" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "カテゴリ" } }
+    "feddy.compose.descriptionField.placeholder": {
+      "comment": "Placeholder text for the multi-line description field in RequestComposeView.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details hinzufügen (optional)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add details (optional)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añade detalles (opcional)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter des détails (optionnel)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "詳細を追加（任意）"
+          }
+        }
       }
     },
-    "feddy.error.generic" : {
-      "comment" : "Catch-all message when a request fails for an unknown reason.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Etwas ist schiefgelaufen." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Something went wrong." } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Algo salió mal." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Une erreur s'est produite." } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "エラーが発生しました。" } }
+    "feddy.compose.queued": {
+      "comment": "Toast / status shown when a submission is enqueued for retry while offline.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir senden es, sobald du wieder online bist."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We'll send it once you're back online."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo enviaremos cuando vuelvas a estar en línea."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nous l'enverrons dès que vous serez de nouveau en ligne."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オンラインに戻ったら送信します。"
+          }
+        }
       }
     },
-    "feddy.error.network" : {
-      "comment" : "Shown when a request fails because the device cannot reach the API.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Netzwerkfehler. Verbindung prüfen und erneut versuchen." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Network error. Check your connection and try again." } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Error de red. Comprueba tu conexión e inténtalo de nuevo." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur réseau. Vérifiez votre connexion et réessayez." } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ネットワークエラーが発生しました。接続を確認してもう一度お試しください。" } }
+    "feddy.compose.title": {
+      "comment": "Navigation bar title for the feedback compose sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feedback senden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send feedback"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar comentarios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer un commentaire"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フィードバックを送る"
+          }
+        }
       }
     },
-    "feddy.error.title.required" : {
-      "comment" : "Inline validation message shown when the user tries to submit an empty title.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Titel ist erforderlich." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Title is required." } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "El título es obligatorio." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Le titre est obligatoire." } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "タイトルを入力してください。" } }
+    "feddy.compose.titleField.label": {
+      "comment": "Section header above the title field in RequestComposeView.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titre"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タイトル"
+          }
+        }
       }
     },
-    "feddy.status.loading" : {
-      "comment" : "Loading indicator label.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wird geladen…" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Loading…" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cargando…" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Chargement…" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "読み込み中…" } }
+    "feddy.compose.titleField.placeholder": {
+      "comment": "Placeholder text for the title field in RequestComposeView.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was beschäftigt dich?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What's on your mind?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué tienes en mente?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qu'avez-vous en tête ?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ご意見をお聞かせください"
+          }
+        }
+      }
+    },
+    "feddy.detail.attachments": {
+      "comment": "Section heading for image attachments on detail view.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anhänge"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attachments"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjuntos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièces jointes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添付ファイル"
+          }
+        }
+      }
+    },
+    "feddy.detail.comment.placeholder": {
+      "comment": "Placeholder for the comment composer text field.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kommentar schreiben..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Write a comment..."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escribe un comentario..."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Écrire un commentaire..."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コメントを入力…"
+          }
+        }
+      }
+    },
+    "feddy.detail.comment.send.failed": {
+      "comment": "Toast shown when posting a comment fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kommentar konnte nicht gesendet werden. Versuche es erneut."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't post your comment. Try again."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo publicar tu comentario. Inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec de la publication. Veuillez réessayer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コメントを投稿できませんでした。もう一度お試しください。"
+          }
+        }
+      }
+    },
+    "feddy.detail.comments": {
+      "comment": "Section heading for the comment thread on detail view.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kommentare"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comments"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comentarios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commentaires"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コメント"
+          }
+        }
+      }
+    },
+    "feddy.detail.comments.empty": {
+      "comment": "Empty state inside the comments section when none exist.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Kommentare. Starte das Gespräch."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No comments yet. Start the conversation."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay comentarios. Empieza la conversación."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun commentaire. Lancez la conversation."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだコメントはありません。最初の一言をどうぞ。"
+          }
+        }
+      }
+    },
+    "feddy.detail.officialReply": {
+      "comment": "Section heading above the operator's official reply on detail view.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offizielle Antwort"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Official reply"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Respuesta oficial"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réponse officielle"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "公式の回答"
+          }
+        }
+      }
+    },
+    "feddy.detail.vote.failed": {
+      "comment": "Toast shown when toggling the vote fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stimme konnte nicht gespeichert werden. Versuche es erneut."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't record your vote. Try again."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo registrar tu voto. Inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec de l'enregistrement du vote. Réessayez."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "投票を記録できませんでした。もう一度お試しください。"
+          }
+        }
+      }
+    },
+    "feddy.error.generic": {
+      "comment": "Catch-all message when a request fails for an unknown reason.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Etwas ist schiefgelaufen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algo salió mal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une erreur s'est produite."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "エラーが発生しました。"
+          }
+        }
+      }
+    },
+    "feddy.error.network": {
+      "comment": "Shown when a request fails because the device cannot reach the API.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Netzwerkfehler. Verbindung prüfen und erneut versuchen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network error. Check your connection and try again."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de red. Comprueba tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erreur réseau. Vérifiez votre connexion et réessayez."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ネットワークエラーが発生しました。接続を確認してもう一度お試しください。"
+          }
+        }
+      }
+    },
+    "feddy.error.title.required": {
+      "comment": "Inline validation message shown when the user tries to submit an empty title.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel ist erforderlich."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title is required."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El título es obligatorio."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le titre est obligatoire."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タイトルを入力してください。"
+          }
+        }
+      }
+    },
+    "feddy.list.empty.body": {
+      "comment": "Empty-state body copy nudging the user to be the first to post.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teile als Erster, was du dir wünschst."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Be the first to share what you'd like to see."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sé el primero en compartir lo que te gustaría ver."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soyez le premier à partager ce que vous aimeriez voir."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ぜひ最初にご要望をお聞かせください。"
+          }
+        }
+      }
+    },
+    "feddy.list.empty.title": {
+      "comment": "Empty-state headline when no feedback exists yet.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch kein Feedback"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No feedback yet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay comentarios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun retour pour le moment"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだフィードバックはありません"
+          }
+        }
+      }
+    },
+    "feddy.list.error.body": {
+      "comment": "Error state when the list fails to load.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laden fehlgeschlagen. Zum erneuten Versuch ziehen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load feedback. Pull to retry."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo cargar. Desliza para reintentar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec du chargement. Tirez pour réessayer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み込みに失敗しました。引っ張って再試行してください。"
+          }
+        }
+      }
+    },
+    "feddy.list.loadingMore": {
+      "comment": "Footer label shown while paginating to the next page.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mehr laden..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading more..."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargando más..."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chargement..."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "さらに読み込み中…"
+          }
+        }
+      }
+    },
+    "feddy.list.title": {
+      "comment": "Title of the roadmap / feedback list view shown by RequestListView.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feedback"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feedback"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comentarios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commentaires"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フィードバック"
+          }
+        }
+      }
+    },
+    "feddy.status.completed": {
+      "comment": "Roadmap status: shipped / done.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgeschlossen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completed"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完了"
+          }
+        }
+      }
+    },
+    "feddy.status.duplicate": {
+      "comment": "Roadmap status: marked as duplicate of another item.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplikat"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplicate"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplicado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doublon"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重複"
+          }
+        }
+      }
+    },
+    "feddy.status.in_progress": {
+      "comment": "Roadmap status: actively being worked on.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Arbeit"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In progress"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En progreso"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En cours"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "対応中"
+          }
+        }
+      }
+    },
+    "feddy.status.loading": {
+      "comment": "Loading indicator label.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird geladen…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargando…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chargement…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み込み中…"
+          }
+        }
+      }
+    },
+    "feddy.status.pending": {
+      "comment": "Roadmap status: pending review.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausstehend"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pending"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pendiente"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認中"
+          }
+        }
+      }
+    },
+    "feddy.status.planned": {
+      "comment": "Roadmap status: planned for a future release.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplant"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planned"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planificado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planifié"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "計画中"
+          }
+        }
+      }
+    },
+    "feddy.status.rejected": {
+      "comment": "Roadmap status: declined / won't do.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht umsetzbar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Won't do"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se hará"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas prévu"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "対応しません"
+          }
+        }
+      }
+    },
+    "feddy.status.reviewed": {
+      "comment": "Roadmap status: reviewed but no decision yet.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geprüft"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reviewed"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revisado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Examiné"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認済み"
+          }
+        }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

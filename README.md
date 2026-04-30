@@ -1,6 +1,6 @@
 # Feddy Swift SDK
 
-> **Beta Notice**: This SDK is currently in beta (v0.2.0). The API may change before the 1.0 release.
+> **Beta Notice**: This SDK is currently in beta (v0.3.0). The API may change before the 1.0 release.
 
 A Swift SDK for integrating [Feddy](https://feddy.app) feedback, roadmap, and changelog features into your iOS and macOS applications.
 
@@ -12,7 +12,7 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.2.0")
+    .package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.3.0")
 ]
 ```
 
@@ -186,6 +186,63 @@ Submissions that hit a network failure or 5xx server error are persisted to a lo
 
 The queue is bounded (100 entries) and survives app restarts; the host app does not need to manage it.
 
+## Show Roadmap
+
+`RequestListView` is a drop-in roadmap viewer — paginated list, board picker, pull-to-refresh, inline upvote, and tap-to-detail navigation. No setup beyond `Feddy.configure(...)`.
+
+### iOS Presentation
+
+```swift
+import SwiftUI
+import Feddy
+
+struct ContentView: View {
+    @State private var showRoadmap = false
+
+    var body: some View {
+        Button("View Roadmap") { showRoadmap = true }
+            .sheet(isPresented: $showRoadmap) {
+                RequestListView()
+            }
+    }
+}
+```
+
+To restrict to specific boards, pass the workspace's board keys:
+
+```swift
+RequestListView(boards: [
+    .featureRequest,
+    .init(key: "discussions", name: "Discussions"),
+])
+```
+
+### Programmatic Read API
+
+When you want a fully custom UI, fetch the same data programmatically:
+
+```swift
+let page = try await Feddy.fetchRequests(boardKey: "features", limit: 20)
+for item in page.items {
+    print(item.title, item.voteCount, item.attachments.count)
+}
+
+// Single request detail (with attachments + official reply)
+let detail = try await Feddy.fetchRequest(id: "req_xyz")
+
+// Toggle upvote — server is the source of truth, returns new state
+let state = try await Feddy.upvote(requestId: "req_xyz")
+print("voted=\(state.voted) total=\(state.voteCount)")
+
+// Comments (oldest-first, paginated)
+let thread = try await Feddy.fetchComments(requestId: "req_xyz", limit: 50)
+
+// Append a comment
+let posted = try await Feddy.addComment(requestId: "req_xyz", body: "Looking forward to this!")
+```
+
+All read methods are `async throws`; errors surface as `FeddyError.network` or `FeddyError.http(status:code:message:)` so the caller can switch on the server's `code` string for typed handling.
+
 ## Advanced Usage
 
 ### Anonymous Tracking
@@ -234,12 +291,12 @@ Feddy.identify(
 
 ## Features
 
-- **Simple Integration**: Three method calls to get going — `Feddy.configure(apiKey:)`, `Feddy.identify(userId:)`, and `Feddy.submitRequest(title:)`
-- **SwiftUI-First UI**: `RequestComposeView` ships as a drop-in `.sheet` form — fully localized, no extra setup
+- **Simple Integration**: Two method calls to get going — `Feddy.configure(apiKey:)` and `Feddy.identify(userId:)`
+- **SwiftUI-First UI**: `RequestComposeView`, `RequestListView`, and `RequestDetailView` all ship as drop-in views — fully localized, no extra setup
 - **Offline-Aware**: Failed submissions persist to a local retry queue and replay automatically when the network returns
 - **Cross-Platform**: Native support for both iOS and macOS
 - **Anonymous Fallback**: Collect feedback before users sign in via a per-install anonymous token — end users never need a Feddy account
-- **Fire-and-Forget API**: No `try` / `await` boilerplate at the call site — the SDK handles retries and logging internally
+- **Fire-and-Forget Writes**: `submitRequest` returns immediately — no `try` / `await` boilerplate; reads (`fetchRequests` / `fetchRequest` / `upvote` / `addComment`) are `async throws` for typed error handling
 - **Localized**: Built-in `en` / `es` / `ja` / `de` / `fr` translations for end-user-facing strings
 - **Open Source**: MIT licensed; no proprietary runtime dependencies
 

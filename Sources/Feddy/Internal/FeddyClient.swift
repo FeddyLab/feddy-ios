@@ -68,6 +68,64 @@ actor FeddyClient {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        applyStandardHeaders(to: &request)
+        request.httpBody = encodedBody
+        return try await execute(request)
+    }
+
+    /// GET helper for read-side endpoints (list / detail / comments).
+    /// Query params get URL-encoded; missing optional values are skipped
+    /// rather than sent as empty strings (mirrors how the server's zod
+    /// `.optional()` expects fields to be absent, not blank).
+    @available(iOS 15.0, macOS 12.0, *)
+    func get<Response: Decodable>(
+        path: String,
+        query: [String: String?] = [:]
+    ) async throws -> Response {
+        var components = URLComponents(
+            url: configuration.baseURL.appendingPathComponent(path),
+            resolvingAgainstBaseURL: false
+        )
+        if !query.isEmpty {
+            components?.queryItems = query.compactMap { key, value in
+                guard let value, !value.isEmpty else { return nil }
+                return URLQueryItem(name: key, value: value)
+            }
+        }
+        guard let url = components?.url else {
+            throw FeddyError.invalidPayload(reason: "Could not build URL for \(path)")
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        applyStandardHeaders(to: &request)
+        let data = try await execute(request)
+        do {
+            return try JSONDecoder.feddy.decode(Response.self, from: data)
+        } catch {
+            throw FeddyError.decoding(String(describing: error))
+        }
+    }
+
+    /// POST that returns a decoded response body. Used by upvote /
+    /// addComment where the caller wants the server's new state to
+    /// update the UI (vote count, the persisted comment row, ...).
+    @available(iOS 15.0, macOS 12.0, *)
+    func postReturning<Body: Encodable, Response: Decodable>(
+        path: String,
+        body: Body
+    ) async throws -> Response {
+        let data = try await postRaw(path: path, body: body)
+        do {
+            return try JSONDecoder.feddy.decode(Response.self, from: data)
+        } catch {
+            throw FeddyError.decoding(String(describing: error))
+        }
+    }
+
+    /// Apply Authorization + the cross-SDK X-Feddy-* headers shared by
+    /// every outbound request. Centralising here means a new endpoint
+    /// (or method) can never silently miss the SDK census headers.
+    private func applyStandardHeaders(to request: inout URLRequest) {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("Bearer \(configuration.apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue(SDKVersion.userAgent, forHTTPHeaderField: "User-Agent")
@@ -91,8 +149,10 @@ actor FeddyClient {
         request.setValue(SDKVersion.deviceModel, forHTTPHeaderField: "X-Feddy-Device-Model")
         request.setValue(SDKVersion.deviceManufacturer, forHTTPHeaderField: "X-Feddy-Device-Manufacturer")
         request.setValue(SDKVersion.locale, forHTTPHeaderField: "X-Feddy-Locale")
-        request.httpBody = encodedBody
+    }
 
+    @available(iOS 15.0, macOS 12.0, *)
+    private func execute(_ request: URLRequest) async throws -> Data {
         let data: Data
         let response: URLResponse
         do {

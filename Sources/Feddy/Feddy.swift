@@ -140,6 +140,93 @@ public enum Feddy {
         }
     }
 
+    /// Fetch one page of public-roadmap requests for this workspace.
+    ///
+    /// Pass the `nextCursor` from the previous page back as `cursor` to
+    /// load more; nil means no more pages. Items are ordered newest-first
+    /// (matches `GET /v1/requests`).
+    ///
+    /// - Parameters:
+    ///   - boardKey: Restrict to one board (e.g. `"features"` /
+    ///     `"bugs"`). Omit to span every active board in the workspace.
+    ///   - limit: Page size, 1...100. Defaults to 20 to match
+    ///     `RequestListView`'s rendering.
+    ///   - cursor: Opaque cursor from a prior page's `nextCursor`.
+    @available(iOS 15.0, macOS 12.0, *)
+    public static func fetchRequests(
+        boardKey: String? = nil,
+        limit: Int = 20,
+        cursor: String? = nil
+    ) async throws -> Feddy.RequestList {
+        let client = try currentClient()
+        return try await client.fetchRequests(
+            boardKey: boardKey,
+            limit: limit,
+            cursor: cursor
+        )
+    }
+
+    /// Fetch a single roadmap request by id.
+    ///
+    /// Returns 404 (`FeedbackError.http(status: 404, ...)`) for non-public
+    /// statuses (`pending` / `reviewed` / `rejected` / `duplicate`) so
+    /// internal triage state never leaks to end users via the SDK.
+    @available(iOS 15.0, macOS 12.0, *)
+    public static func fetchRequest(id: String) async throws -> Feddy.FeedbackRequest {
+        let client = try currentClient()
+        return try await client.fetchRequest(id: id)
+    }
+
+    /// Fetch comments on a roadmap request, oldest-first.
+    ///
+    /// Internal-only operator comments (`request_comment.is_internal`)
+    /// are filtered server-side and never reach the SDK.
+    @available(iOS 15.0, macOS 12.0, *)
+    public static func fetchComments(
+        requestId: String,
+        limit: Int = 20,
+        cursor: String? = nil
+    ) async throws -> Feddy.CommentList {
+        let client = try currentClient()
+        return try await client.fetchComments(
+            requestId: requestId,
+            limit: limit,
+            cursor: cursor
+        )
+    }
+
+    /// Toggle the current end user's vote on a roadmap request.
+    ///
+    /// Idempotent — calling twice in a row first creates the vote, then
+    /// removes it. Returns the new state; the SDK does not cache vote
+    /// state across sessions, so the host UI should rely on this
+    /// response (and on subsequent `fetchRequest`/`fetchRequests`).
+    ///
+    /// Uses the last identified user when available, falls back to the
+    /// per-install anonymous token so users who never identified can
+    /// still vote.
+    @available(iOS 15.0, macOS 12.0, *)
+    public static func upvote(requestId: String) async throws -> Feddy.VoteState {
+        let client = try currentClient()
+        return try await client.toggleVote(requestId: requestId)
+    }
+
+    /// Append a comment to a roadmap request, authored by the current
+    /// end user. Returns the persisted row so the host UI can append
+    /// it to the visible thread.
+    ///
+    /// Empty / whitespace-only bodies throw
+    /// ``FeddyError/invalidPayload(reason:)`` before any network call;
+    /// server-side limit is 2000 chars after trim.
+    @available(iOS 15.0, macOS 12.0, *)
+    public static func addComment(
+        requestId: String,
+        body: String
+    ) async throws -> Feddy.FeedbackComment {
+        let client = try currentClient()
+        return try await client.addComment(requestId: requestId, body: body)
+    }
+
     /// Drops any previously configured client and forgets the last
     /// identified user. Useful for tests and for "log out" flows that
     /// should stop attributing writes to a known user.
