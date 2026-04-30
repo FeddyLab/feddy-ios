@@ -71,6 +71,26 @@ actor FeddyClient {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("Bearer \(configuration.apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue(SDKVersion.userAgent, forHTTPHeaderField: "User-Agent")
+        // SDK / host metadata census — server upserts workspace_sdk_usage
+        // from these headers (see feddy-api/src/shared/sdk-usage.ts). Never
+        // skipped: missing optional fields are simply omitted, server
+        // tolerates that.
+        request.setValue(SDKVersion.platform, forHTTPHeaderField: "X-Feddy-Sdk-Platform")
+        request.setValue(SDKVersion.current, forHTTPHeaderField: "X-Feddy-Sdk-Version")
+        if let appId = SDKVersion.appId {
+            request.setValue(appId, forHTTPHeaderField: "X-Feddy-App-Id")
+        }
+        if let appVersion = SDKVersion.appVersion {
+            request.setValue(appVersion, forHTTPHeaderField: "X-Feddy-App-Version")
+        }
+        if let appBuild = SDKVersion.appBuild {
+            request.setValue(appBuild, forHTTPHeaderField: "X-Feddy-App-Build")
+        }
+        request.setValue(SDKVersion.osName, forHTTPHeaderField: "X-Feddy-Os-Name")
+        request.setValue(SDKVersion.osVersion, forHTTPHeaderField: "X-Feddy-Os-Version")
+        request.setValue(SDKVersion.deviceModel, forHTTPHeaderField: "X-Feddy-Device-Model")
+        request.setValue(SDKVersion.deviceManufacturer, forHTTPHeaderField: "X-Feddy-Device-Manufacturer")
+        request.setValue(SDKVersion.locale, forHTTPHeaderField: "X-Feddy-Locale")
         request.httpBody = encodedBody
 
         let data: Data
