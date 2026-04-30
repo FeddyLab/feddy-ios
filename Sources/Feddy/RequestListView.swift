@@ -31,6 +31,8 @@ import SwiftUI
 public struct RequestListView: View {
     private let boards: [FeedbackBoard]
 
+    @Environment(\.dismiss) private var dismiss
+
     @State private var selectedBoardKey: String? = nil  // nil = All boards
     @State private var items: [Feddy.FeedbackRequest] = []
     @State private var nextCursor: String? = nil
@@ -55,6 +57,21 @@ public struct RequestListView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
                 .toolbar {
+                    // Sheet-friendly close affordance — `dismiss` is
+                    // context-aware (closes a sheet / pops a navigation
+                    // push) so this works whether the host presents the
+                    // view as a sheet or pushes it onto an existing
+                    // stack.
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                        }
+                        .accessibilityLabel(
+                            Localization.string("feddy.action.cancel")
+                        )
+                    }
                     ToolbarItem(placement: .primaryAction) {
                         filterMenu
                     }

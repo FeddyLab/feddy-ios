@@ -16,6 +16,8 @@ import SwiftUI
 public struct RoadmapView: View {
     private let boards: [FeedbackBoard]
 
+    @Environment(\.dismiss) private var dismiss
+
     @State private var selectedTab: Feddy.RoadmapStatus = .planned
     @State private var isComposing: Bool = false
     /// Bumps every time the compose sheet dismisses so each
@@ -40,6 +42,16 @@ public struct RoadmapView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    .accessibilityLabel(
+                        Localization.string("feddy.action.cancel")
+                    )
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         isComposing = true
