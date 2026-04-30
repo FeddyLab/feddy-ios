@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showFeedbackSheet = false
+    @State private var showRoadmapSheet = false
 
     var body: some View {
         NavigationStack {
@@ -55,6 +56,11 @@ struct ContentView: View {
                 } label: {
                     Label("Send Feedback", systemImage: "bubble.left.and.bubble.right")
                 }
+                Button {
+                    showRoadmapSheet = true
+                } label: {
+                    Label("View Roadmap", systemImage: "list.bullet.rectangle")
+                }
             }
 
             Section {
@@ -66,6 +72,9 @@ struct ContentView: View {
         .navigationTitle("Profile")
         .sheet(isPresented: $showFeedbackSheet) {
             RequestComposeView()
+        }
+        .sheet(isPresented: $showRoadmapSheet) {
+            RequestListView()
         }
     }
 
