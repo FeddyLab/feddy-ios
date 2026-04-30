@@ -130,7 +130,7 @@ public struct RequestDetailView: View {
             VStack(spacing: 2) {
                 Image(systemName: voted ? "chevron.up.circle.fill" : "chevron.up.circle")
                     .font(.title2)
-                Text("\(voteCountOverride ?? currentCount)")
+                Text(verbatim: "\(voteCountOverride ?? currentCount)")
                     .font(.caption.monospacedDigit())
             }
             .foregroundStyle(voted ? Color.accentColor : Color.secondary)

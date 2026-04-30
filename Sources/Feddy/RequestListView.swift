@@ -41,6 +41,7 @@ public struct RequestListView: View {
     @State private var voteOverlays: [String: Int] = [:]
     @State private var pendingVoteIds: Set<String> = []
     @State private var voteErrorMessage: String? = nil
+    @State private var isComposing: Bool = false
 
     public init(boards: [FeedbackBoard] = FeedbackBoard.systemDefaults) {
         self.boards = boards
@@ -57,12 +58,27 @@ public struct RequestListView: View {
                     ToolbarItem(placement: .primaryAction) {
                         filterMenu
                     }
+                    ToolbarItem(placement: .primaryAction) {
+                        composeButton
+                    }
                 }
                 .task(id: selectedBoardKey) {
                     await loadInitial()
                 }
                 .refreshable {
                     await loadInitial()
+                }
+                .sheet(
+                    isPresented: $isComposing,
+                    onDismiss: {
+                        // Refresh after compose dismiss so a successful
+                        // submission with status `pending` doesn't appear
+                        // (server filters internal statuses) but the UI
+                        // still feels reactive on retry / cancel.
+                        Task { await loadInitial() }
+                    }
+                ) {
+                    RequestComposeView(boards: boards)
                 }
                 .alert(
                     Localization.string("feddy.detail.vote.failed"),
@@ -121,24 +137,34 @@ public struct RequestListView: View {
         }
     }
 
+    /// Toolbar shortcut to open ``RequestComposeView`` so end users can
+    /// post new feedback directly from the list rather than the host
+    /// app having to wire up its own entry point. Mirrors the
+    /// "compose" affordance every mainstream feedback / inbox app
+    /// (GitHub, Linear, Mail) puts in the same spot.
+    private var composeButton: some View {
+        Button {
+            isComposing = true
+        } label: {
+            Image(systemName: "square.and.pencil")
+        }
+        .accessibilityLabel(Localization.string("feddy.compose.title"))
+    }
+
     private var filterMenu: some View {
         Menu {
-            Button {
+            menuRow(
+                title: Localization.string("feddy.filter.allBoards"),
+                isSelected: selectedBoardKey == nil
+            ) {
                 selectedBoardKey = nil
-            } label: {
-                Label(
-                    Localization.string("feddy.filter.allBoards"),
-                    systemImage: selectedBoardKey == nil ? "checkmark" : ""
-                )
             }
             ForEach(boards) { board in
-                Button {
+                menuRow(
+                    title: board.name,
+                    isSelected: selectedBoardKey == board.key
+                ) {
                     selectedBoardKey = board.key
-                } label: {
-                    Label(
-                        board.name,
-                        systemImage: selectedBoardKey == board.key ? "checkmark" : ""
-                    )
                 }
             }
         } label: {
@@ -146,6 +172,26 @@ public struct RequestListView: View {
                 Localization.string("feddy.action.filter"),
                 systemImage: "line.3.horizontal.decrease.circle"
             )
+        }
+    }
+
+    /// Render a menu entry that shows a checkmark only when selected.
+    /// Passing `systemImage: ""` to `Label` would log a runtime warning
+    /// for every unselected entry every time the menu opens, which
+    /// floods the console once a workspace has more than a couple of
+    /// boards.
+    @ViewBuilder
+    private func menuRow(
+        title: String,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            if isSelected {
+                Label(title, systemImage: "checkmark")
+            } else {
+                Text(title)
+            }
         }
     }
 
@@ -295,7 +341,10 @@ struct RequestRow: View {
                         : Localization.string("feddy.action.upvote")
                 )
                 .disabled(votePending)
-                Text("\(voteOverlay ?? request.voteCount)")
+                // `Text("\(int)")` triggers SwiftUI localization extraction
+                // for a `%lld` key, which would clutter the catalog. Use
+                // `verbatim:` to render the formatted string as-is.
+                Text(verbatim: "\(voteOverlay ?? request.voteCount)")
                     .font(.caption)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
@@ -317,10 +366,14 @@ struct RequestRow: View {
                         statusChip
                     }
                     if !request.attachments.isEmpty {
-                        Label(
-                            "\(request.attachments.count)",
-                            systemImage: "paperclip"
-                        )
+                        // Use the title-closure form so the count isn't
+                        // routed through SwiftUI's localization extractor
+                        // (which would otherwise generate a `%lld` key).
+                        Label {
+                            Text(verbatim: "\(request.attachments.count)")
+                        } icon: {
+                            Image(systemName: "paperclip")
+                        }
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     }

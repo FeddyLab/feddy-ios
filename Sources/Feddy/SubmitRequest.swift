@@ -20,7 +20,7 @@ import Foundation
 /// RequestComposeView(boards: [
 ///     .featureRequest,
 ///     .bugReport,
-///     .init(key: "discussions", name: NSLocalizedString("Discussions", comment: "")),
+///     .init(key: "discussions", name: "Discussions"),
 /// ])
 /// ```
 public struct FeedbackBoard: Sendable, Hashable, Identifiable {

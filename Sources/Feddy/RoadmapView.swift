@@ -17,6 +17,10 @@ public struct RoadmapView: View {
     private let boards: [FeedbackBoard]
 
     @State private var selectedTab: Feddy.RoadmapStatus = .planned
+    @State private var isComposing: Bool = false
+    /// Bumps every time the compose sheet dismisses so each
+    /// `RoadmapStatusPage` can `.task(id:)` on the change and reload.
+    @State private var refreshToken: Int = 0
 
     public init(boards: [FeedbackBoard] = FeedbackBoard.systemDefaults) {
         self.boards = boards
@@ -35,6 +39,28 @@ public struct RoadmapView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        isComposing = true
+                    } label: {
+                        Image(systemName: "square.and.pencil")
+                    }
+                    .accessibilityLabel(Localization.string("feddy.compose.title"))
+                }
+            }
+            .sheet(
+                isPresented: $isComposing,
+                onDismiss: {
+                    // Each tab observes refreshToken via task(id:) and
+                    // reloads. Server filters pending status, so a
+                    // freshly-submitted item won't appear yet — the
+                    // refresh is mostly for retry/cancel UX.
+                    refreshToken &+= 1
+                }
+            ) {
+                RequestComposeView(boards: boards)
+            }
         }
     }
 
@@ -50,10 +76,17 @@ public struct RoadmapView: View {
     }
 
     private var statusPicker: some View {
-        Picker("", selection: $selectedTab) {
+        // Empty `Picker("", ...)` would emit an empty-string entry into
+        // the localization catalog. Use the label-closure form with
+        // EmptyView so SwiftUI doesn't route an empty key through
+        // localization extraction; segmented style hides the label
+        // anyway.
+        Picker(selection: $selectedTab) {
             ForEach(Feddy.RoadmapStatus.allCases, id: \.self) { status in
                 Text(localizedStatusLabel(status.rawValue)).tag(status)
             }
+        } label: {
+            EmptyView()
         }
         .pickerStyle(.segmented)
     }
@@ -67,8 +100,12 @@ public struct RoadmapView: View {
         if #available(iOS 16.0, macOS 13.0, *) {
             TabView(selection: $selectedTab) {
                 ForEach(Feddy.RoadmapStatus.allCases, id: \.self) { status in
-                    RoadmapStatusPage(status: status, boards: boards)
-                        .tag(status)
+                    RoadmapStatusPage(
+                        status: status,
+                        boards: boards,
+                        refreshToken: refreshToken
+                    )
+                    .tag(status)
                 }
             }
             #if os(iOS)
@@ -79,7 +116,11 @@ public struct RoadmapView: View {
             // page only (no horizontal swipe). The segmented picker still
             // switches between status pages — only the swipe gesture is
             // missing on older OSes.
-            RoadmapStatusPage(status: selectedTab, boards: boards)
+            RoadmapStatusPage(
+                status: selectedTab,
+                boards: boards,
+                refreshToken: refreshToken
+            )
         }
     }
 }
@@ -90,6 +131,9 @@ public struct RoadmapView: View {
 private struct RoadmapStatusPage: View {
     let status: Feddy.RoadmapStatus
     let boards: [FeedbackBoard]
+    /// Parent's refresh-trigger counter — used as `task(id:)` so each
+    /// page reloads after the compose sheet dismisses.
+    let refreshToken: Int
 
     @State private var items: [Feddy.FeedbackRequest] = []
     @State private var nextCursor: String? = nil
@@ -103,10 +147,13 @@ private struct RoadmapStatusPage: View {
 
     var body: some View {
         content
-            .task {
-                if items.isEmpty {
-                    await loadInitial()
+            .task(id: refreshToken) {
+                // Initial load on first appear, plus reload whenever the
+                // parent bumps refreshToken (compose sheet dismissed).
+                if refreshToken == 0 && !items.isEmpty {
+                    return
                 }
+                await loadInitial()
             }
             .refreshable {
                 await loadInitial()

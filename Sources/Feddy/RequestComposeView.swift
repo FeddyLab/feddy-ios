@@ -16,7 +16,7 @@ import SwiftUI
 ///         .featureRequest,
 ///         .bugReport,
 ///         .init(key: "discussions",
-///               name: NSLocalizedString("Discussions", comment: "")),
+///               name: "Discussions"),
 ///     ])
 /// }
 /// ```
