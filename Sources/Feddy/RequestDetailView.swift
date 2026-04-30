@@ -128,21 +128,32 @@ public struct RequestDetailView: View {
     private func voteButton(currentCount: Int) -> some View {
         Button(action: handleVoteTap) {
             VStack(spacing: 2) {
-                Image(systemName: voted ? "chevron.up.circle.fill" : "chevron.up.circle")
-                    .font(.title2)
+                Image(systemName: "chevron.up")
+                    .font(.system(size: 14, weight: .semibold))
                 Text(verbatim: "\(voteCountOverride ?? currentCount)")
-                    .font(.caption.monospacedDigit())
+                    .font(.caption.monospacedDigit().weight(.semibold))
             }
-            .foregroundStyle(voted ? Color.accentColor : Color.secondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .foregroundStyle(voted ? Color.white : Color.primary)
+            .frame(width: 48, height: 52)
             .background(
-                voted ? Color.accentColor.opacity(0.12) : Color.secondary.opacity(0.08),
-                in: RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(
+                        voted
+                            ? Color.accentColor
+                            : Color.secondary.opacity(0.12)
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(
+                        voted ? Color.clear : Color.secondary.opacity(0.25),
+                        lineWidth: 1
+                    )
             )
         }
         .buttonStyle(.plain)
         .disabled(votePending)
+        .opacity(votePending ? 0.6 : 1)
         .accessibilityLabel(
             voted
                 ? Localization.string("feddy.action.upvoted")
@@ -264,6 +275,9 @@ public struct RequestDetailView: View {
             async let commentsTask = Feddy.fetchComments(requestId: requestId, limit: 20, cursor: nil)
             let (loadedDetail, loadedComments) = try await (detailTask, commentsTask)
             detail = loadedDetail
+            // Seed local state from the server-supplied voted flag so
+            // returning to the detail view shows the persisted vote.
+            voted = loadedDetail.voted
             voteCountOverride = nil
             comments = loadedComments.items
             commentsCursor = loadedComments.nextCursor

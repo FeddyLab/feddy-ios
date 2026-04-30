@@ -16,12 +16,12 @@ extension FeddyClient {
         let clamped = max(1, min(limit, 100))
         return try await get(
             path: "/v1/requests",
-            query: [
+            query: asUserQuery().merging([
                 "board_key": boardKey,
                 "status": status?.rawValue,
                 "limit": String(clamped),
                 "cursor": cursor,
-            ]
+            ]) { _, new in new }
         )
     }
 
@@ -34,7 +34,20 @@ extension FeddyClient {
         let escaped = trimmed.addingPercentEncoding(
             withAllowedCharacters: .urlPathAllowed
         ) ?? trimmed
-        return try await get(path: "/v1/requests/\(escaped)")
+        return try await get(
+            path: "/v1/requests/\(escaped)",
+            query: asUserQuery()
+        )
+    }
+
+    /// Build the `as_external_user_id` / `as_anonymous_token` query
+    /// pair that read endpoints use to compute the per-item `voted`
+    /// flag. Mirrors how vote / addComment auto-fill body identifiers.
+    private func asUserQuery() -> [String: String?] {
+        if let externalId = lastExternalUserId {
+            return ["as_external_user_id": externalId]
+        }
+        return ["as_anonymous_token": anonymousToken]
     }
 
     @available(iOS 15.0, macOS 12.0, *)

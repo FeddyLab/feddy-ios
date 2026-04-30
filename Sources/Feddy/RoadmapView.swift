@@ -277,6 +277,8 @@ private struct RoadmapStatusPage: View {
             )
             items = page.items
             nextCursor = page.nextCursor
+            votedIds = Set(page.items.filter(\.voted).map(\.id))
+            voteOverlays.removeAll()
         } catch {
             loadError = Localization.string("feddy.list.error.body")
         }
@@ -297,6 +299,9 @@ private struct RoadmapStatusPage: View {
             )
             items.append(contentsOf: page.items)
             nextCursor = page.nextCursor
+            for item in page.items where item.voted {
+                votedIds.insert(item.id)
+            }
         } catch {
             // Silently stop pagination on error.
         }

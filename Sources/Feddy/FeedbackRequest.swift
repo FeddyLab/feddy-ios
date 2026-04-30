@@ -42,6 +42,11 @@ extension Feddy {
         public let boardKey: String
         public let officialReply: String?
         public let voteCount: Int
+        /// Whether the current end user has voted on this request.
+        /// Computed server-side from `request_vote` joined on the
+        /// `as_external_user_id` / `as_anonymous_token` query
+        /// parameters that the SDK auto-supplies on every fetch.
+        public let voted: Bool
         public let createdAt: Date
         public let attachments: [Attachment]
 
@@ -56,6 +61,7 @@ extension Feddy {
             boardKey: String,
             officialReply: String?,
             voteCount: Int,
+            voted: Bool = false,
             createdAt: Date,
             attachments: [Attachment] = []
         ) {
@@ -69,12 +75,13 @@ extension Feddy {
             self.boardKey = boardKey
             self.officialReply = officialReply
             self.voteCount = voteCount
+            self.voted = voted
             self.createdAt = createdAt
             self.attachments = attachments
         }
 
         enum CodingKeys: String, CodingKey {
-            case id, title, description, status, priority
+            case id, title, description, status, priority, voted
             case requestType = "request_type"
             case boardId = "board_id"
             case boardKey = "board_key"
@@ -96,6 +103,7 @@ extension Feddy {
             self.boardKey = try c.decodeIfPresent(String.self, forKey: .boardKey) ?? ""
             self.officialReply = try c.decodeIfPresent(String.self, forKey: .officialReply)
             self.voteCount = try c.decodeIfPresent(Int.self, forKey: .voteCount) ?? 0
+            self.voted = try c.decodeIfPresent(Bool.self, forKey: .voted) ?? false
             self.createdAt = try c.decode(Date.self, forKey: .createdAt)
             self.attachments = try c.decodeIfPresent([Attachment].self, forKey: .attachments) ?? []
         }

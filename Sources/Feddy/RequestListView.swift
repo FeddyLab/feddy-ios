@@ -264,6 +264,13 @@ public struct RequestListView: View {
             )
             items = page.items
             nextCursor = page.nextCursor
+            // Seed votedIds from the server-supplied flag so the
+            // voted-state highlight survives view reopens — without
+            // this, only this-session taps would show as voted.
+            votedIds = Set(page.items.filter(\.voted).map(\.id))
+            // Drop stale overlays that no longer match a fetched item;
+            // server is authoritative for vote_count on initial load.
+            voteOverlays.removeAll()
         } catch {
             loadError = Localization.string("feddy.list.error.body")
         }
@@ -284,6 +291,10 @@ public struct RequestListView: View {
             )
             items.append(contentsOf: page.items)
             nextCursor = page.nextCursor
+            // Merge new page's voted flags into the existing set.
+            for item in page.items where item.voted {
+                votedIds.insert(item.id)
+            }
         } catch {
             // Silently stop pagination on error; pull-to-refresh recovers.
         }
@@ -344,28 +355,8 @@ struct RequestRow: View {
     let onVoteTap: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            VStack(spacing: 2) {
-                Button(action: onVoteTap) {
-                    Image(systemName: voted ? "chevron.up.circle.fill" : "chevron.up.circle")
-                        .font(.title3)
-                        .foregroundStyle(voted ? Color.accentColor : Color.secondary)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(
-                    voted
-                        ? Localization.string("feddy.action.upvoted")
-                        : Localization.string("feddy.action.upvote")
-                )
-                .disabled(votePending)
-                // `Text("\(int)")` triggers SwiftUI localization extraction
-                // for a `%lld` key, which would clutter the catalog. Use
-                // `verbatim:` to render the formatted string as-is.
-                Text(verbatim: "\(voteOverlay ?? request.voteCount)")
-                    .font(.caption)
-                    .monospacedDigit()
-                    .foregroundStyle(.secondary)
-            }
+        HStack(alignment: .center, spacing: 12) {
+            voteButton
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(request.title)
@@ -398,7 +389,48 @@ struct RequestRow: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 6)
+    }
+
+    /// Reddit / Featurebase style upvote pill: vertical chip with the
+    /// ↑ icon over the count, framed by a rounded background that
+    /// changes color when the current user has voted. The accentColor
+    /// fill makes the voted state unmistakable at a glance even when
+    /// scrolling a long list.
+    private var voteButton: some View {
+        Button(action: onVoteTap) {
+            VStack(spacing: 2) {
+                Image(systemName: "chevron.up")
+                    .font(.system(size: 14, weight: .semibold))
+                Text(verbatim: "\(voteOverlay ?? request.voteCount)")
+                    .font(.caption.monospacedDigit().weight(.semibold))
+            }
+            .foregroundStyle(voted ? Color.white : Color.primary)
+            .frame(width: 44, height: 48)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(
+                        voted
+                            ? Color.accentColor
+                            : Color.secondary.opacity(0.12)
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(
+                        voted ? Color.clear : Color.secondary.opacity(0.25),
+                        lineWidth: 1
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(
+            voted
+                ? Localization.string("feddy.action.upvoted")
+                : Localization.string("feddy.action.upvote")
+        )
+        .disabled(votePending)
+        .opacity(votePending ? 0.6 : 1)
     }
 
     private var boardChip: some View {
