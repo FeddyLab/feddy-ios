@@ -505,6 +505,42 @@
         }
       }
     },
+    "feddy.compose.attachments.add": {
+      "comment": "Label for the PhotosPicker entry in the compose form. Premium-only.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotos hinzufügen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add photos"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir fotos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter des photos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真を追加"
+          }
+        }
+      }
+    },
     "feddy.compose.queued": {
       "comment": "Toast / status shown when a submission is enqueued for retry while offline.",
       "extractionState": "manual",

@@ -20,6 +20,7 @@ import Foundation
 struct IdentityStore: @unchecked Sendable {
     static let anonymousTokenKey = "app.feddy.anonymousToken"
     static let lastExternalUserIdKey = "app.feddy.lastExternalUserId"
+    static let attachmentsEnabledKey = "app.feddy.attachmentsEnabled"
 
     let defaults: UserDefaults
     let generator: @Sendable () -> String
@@ -60,5 +61,16 @@ struct IdentityStore: @unchecked Sendable {
         } else {
             defaults.removeObject(forKey: Self.lastExternalUserIdKey)
         }
+    }
+
+    /// Cached premium gate from the last successful `/v1/identify` call.
+    /// `false` until identify confirms otherwise — we hide attachment UI
+    /// rather than show it speculatively and have uploads rejected.
+    var attachmentsEnabled: Bool {
+        defaults.bool(forKey: Self.attachmentsEnabledKey)
+    }
+
+    func setAttachmentsEnabled(_ value: Bool) {
+        defaults.set(value, forKey: Self.attachmentsEnabledKey)
     }
 }

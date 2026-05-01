@@ -1,5 +1,9 @@
 #if canImport(SwiftUI)
 import SwiftUI
+#if canImport(UIKit)
+import PhotosUI
+import UIKit
+#endif
 
 /// A SwiftUI sheet for collecting feedback. Drop into your view hierarchy
 /// with `.sheet(isPresented:)`:
@@ -39,6 +43,11 @@ public struct RequestComposeView: View {
     @State private var details: String = ""
     @State private var selectedBoardKey: String
     @FocusState private var titleFieldFocused: Bool
+
+    #if canImport(UIKit)
+    @State private var pickerItems: [Any] = []
+    @State private var selectedImages: [UIImage] = []
+    #endif
 
     public init(boards: [FeedbackBoard] = FeedbackBoard.systemDefaults) {
         precondition(
@@ -144,8 +153,100 @@ public struct RequestComposeView: View {
                     }
                 }
             }
+
+            #if canImport(UIKit)
+            if Feddy.attachmentsEnabled {
+                if #available(iOS 16.0, *) {
+                    attachmentsSection
+                }
+            }
+            #endif
         }
     }
+
+    #if canImport(UIKit)
+    @available(iOS 16.0, *)
+    private var attachmentsSection: some View {
+        Section {
+            PhotosPicker(
+                selection: pickerSelectionBinding,
+                maxSelectionCount: 3,
+                matching: .images
+            ) {
+                Label(
+                    Localization.string("feddy.compose.attachments.add"),
+                    systemImage: "photo.on.rectangle"
+                )
+            }
+
+            if !selectedImages.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(Array(selectedImages.enumerated()), id: \.offset) {
+                            index, image in
+                            attachmentThumbnail(image: image, index: index)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+    }
+
+    @available(iOS 16.0, *)
+    private var pickerSelectionBinding: Binding<[PhotosPickerItem]> {
+        Binding(
+            get: { (pickerItems as? [PhotosPickerItem]) ?? [] },
+            set: { newItems in
+                pickerItems = newItems
+                Task { await loadImages(from: newItems) }
+            }
+        )
+    }
+
+    @available(iOS 16.0, *)
+    private func attachmentThumbnail(image: UIImage, index: Int) -> some View {
+        ZStack(alignment: .topTrailing) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 64, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            Button {
+                removeImage(at: index)
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(.white, .black.opacity(0.6))
+            }
+            .buttonStyle(.plain)
+            .padding(2)
+        }
+    }
+
+    @available(iOS 16.0, *)
+    private func loadImages(from items: [PhotosPickerItem]) async {
+        var loaded: [UIImage] = []
+        for item in items {
+            if let data = try? await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                loaded.append(image)
+            }
+        }
+        await MainActor.run { selectedImages = loaded }
+    }
+
+    @available(iOS 16.0, *)
+    private func removeImage(at index: Int) {
+        guard index < selectedImages.count else { return }
+        selectedImages.remove(at: index)
+        if var items = pickerItems as? [PhotosPickerItem],
+           index < items.count {
+            items.remove(at: index)
+            pickerItems = items
+        }
+    }
+    #endif
 
     /// TextEditor on the iOS 15 / macOS 12 floor has no built-in placeholder
     /// support and no `.scrollContentBackground(.hidden)` (iOS 16+). The
@@ -179,11 +280,20 @@ public struct RequestComposeView: View {
     private func submit() {
         let titleValue = trimmedTitle
         guard !titleValue.isEmpty else { return }
+        #if canImport(UIKit)
+        Feddy.submitRequest(
+            title: titleValue,
+            description: trimmedDetails,
+            boardKey: selectedBoardKey,
+            images: selectedImages
+        )
+        #else
         Feddy.submitRequest(
             title: titleValue,
             description: trimmedDetails,
             boardKey: selectedBoardKey
         )
+        #endif
         dismiss()
     }
 }

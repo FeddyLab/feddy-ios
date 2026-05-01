@@ -27,9 +27,15 @@ public struct RequestDetailView: View {
     @State private var commentDraft: String = ""
     @State private var isPostingComment: Bool = false
     @State private var commentErrorMessage: String? = nil
+    @State private var lightboxAttachment: LightboxAttachment? = nil
 
     public init(requestId: String) {
         self.requestId = requestId
+    }
+
+    private struct LightboxAttachment: Identifiable {
+        let url: URL
+        var id: String { url.absoluteString }
     }
 
     public var body: some View {
@@ -61,6 +67,11 @@ public struct RequestDetailView: View {
             ) {
                 Button(Localization.string("feddy.action.cancel"), role: .cancel) {
                     commentErrorMessage = nil
+                }
+            }
+            .sheet(item: $lightboxAttachment) { attachment in
+                AttachmentLightboxView(url: attachment.url) {
+                    lightboxAttachment = nil
                 }
             }
     }
@@ -183,21 +194,26 @@ public struct RequestDetailView: View {
                 spacing: 8
             ) {
                 ForEach(attachments, id: \.key) { attachment in
-                    AsyncImage(url: attachment.assetURL) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                        case .success(let img):
-                            img.resizable().aspectRatio(contentMode: .fill)
-                        case .failure:
-                            Image(systemName: "photo")
-                                .foregroundStyle(.secondary)
-                        @unknown default:
-                            Color.gray.opacity(0.1)
+                    Button {
+                        lightboxAttachment = LightboxAttachment(url: attachment.assetURL)
+                    } label: {
+                        AsyncImage(url: attachment.assetURL) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                            case .success(let img):
+                                img.resizable().aspectRatio(contentMode: .fill)
+                            case .failure:
+                                Image(systemName: "photo")
+                                    .foregroundStyle(.secondary)
+                            @unknown default:
+                                Color.gray.opacity(0.1)
+                            }
                         }
+                        .frame(width: 80, height: 80)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                    .frame(width: 80, height: 80)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -353,6 +369,43 @@ public struct RequestDetailView: View {
                     commentErrorMessage = Localization.string("feddy.detail.comment.send.failed")
                 }
             }
+        }
+    }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+private struct AttachmentLightboxView: View {
+    let url: URL
+    let onDismiss: () -> Void
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Color.black.ignoresSafeArea()
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView().tint(.white)
+                case .success(let img):
+                    img
+                        .resizable()
+                        .scaledToFit()
+                case .failure:
+                    Image(systemName: "exclamationmark.triangle")
+                        .foregroundStyle(.white)
+                @unknown default:
+                    Color.clear
+                }
+            }
+            .padding()
+
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.title3)
+                    .foregroundStyle(.white)
+                    .padding(10)
+                    .background(Color.black.opacity(0.5), in: Circle())
+            }
+            .padding()
         }
     }
 }

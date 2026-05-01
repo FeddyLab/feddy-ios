@@ -112,6 +112,52 @@ public enum Feddy {
     ///     — for the default workspace those are `"features"` and
     ///     `"bugs"`. Server falls back to the workspace's primary board
     ///     when omitted.
+    ///   - images: Optional images to attach (iOS only). Each is
+    ///     compressed to JPEG ≤ 800KB and uploaded sequentially before
+    ///     the request is created. Per-image failures are logged and
+    ///     skipped — the request still creates with whichever uploads
+    ///     succeeded. Up to 3 images per request; entry UI is gated on
+    ///     workspace plan via the `attachments_enabled` flag from
+    ///     `/v1/identify`.
+    #if canImport(UIKit)
+    public static func submitRequest(
+        title: String,
+        description: String? = nil,
+        boardKey: String? = nil,
+        images: [UIImage] = []
+    ) {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty else {
+            print("[Feddy] submitRequest ignored — title is empty")
+            assertionFailure("[Feddy] submitRequest title must not be empty")
+            return
+        }
+
+        guard let client = state.read({ $0 }) else {
+            print("[Feddy] submitRequest called before configure — ignoring")
+            return
+        }
+
+        let jpegs: [Data] = images.compactMap { image in
+            guard let data = ImageCompression.compressJPEG(image) else {
+                print("[Feddy] image compression failed — skipping one attachment")
+                return nil
+            }
+            return data
+        }
+
+        if #available(iOS 15.0, macOS 12.0, *) {
+            Task {
+                await client.submitRequestFireAndForget(
+                    title: trimmedTitle,
+                    description: description,
+                    boardKey: boardKey,
+                    attachmentJPEGs: jpegs
+                )
+            }
+        }
+    }
+    #else
     public static func submitRequest(
         title: String,
         description: String? = nil,
@@ -139,6 +185,7 @@ public enum Feddy {
             }
         }
     }
+    #endif
 
     /// Fetch one page of public-roadmap requests for this workspace.
     ///
@@ -244,6 +291,7 @@ public enum Feddy {
     public static func reset() {
         if let client = state.read({ $0 }) {
             client.identityStore.setLastExternalUserId(nil)
+            client.identityStore.setAttachmentsEnabled(false)
         }
         state.write { $0 = nil }
     }
@@ -253,5 +301,15 @@ public enum Feddy {
             throw FeddyError.notConfigured
         }
         return client
+    }
+
+    /// Whether the configured workspace is on a paid plan that includes
+    /// attachment uploads. Cached from the last `/v1/identify` response;
+    /// `false` until identify confirms otherwise. Used by
+    /// ``RequestComposeView`` to gate the PhotosPicker entry — entry UI
+    /// is hidden for non-premium workspaces rather than showing it and
+    /// having uploads rejected.
+    static var attachmentsEnabled: Bool {
+        state.read { $0?.identityStore.attachmentsEnabled ?? false }
     }
 }

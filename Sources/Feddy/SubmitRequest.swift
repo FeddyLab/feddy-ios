@@ -79,7 +79,8 @@ extension FeddyClient {
             anonymousToken: lastExternalUserId == nil ? anonymousToken : nil,
             title: title,
             description: description,
-            boardKey: boardKey
+            boardKey: boardKey,
+            attachmentKeys: nil
         )
         _ = try await postRaw(path: "/v1/requests", body: body)
     }
@@ -89,18 +90,37 @@ extension FeddyClient {
     /// surface stays a one-liner. Network errors / 5xx → enqueue. 4xx →
     /// logged but dropped (retrying bad payloads is a death loop). 2xx →
     /// drain any pending entries opportunistically.
+    ///
+    /// Attachments (`attachmentJPEGs`, already-compressed JPEG bytes)
+    /// upload sequentially via ``uploadAttachment(jpeg:)`` before the
+    /// final POST /v1/requests. Per-image upload is fault-tolerant:
+    /// failures are logged and skipped, and the request still creates
+    /// with whichever keys did succeed. Once a key is in R2 the offline
+    /// queue can replay POST /v1/requests indefinitely without re-uploading.
     @available(iOS 15.0, macOS 12.0, *)
     func submitRequestFireAndForget(
         title: String,
         description: String?,
-        boardKey: String?
+        boardKey: String?,
+        attachmentJPEGs: [Data] = []
     ) async {
+        var attachmentKeys: [String] = []
+        for jpeg in attachmentJPEGs {
+            do {
+                let key = try await uploadAttachment(jpeg: jpeg)
+                attachmentKeys.append(key)
+            } catch {
+                print("[Feddy] attachment upload failed — skipping: \(error.localizedDescription)")
+            }
+        }
+
         let body = SubmitRequestBody(
             externalUserId: lastExternalUserId,
             anonymousToken: lastExternalUserId == nil ? anonymousToken : nil,
             title: title,
             description: description,
-            boardKey: boardKey
+            boardKey: boardKey,
+            attachmentKeys: attachmentKeys.isEmpty ? nil : attachmentKeys
         )
         do {
             _ = try await postRaw(path: "/v1/requests", body: body)
@@ -185,6 +205,7 @@ struct SubmitRequestBody: Encodable {
     let title: String
     let description: String?
     let boardKey: String?
+    let attachmentKeys: [String]?
 
     enum CodingKeys: String, CodingKey {
         case externalUserId = "external_user_id"
@@ -192,5 +213,6 @@ struct SubmitRequestBody: Encodable {
         case title
         case description
         case boardKey = "board_key"
+        case attachmentKeys = "attachment_keys"
     }
 }

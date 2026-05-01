@@ -42,7 +42,12 @@ extension FeddyClient {
         // submitRequest replay after a process restart still attributes
         // correctly even if the network call below fails.
         identityStore.setLastExternalUserId(externalUserId)
-        _ = try await postRaw(path: "/v1/identify", body: body)
+        let response = try await post(
+            path: "/v1/identify",
+            body: body,
+            responseType: IdentifyResponse.self
+        )
+        identityStore.setAttachmentsEnabled(response.attachmentsEnabled)
     }
 }
 
@@ -61,5 +66,23 @@ private struct IdentifyRequestBody: Encodable {
         case displayName = "display_name"
         case avatarURL = "avatar_url"
         case profile
+    }
+}
+
+private struct IdentifyResponse: Decodable {
+    let attachmentsEnabled: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case attachmentsEnabled = "attachments_enabled"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        // Default to `false` when the server doesn't include the field —
+        // mirrors the conservative "hide attachment UI until premium is
+        // explicitly confirmed" stance and lets older / cached server
+        // responses decode cleanly.
+        self.attachmentsEnabled =
+            try container.decodeIfPresent(Bool.self, forKey: .attachmentsEnabled) ?? false
     }
 }
