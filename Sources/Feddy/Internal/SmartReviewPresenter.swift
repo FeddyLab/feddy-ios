@@ -27,9 +27,9 @@ enum SmartReviewPresenter {
     private static let inFlight = Locked<Bool>(false)
 
     static func presentIfAppropriate(
-        store: SmartReviewStore,
-        rules: SmartReviewRules = .default,
-        boardKey: String?
+        client: FeddyClient,
+        boardKey: String?,
+        trigger: String?
     ) {
         let acquired = inFlight.write { wasInFlight -> Bool in
             guard !wasInFlight else { return false }
@@ -40,6 +40,14 @@ enum SmartReviewPresenter {
             print("[Feddy] requestReviewIfAppropriate ignored — already presenting")
             return
         }
+
+        // Always kick off a background refresh so the *next* call
+        // reflects whatever the dashboard last saved. The current
+        // call uses whatever cached / default rules we already have
+        // — never blocks on the network (per design Q5).
+        SmartReviewConfigFetcher.refreshInBackground(client: client)
+        let rules = SmartReviewConfigFetcher.currentRules()
+        let store = client.smartReviewStore
 
         let now = Date()
         let decision = SmartReviewEngine.eval(
@@ -63,17 +71,38 @@ enum SmartReviewPresenter {
         let sheet = SmartReviewSheet(
             onRated: { stars in
                 store.markShown(at: Date())
+                ReviewPromptEventLogger.log(
+                    stage: .rated,
+                    rating: stars,
+                    trigger: trigger,
+                    client: client
+                )
                 if stars >= 4 {
                     triggerSystemReview(from: presenter)
+                    ReviewPromptEventLogger.log(
+                        stage: .routedStore,
+                        rating: stars,
+                        trigger: trigger,
+                        client: client
+                    )
                 } else {
                     presentCompose(from: presenter, boardKey: boardKey)
+                    ReviewPromptEventLogger.log(
+                        stage: .routedFeedback,
+                        rating: stars,
+                        trigger: trigger,
+                        client: client
+                    )
                 }
                 release()
             },
             onCancel: {
                 // Cancel does NOT call markShown — the user never saw
                 // the actual review UI, so cooldown / yearly cap stay
-                // untouched.
+                // untouched. We also don't log a wire event here;
+                // `shown` already covered "we offered the prompt"
+                // and a missing `rated` is itself the cancel signal
+                // when reading the funnel.
                 release()
             }
         )
@@ -83,7 +112,17 @@ enum SmartReviewPresenter {
             host.sheetPresentationController?.detents = [.medium()]
             host.sheetPresentationController?.prefersGrabberVisible = true
         }
-        presenter.present(host, animated: true)
+        presenter.present(host, animated: true) {
+            // Sheet visible — record the funnel entry. Done in the
+            // completion so we don't log a "shown" for prompts the
+            // OS animated out from under us (rare but possible if
+            // the host pushes another modal on top).
+            ReviewPromptEventLogger.log(
+                stage: .shown,
+                trigger: trigger,
+                client: client
+            )
+        }
     }
 
     static func release() {

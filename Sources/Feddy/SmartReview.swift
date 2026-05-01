@@ -29,27 +29,50 @@ extension Feddy {
     /// has not yet been called or if any gate fails (a console line
     /// describes which gate skipped).
     ///
-    /// - Parameter boardKey: Which dashboard board the low-rating
-    ///   capture lands in (same semantics as `boardKey` on
-    ///   ``submitRequest(title:description:boardKey:images:)``).
-    ///   Omit to fall back to the workspace's default board picker.
+    /// - Parameters:
+    ///   - boardKey: Which dashboard board the low-rating capture
+    ///     lands in (same semantics as `boardKey` on
+    ///     ``submitRequest(title:description:boardKey:images:)``).
+    ///     Omit to fall back to the workspace's default board picker.
+    ///   - trigger: Optional caller-defined label that identifies
+    ///     where in your app this prompt fired from — e.g.
+    ///     `"task_50_complete"` vs `"share_used"`. Surfaces in your
+    ///     dashboard funnel so you can compare which moments drive
+    ///     the best ratings. Trimmed and capped at 100 characters;
+    ///     empty / whitespace-only values are treated as nil.
     @available(iOS 15.0, *)
     @MainActor
-    public static func requestReviewIfAppropriate(boardKey: String? = nil) {
+    public static func requestReviewIfAppropriate(
+        boardKey: String? = nil,
+        trigger: String? = nil
+    ) {
         #if canImport(UIKit) && canImport(SwiftUI)
         guard let client = currentClientIfReady() else {
             print("[Feddy] requestReviewIfAppropriate called before configure — ignoring")
             return
         }
         SmartReviewPresenter.presentIfAppropriate(
-            store: client.smartReviewStore,
-            boardKey: boardKey
+            client: client,
+            boardKey: boardKey,
+            trigger: normalizeTrigger(trigger)
         )
         #else
         // Smart Review needs UIKit + SwiftUI — silent no-op on
         // platforms that lack either (Linux CI, FoundationOnly).
         _ = boardKey
+        _ = trigger
         #endif
+    }
+
+    /// Trim, drop empty, cap at 100 chars (matches server's
+    /// `z.string().trim().min(1).max(100)` so a misuse on the
+    /// client never costs a 400 round-trip).
+    private static func normalizeTrigger(_ raw: String?) -> String? {
+        guard let trimmed = raw?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !trimmed.isEmpty
+        else { return nil }
+        if trimmed.count <= 100 { return trimmed }
+        return String(trimmed.prefix(100))
     }
 
     /// Clear every persisted Smart Review counter — install date,
@@ -66,5 +89,6 @@ extension Feddy {
             return
         }
         client.smartReviewStore.clearAll()
+        SmartReviewConfigFetcher.clearCache()
     }
 }
