@@ -8,19 +8,22 @@ actor FeddyClient {
     nonisolated let identityStore: IdentityStore
     nonisolated let requestQueue: RequestQueue
     nonisolated let subscriptionStore: SubscriptionStore
+    nonisolated let smartReviewStore: SmartReviewStore
 
     init(
         configuration: FeddyConfiguration,
         session: URLSession = .shared,
         identityStore: IdentityStore = IdentityStore(),
         requestQueue: RequestQueue = RequestQueue(),
-        subscriptionStore: SubscriptionStore = SubscriptionStore()
+        subscriptionStore: SubscriptionStore = SubscriptionStore(),
+        smartReviewStore: SmartReviewStore = SmartReviewStore()
     ) {
         self.configuration = configuration
         self.session = session
         self.identityStore = identityStore
         self.requestQueue = requestQueue
         self.subscriptionStore = subscriptionStore
+        self.smartReviewStore = smartReviewStore
     }
 
     nonisolated var anonymousToken: String {

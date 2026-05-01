@@ -55,6 +55,12 @@ public enum Feddy {
             state.write { $0 = client }
 
             if #available(iOS 15.0, macOS 12.0, *) {
+                // Bump the Smart Review session counter once per
+                // configure — single source of truth, no UIKit
+                // foreground-notification dance and no risk of
+                // lock-screen round trips inflating the count.
+                client.smartReviewStore.bumpSession()
+
                 Task {
                     await client.replayQueue()
                 }
@@ -380,6 +386,12 @@ public enum Feddy {
             throw FeddyError.notConfigured
         }
         return client
+    }
+
+    /// Non-throwing variant for fire-and-forget call sites that
+    /// already log + return on absence.
+    static func currentClientIfReady() -> FeddyClient? {
+        state.read { $0 }
     }
 
     /// Whether the configured workspace is on a paid plan that includes

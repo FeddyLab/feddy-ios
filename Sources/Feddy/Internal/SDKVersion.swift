@@ -6,12 +6,10 @@ import UIKit
 /// Static metadata about the Feddy SDK and its host environment, exposed
 /// as HTTP headers on every outbound API call so the server can keep an
 /// install census per workspace × app version × sdk version. See
-/// `FeddyClient.postRawData` for the wiring and the v1.0 launch task doc
-/// for the cross-SDK header contract.
+/// `FeddyClient.postRawData` for where these get attached.
 enum SDKVersion {
-    /// Bumped per release. `0.3.0` is the v0.3 reading-side feedback loop
-    /// (list / vote / detail / comments). v1.0 ships SmartReview.
-    static let current = "0.3.0"
+    /// Bumped per release.
+    static let current = "0.6.0"
 
     /// Stable platform identifier sent as `X-Feddy-Sdk-Platform`. Always
     /// "ios" for this SDK regardless of which Apple OS we're actually

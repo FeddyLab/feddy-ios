@@ -325,6 +325,42 @@
         }
       }
     },
+    "feddy.compose.attachments.add": {
+      "comment": "Label for the PhotosPicker entry in the compose form. Premium-only.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotos hinzufügen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add photos"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir fotos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter des photos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真を追加"
+          }
+        }
+      }
+    },
     "feddy.compose.board.bugs": {
       "comment": "Display name for the default 'bugs' board. Single word to fit picker chip width.",
       "extractionState": "manual",
@@ -501,42 +537,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "詳細を追加（任意）"
-          }
-        }
-      }
-    },
-    "feddy.compose.attachments.add": {
-      "comment": "Label for the PhotosPicker entry in the compose form. Premium-only.",
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fotos hinzufügen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add photos"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Añadir fotos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajouter des photos"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "写真を追加"
           }
         }
       }
@@ -1365,6 +1365,150 @@
           "stringUnit": {
             "state": "translated",
             "value": "ロードマップ"
+          }
+        }
+      }
+    },
+    "feddy.smartReview.prompt.cancel": {
+      "comment": "Dismiss action on the SmartReview pre-prompt sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht jetzt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora no"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas maintenant"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今はしない"
+          }
+        }
+      }
+    },
+    "feddy.smartReview.prompt.subtitle": {
+      "comment": "Subtitle below the SmartReview pre-prompt title, instructing the user to tap a star.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe auf einen Stern, um deine Erfahrung zu bewerten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap a star to rate your experience."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toca una estrella para valorar tu experiencia."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appuyez sur une étoile pour évaluer votre expérience."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "星をタップして体験を評価してください。"
+          }
+        }
+      }
+    },
+    "feddy.smartReview.prompt.title": {
+      "comment": "Title of the SmartReview pre-prompt sheet shown before the system review prompt.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gefällt dir die App?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enjoying this app?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Te gusta la app?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous aimez cette application ?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このアプリは気に入っていますか？"
+          }
+        }
+      }
+    },
+    "feddy.smartReview.star.a11y": {
+      "comment": "VoiceOver label for each star button in the SmartReview pre-prompt sheet. %lld is the star count (1...5).",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Sterne geben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rate %lld star(s)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valorar con %lld estrellas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noter %lld étoiles"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "星 %lld 個で評価"
           }
         }
       }

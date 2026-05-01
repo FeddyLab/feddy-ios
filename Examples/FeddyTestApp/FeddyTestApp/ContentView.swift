@@ -70,6 +70,28 @@ struct ContentView: View {
             }
 
             Section {
+                Button {
+                    Feddy.requestReviewIfAppropriate(boardKey: "bugs")
+                } label: {
+                    Label("Trigger Smart Review", systemImage: "star.bubble")
+                }
+                Button {
+                    seedSmartReviewGatesForTesting()
+                } label: {
+                    Label("Seed gates as ready", systemImage: "calendar.badge.plus")
+                }
+                Button(role: .destructive) {
+                    Feddy.resetSmartReviewState()
+                } label: {
+                    Label("Reset Smart Review state", systemImage: "arrow.counterclockwise")
+                }
+            } header: {
+                Text("Debug — internal testing")
+            } footer: {
+                Text("Manipulating UserDefaults directly is for verifying the SDK during development. Don't copy this pattern into your own integration — production hosts should just call requestReviewIfAppropriate() at appropriate moments.")
+            }
+
+            Section {
                 Text("Feddy.identify(…) ran in the host app on launch with the values above. Open dashboard.feddy.app to confirm this user appeared.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
@@ -96,6 +118,22 @@ struct ContentView: View {
                     .font(.title2.bold())
                     .foregroundStyle(.white)
             }
+    }
+
+    /// Demo-only hack: writes UserDefaults keys that match the SDK's
+    /// internal SmartReviewStore so the rule engine sees "8 days
+    /// installed, 10 sessions, never shown" and lets the next
+    /// requestReviewIfAppropriate() actually present the sheet.
+    /// Real host apps must NOT replicate this — the SDK's storage
+    /// keys are an implementation detail and may change.
+    private func seedSmartReviewGatesForTesting() {
+        let defaults = UserDefaults.standard
+        let eightDaysAgo = Date().addingTimeInterval(-8 * 86_400)
+        defaults.set(eightDaysAgo, forKey: "app.feddy.smartReview.installDate")
+        defaults.set(10, forKey: "app.feddy.smartReview.sessionCount")
+        defaults.removeObject(forKey: "app.feddy.smartReview.lastShownAt")
+        defaults.removeObject(forKey: "app.feddy.smartReview.yearlyCount")
+        defaults.removeObject(forKey: "app.feddy.smartReview.yearlyWindowStart")
     }
 }
 
