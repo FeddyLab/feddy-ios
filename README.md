@@ -55,16 +55,12 @@ Feddy.identify(
     displayName: "Alice Chen"
 )
 
-// With avatar URL and custom traits
+// With avatar URL
 Feddy.identify(
     userId: "user123",
     email: "user@example.com",
     displayName: "Alice Chen",
-    avatarURL: URL(string: "https://example.com/avatar.jpg"),
-    profile: [
-        "plan": .string("pro"),
-        "seats": .int(5),
-    ]
+    avatarURL: URL(string: "https://example.com/avatar.jpg")
 )
 ```
 
@@ -267,21 +263,33 @@ Feddy.reset()
 
 After `reset`, subsequent calls become no-ops until you call `Feddy.configure` again.
 
-### Profile Traits
+### Subscription Status
 
-The `profile` dictionary accepts string, int, double, and bool values. Use it for any custom attributes you want to filter or sort feedback by in the dashboard:
+Feedback rows in the dashboard carry the user's current subscription state, so paying customers' reports surface clearly. By default the SDK reads `Transaction.currentEntitlements` from StoreKit 2 and attaches the result to the next identify call — no extra setup needed for native StoreKit apps.
+
+If your app uses RevenueCat (or any other store-of-record), pass the snapshot to `Feddy.setSubscription(...)` after your purchase delegate fires:
 
 ```swift
-Feddy.identify(
-    userId: "user123",
-    profile: [
-        "plan": .string("pro"),
-        "trial_days_left": .int(7),
-        "is_paying": .bool(true),
-        "ltv_usd": .double(199.99),
-    ]
-)
+Purchases.shared.getCustomerInfo { info, _ in
+    guard let info else { return }
+    let isPro = info.entitlements["pro"]?.isActive == true
+    Feddy.setSubscription(
+        isPro
+            ? .init(isPaid: true, status: .active,
+                    productId: info.activeSubscriptions.first,
+                    expiresAt: info.expirationDate(forEntitlement: "pro"))
+            : .init(isPaid: false, status: .none)
+    )
+}
 ```
+
+To opt out of automatic StoreKit detection (e.g. when a third-party store-of-record owns this state):
+
+```swift
+Feddy.configure(apiKey: "fed_xxxxxxxxxxxx", autoDetectSubscription: false)
+```
+
+Call `Feddy.refreshSubscription()` after a successful purchase or app foreground to re-read the current entitlements without restarting the app.
 
 ## Requirements
 

@@ -1,34 +1,12 @@
 import Foundation
 
-extension Feddy {
-    /// Profile attribute value supported by `/v1/identify`'s `profile`
-    /// blob. Mirrors what the server stores per user.
-    public enum ProfileValue: Sendable, Encodable {
-        case string(String)
-        case int(Int)
-        case double(Double)
-        case bool(Bool)
-
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.singleValueContainer()
-            switch self {
-            case .string(let value): try container.encode(value)
-            case .int(let value): try container.encode(value)
-            case .double(let value): try container.encode(value)
-            case .bool(let value): try container.encode(value)
-            }
-        }
-    }
-}
-
 extension FeddyClient {
     @available(iOS 15.0, macOS 12.0, *)
     func identify(
         externalUserId: String?,
         email: String?,
         displayName: String?,
-        avatarURL: URL?,
-        profile: [String: Feddy.ProfileValue]?
+        avatarURL: URL?
     ) async throws {
         let body = IdentifyRequestBody(
             externalUserId: externalUserId,
@@ -36,7 +14,7 @@ extension FeddyClient {
             email: email,
             displayName: displayName,
             avatarURL: avatarURL?.absoluteString,
-            profile: profile
+            subscription: subscriptionStore.effective.map(SubscriptionPayload.init)
         )
         // Persist the userId before the network call so a queued
         // submitRequest replay after a process restart still attributes
@@ -57,7 +35,7 @@ private struct IdentifyRequestBody: Encodable {
     let email: String?
     let displayName: String?
     let avatarURL: String?
-    let profile: [String: Feddy.ProfileValue]?
+    let subscription: SubscriptionPayload?
 
     enum CodingKeys: String, CodingKey {
         case externalUserId = "external_user_id"
@@ -65,8 +43,35 @@ private struct IdentifyRequestBody: Encodable {
         case email
         case displayName = "display_name"
         case avatarURL = "avatar_url"
-        case profile
+        case subscription
     }
+}
+
+private struct SubscriptionPayload: Encodable {
+    let isPaid: Bool
+    let status: String
+    let productId: String?
+    let expiresAt: String?
+
+    init(from subscription: Feddy.Subscription) {
+        self.isPaid = subscription.isPaid
+        self.status = subscription.status.rawValue
+        self.productId = subscription.productId
+        self.expiresAt = subscription.expiresAt.map { Self.iso8601.string(from: $0) }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case isPaid = "is_paid"
+        case status
+        case productId = "product_id"
+        case expiresAt = "expires_at"
+    }
+
+    private static let iso8601: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        return f
+    }()
 }
 
 private struct IdentifyResponse: Decodable {

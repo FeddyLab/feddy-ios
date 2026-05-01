@@ -83,8 +83,7 @@ final class FeddyIdentifyTests: XCTestCase {
             externalUserId: "user_42",
             email: "alice@example.com",
             displayName: "Alice",
-            avatarURL: nil,
-            profile: ["plan": .string("pro"), "seats": .int(3)]
+            avatarURL: nil
         )
 
         let requests = MockURLProtocol.capturedRequests
@@ -107,9 +106,47 @@ final class FeddyIdentifyTests: XCTestCase {
         XCTAssertEqual(json["email"] as? String, "alice@example.com")
         XCTAssertEqual(json["display_name"] as? String, "Alice")
         XCTAssertNil(json["anonymous_token"], "must not include anon token when external id is present")
-        let profile = try XCTUnwrap(json["profile"] as? [String: Any])
-        XCTAssertEqual(profile["plan"] as? String, "pro")
-        XCTAssertEqual(profile["seats"] as? Int, 3)
+        XCTAssertNil(json["profile"], "profile field was removed in v0.5")
+        XCTAssertNil(json["subscription"], "no subscription set should omit the field entirely")
+    }
+
+    func test_identify_includesSubscriptionWhenSet() async throws {
+        let session = MockURLProtocol.makeSession()
+        let client = makeClient(session: session)
+        let expiry = Date(timeIntervalSince1970: 1_780_099_200)  // 2026-05-30T00:00:00Z
+        client.subscriptionStore.setManualOverride(
+            Feddy.Subscription(
+                isPaid: true,
+                status: .active,
+                productId: "com.foo.pro",
+                expiresAt: expiry
+            )
+        )
+
+        MockURLProtocol.setHandler { request in
+            let response = HTTPURLResponse(
+                url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil
+            )!
+            return (response, Data("{}".utf8))
+        }
+
+        try await client.identify(
+            externalUserId: "user_42",
+            email: nil, displayName: nil, avatarURL: nil
+        )
+
+        let req = try XCTUnwrap(MockURLProtocol.capturedRequests.first)
+        let json = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: req.httpBody!) as? [String: Any]
+        )
+        let sub = try XCTUnwrap(json["subscription"] as? [String: Any])
+        XCTAssertEqual(sub["is_paid"] as? Bool, true)
+        XCTAssertEqual(sub["status"] as? String, "active")
+        XCTAssertEqual(sub["product_id"] as? String, "com.foo.pro")
+        XCTAssertEqual(sub["expires_at"] as? String, "2026-05-30T00:00:00Z")
+
+        // Cleanup so other tests don't see this manual override.
+        client.subscriptionStore.setManualOverride(nil)
     }
 
     func test_identify_fallsBackToAnonymousToken() async throws {
@@ -127,8 +164,7 @@ final class FeddyIdentifyTests: XCTestCase {
             externalUserId: nil,
             email: nil,
             displayName: nil,
-            avatarURL: nil,
-            profile: nil
+            avatarURL: nil
         )
 
         let req = try XCTUnwrap(MockURLProtocol.capturedRequests.first)
@@ -155,7 +191,7 @@ final class FeddyIdentifyTests: XCTestCase {
         do {
             try await client.identify(
                 externalUserId: "user_42",
-                email: nil, displayName: nil, avatarURL: nil, profile: nil
+                email: nil, displayName: nil, avatarURL: nil
             )
             XCTFail("expected error")
         } catch let FeddyError.http(status, code, message) {

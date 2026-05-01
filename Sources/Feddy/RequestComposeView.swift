@@ -42,6 +42,7 @@ public struct RequestComposeView: View {
     @State private var title: String = ""
     @State private var details: String = ""
     @State private var selectedBoardKey: String
+    @State private var isSubmitting: Bool = false
     @FocusState private var titleFieldFocused: Bool
 
     #if canImport(UIKit)
@@ -61,6 +62,7 @@ public struct RequestComposeView: View {
     public var body: some View {
         navigationContainer {
             formContent
+                .disabled(isSubmitting)
                 .navigationTitle(Localization.string("feddy.compose.title"))
                 #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
@@ -89,12 +91,20 @@ public struct RequestComposeView: View {
                         .accessibilityLabel(
                             Localization.string("feddy.action.cancel")
                         )
+                        .disabled(isSubmitting)
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button(Localization.string("feddy.action.submit")) {
-                            submit()
+                        if isSubmitting {
+                            ProgressView()
+                                .accessibilityLabel(
+                                    Localization.string("feddy.action.submit")
+                                )
+                        } else {
+                            Button(Localization.string("feddy.action.submit")) {
+                                submit()
+                            }
+                            .disabled(trimmedTitle.isEmpty)
                         }
-                        .disabled(trimmedTitle.isEmpty)
                     }
                 }
         }
@@ -280,21 +290,41 @@ public struct RequestComposeView: View {
     private func submit() {
         let titleValue = trimmedTitle
         guard !titleValue.isEmpty else { return }
-        #if canImport(UIKit)
-        Feddy.submitRequest(
-            title: titleValue,
-            description: trimmedDetails,
-            boardKey: selectedBoardKey,
-            images: selectedImages
-        )
-        #else
-        Feddy.submitRequest(
-            title: titleValue,
-            description: trimmedDetails,
-            boardKey: selectedBoardKey
-        )
-        #endif
-        dismiss()
+        guard !isSubmitting else { return }
+        isSubmitting = true
+
+        // Run the upload + create through the internal client so the
+        // toolbar can show a spinner while attachments stream to R2.
+        // The public `Feddy.submitRequest(...)` API stays fire-and-
+        // forget; this view's flow is the SDK-internal exception that
+        // "Internal async/throws variants are fine" allows.
+        Task {
+            #if canImport(UIKit)
+            let jpegs: [Data] = selectedImages.compactMap { image in
+                guard let data = ImageCompression.compressJPEG(image) else {
+                    print("[Feddy] image compression failed — skipping one attachment")
+                    return nil
+                }
+                return data
+            }
+            #else
+            let jpegs: [Data] = []
+            #endif
+
+            if let client = try? Feddy.currentClient() {
+                await client.submitRequestFireAndForget(
+                    title: titleValue,
+                    description: trimmedDetails,
+                    boardKey: selectedBoardKey,
+                    attachmentJPEGs: jpegs
+                )
+            }
+
+            await MainActor.run {
+                isSubmitting = false
+                dismiss()
+            }
+        }
     }
 }
 #endif

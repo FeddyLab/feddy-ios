@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Public namespace and entry point for the Feddy SDK.
 ///
@@ -32,7 +35,20 @@ public enum Feddy {
     ///
     /// On success, any `submitRequest` payloads queued during a prior
     /// offline session replay in the background.
-    public static func configure(apiKey: String) {
+    ///
+    /// - Parameters:
+    ///   - apiKey: Your Project ID (`fed_xxxxxxxxxxxx`).
+    ///   - autoDetectSubscription: When `true` (default), the SDK
+    ///     reads `Transaction.currentEntitlements` once after configure
+    ///     and again after each ``identify(userId:email:displayName:avatarURL:)``
+    ///     so feedback rows in your dashboard carry up-to-date
+    ///     subscription state. Set to `false` if your app uses
+    ///     RevenueCat or another store-of-record — pass the result of
+    ///     that source to ``setSubscription(_:)`` instead.
+    public static func configure(
+        apiKey: String,
+        autoDetectSubscription: Bool = true
+    ) {
         do {
             let configuration = try FeddyConfiguration(apiKey: apiKey)
             let client = FeddyClient(configuration: configuration)
@@ -41,6 +57,12 @@ public enum Feddy {
             if #available(iOS 15.0, macOS 12.0, *) {
                 Task {
                     await client.replayQueue()
+                }
+                if autoDetectSubscription {
+                    Task {
+                        let detected = await StoreKitDetector.currentSubscription()
+                        client.subscriptionStore.setAutoDetected(detected)
+                    }
                 }
             }
         } catch {
@@ -64,8 +86,7 @@ public enum Feddy {
         userId: String? = nil,
         email: String? = nil,
         displayName: String? = nil,
-        avatarURL: URL? = nil,
-        profile: [String: ProfileValue]? = nil
+        avatarURL: URL? = nil
     ) {
         guard let client = state.read({ $0 }) else {
             print("[Feddy] identify called before configure — ignoring")
@@ -82,12 +103,69 @@ public enum Feddy {
                         externalUserId: userId,
                         email: email,
                         displayName: displayName,
-                        avatarURL: avatarURL,
-                        profile: profile
+                        avatarURL: avatarURL
                     )
                 } catch {
                     print("[Feddy] identify failed — \(error.localizedDescription)")
                 }
+            }
+        }
+    }
+
+    /// Override the subscription snapshot the SDK attaches to its
+    /// next ``identify(userId:email:displayName:avatarURL:)``. Use
+    /// when your app's source of truth for paid state is RevenueCat,
+    /// Adapty, or your own server rather than StoreKit 2 directly:
+    ///
+    /// ```swift
+    /// Purchases.shared.getCustomerInfo { info, _ in
+    ///     guard let info else { return }
+    ///     let isPro = info.entitlements["pro"]?.isActive == true
+    ///     Feddy.setSubscription(
+    ///         isPro
+    ///             ? .init(isPaid: true, status: .active,
+    ///                     productId: info.activeSubscriptions.first,
+    ///                     expiresAt: info.expirationDate(forEntitlement: "pro"))
+    ///             : .init(isPaid: false, status: .none)
+    ///     )
+    /// }
+    /// ```
+    ///
+    /// Pass `nil` to clear the override and fall back to automatic
+    /// StoreKit 2 detection (when `configure`'s `autoDetectSubscription`
+    /// is true).
+    ///
+    /// Fire-and-forget: stored locally and uploaded with the next
+    /// identify call.
+    public static func setSubscription(_ subscription: Subscription?) {
+        guard let client = state.read({ $0 }) else {
+            print("[Feddy] setSubscription called before configure — ignoring")
+            return
+        }
+        client.subscriptionStore.setManualOverride(subscription)
+    }
+
+    /// Re-read `Transaction.currentEntitlements` from StoreKit 2.
+    /// Useful right after a successful in-app purchase or when your
+    /// app comes back to the foreground, so the next identify call
+    /// reflects the user's current paid state without restarting the
+    /// app.
+    ///
+    /// No-op when ``configure(apiKey:autoDetectSubscription:)`` was
+    /// called with `autoDetectSubscription: false` — the manual
+    /// override path is the source of truth in that mode.
+    ///
+    /// Fire-and-forget: returns immediately; the StoreKit read runs
+    /// in the background.
+    public static func refreshSubscription() {
+        guard let client = state.read({ $0 }) else {
+            print("[Feddy] refreshSubscription called before configure — ignoring")
+            return
+        }
+        if #available(iOS 15.0, macOS 12.0, *) {
+            Task {
+                let detected = await StoreKitDetector.currentSubscription()
+                client.subscriptionStore.setAutoDetected(detected)
             }
         }
     }
@@ -98,7 +176,7 @@ public enum Feddy {
     /// so they replay automatically on the next ``configure(apiKey:)`` or
     /// the next successful submit.
     ///
-    /// The SDK uses ``identify(userId:email:displayName:avatarURL:profile:)``'s
+    /// The SDK uses ``identify(userId:email:displayName:avatarURL:)``'s
     /// last `userId` if known, otherwise a per-install anonymous token —
     /// end users never need to "log in" to Feddy for this to work.
     ///
@@ -292,6 +370,7 @@ public enum Feddy {
         if let client = state.read({ $0 }) {
             client.identityStore.setLastExternalUserId(nil)
             client.identityStore.setAttachmentsEnabled(false)
+            client.subscriptionStore.clearAll()
         }
         state.write { $0 = nil }
     }
