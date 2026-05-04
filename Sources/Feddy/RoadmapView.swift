@@ -37,6 +37,9 @@ public struct RoadmapView: View {
                     .padding(.bottom, 4)
                 tabContent
             }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                PoweredByBadge()
+            }
             .navigationTitle(Localization.string("feddy.roadmap.title"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

@@ -85,6 +85,11 @@ struct ContentView: View {
                 } label: {
                     Label("Reset Smart Review state", systemImage: "arrow.counterclockwise")
                 }
+                Button(role: .destructive) {
+                    Feddy.reset()
+                } label: {
+                    Label("Reset SDK (clears identity + caches)", systemImage: "trash")
+                }
             } header: {
                 Text("Debug — internal testing")
             } footer: {

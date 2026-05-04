@@ -1,6 +1,6 @@
 # Feddy Swift SDK
 
-> **Beta Notice**: This SDK is currently in beta (v0.3.0). The API may change before the 1.0 release.
+> **Beta Notice**: This SDK is currently in beta (v0.7.1). The API may change before the 1.0 release.
 
 A Swift SDK for integrating [Feddy](https://feddy.app) feedback, roadmap, and changelog features into your iOS and macOS applications.
 
@@ -12,7 +12,7 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.3.0")
+    .package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.7.1")
 ]
 ```
 

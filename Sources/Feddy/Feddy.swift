@@ -70,6 +70,12 @@ public enum Feddy {
                         client.subscriptionStore.setAutoDetected(detected)
                     }
                 }
+                // Pull the workspace's branding decision so the next
+                // render of `PoweredByBadge` reflects current plan.
+                // First-launch render still uses the hardcoded
+                // fallback until this returns; the badge converges
+                // within 24 h of any plan change.
+                CapabilitiesFetcher.refreshInBackground(client: client)
             }
         } catch {
             let message = (error as? LocalizedError)?.errorDescription
@@ -378,6 +384,7 @@ public enum Feddy {
             client.identityStore.setAttachmentsEnabled(false)
             client.subscriptionStore.clearAll()
         }
+        CapabilitiesFetcher.clearCache()
         state.write { $0 = nil }
     }
 

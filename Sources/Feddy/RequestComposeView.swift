@@ -63,6 +63,9 @@ public struct RequestComposeView: View {
         navigationContainer {
             formContent
                 .disabled(isSubmitting)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    PoweredByBadge()
+                }
                 .navigationTitle(Localization.string("feddy.compose.title"))
                 #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)

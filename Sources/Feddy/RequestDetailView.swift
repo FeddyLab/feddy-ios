@@ -110,6 +110,7 @@ public struct RequestDetailView: View {
                         }
                         Divider()
                         commentsSection
+                        PoweredByBadge()
                     }
                     .padding()
                 }

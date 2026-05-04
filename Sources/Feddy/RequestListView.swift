@@ -85,6 +85,9 @@ public struct RequestListView: View {
                 .refreshable {
                     await loadInitial()
                 }
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    PoweredByBadge()
+                }
                 .sheet(
                     isPresented: $isComposing,
                     onDismiss: {

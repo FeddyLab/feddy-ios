@@ -287,6 +287,9 @@
         }
       }
     },
+    "Reset SDK (clears identity + caches)" : {
+
+    },
     "Reset Smart Review state" : {
 
     },
