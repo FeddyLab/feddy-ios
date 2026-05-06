@@ -291,6 +291,54 @@ Feddy.configure(apiKey: "fed_xxxxxxxxxxxx", autoDetectSubscription: false)
 
 Call `Feddy.refreshSubscription()` after a successful purchase or app foreground to re-read the current entitlements without restarting the app.
 
+### Custom Boards & i18n
+
+The two SDK-shipped system boards (`features` / `bugs`) come pre-translated in 5 locales (en / es / ja / de / fr) and are picked automatically based on the device locale. The bundled views fetch the workspace's full board set from `GET /v1/boards` (1 h cached) so any custom board you create in the dashboard appears without redeploying the app:
+
+```swift
+RequestComposeView()    // boards fetched in the background
+RequestListView()
+RoadmapView()
+```
+
+For **custom boards**, supply per-locale display names via `boardTranslations` so each device locale renders the right label:
+
+```swift
+Feddy.configure(
+    apiKey: "fed_xxxxxxxxxxxx",
+    boardTranslations: [
+        "roadmap-2026": [
+            "en": "Roadmap 2026",
+            "ja": "ロードマップ 2026",
+            "es": "Hoja de ruta 2026",
+        ],
+        "design": ["ja": "デザインフィードバック"],
+    ]
+)
+```
+
+Resolution order for any custom board key:
+
+1. `boardTranslations[key][deviceLocale]` if set
+2. The server's `board.name` (whatever the admin typed in the dashboard)
+3. Capitalized key as a last-ditch label
+
+System keys (`features` / `bugs`) always use the SDK's bundled translations — they are intentionally not overridable so first-party UI stays consistent across SDK platforms.
+
+If your app already has its own i18n system and you want to bypass `fetchBoards`, pass an explicit array — the views will skip the network call entirely:
+
+```swift
+RequestComposeView(boards: [
+    .featureRequest,           // SDK-localized features board
+    .bugReport,                // SDK-localized bugs board
+    FeedbackBoard(key: "design", name: NSLocalizedString("Design", comment: "")),
+])
+```
+
+```swift
+let boards = try await Feddy.fetchBoards()    // for custom UIs
+```
+
 ## Requirements
 
 - iOS 15.0+ / macOS 10.15+

@@ -29,10 +29,11 @@ import SwiftUI
 /// ```
 @available(iOS 15.0, macOS 12.0, *)
 public struct RequestListView: View {
-    private let boards: [FeedbackBoard]
+    private let providedBoards: [FeedbackBoard]?
 
     @Environment(\.dismiss) private var dismiss
 
+    @State private var resolvedBoards: [FeedbackBoard]
     @State private var selectedBoardKey: String? = nil  // nil = All boards
     @State private var items: [Feddy.FeedbackRequest] = []
     @State private var nextCursor: String? = nil
@@ -45,8 +46,18 @@ public struct RequestListView: View {
     @State private var voteErrorMessage: String? = nil
     @State private var isComposing: Bool = false
 
-    public init(boards: [FeedbackBoard] = FeedbackBoard.systemDefaults) {
-        self.boards = boards
+    /// Render the workspace's roadmap-eligible feedback list.
+    ///
+    /// - Parameter boards: When `nil` (default) the SDK fetches the
+    ///   workspace's public boards from `GET /v1/boards` (1 h cached)
+    ///   and falls back to ``FeedbackBoard/systemDefaults`` while
+    ///   loading or on failure. Pass an explicit array when you need a
+    ///   curated picker that diverges from the dashboard.
+    public init(boards: [FeedbackBoard]? = nil) {
+        self.providedBoards = boards
+        self._resolvedBoards = State(
+            initialValue: boards ?? FeedbackBoard.systemDefaults
+        )
     }
 
     public var body: some View {
@@ -82,6 +93,14 @@ public struct RequestListView: View {
                 .task(id: selectedBoardKey) {
                     await loadInitial()
                 }
+                .task {
+                    if providedBoards == nil {
+                        let fresh = await Feddy.fetchBoards()
+                        if !fresh.isEmpty {
+                            resolvedBoards = fresh
+                        }
+                    }
+                }
                 .refreshable {
                     await loadInitial()
                 }
@@ -98,7 +117,7 @@ public struct RequestListView: View {
                         Task { await loadInitial() }
                     }
                 ) {
-                    RequestComposeView(boards: boards)
+                    RequestComposeView(boards: resolvedBoards)
                 }
                 .alert(
                     Localization.string("feddy.detail.vote.failed"),
@@ -179,9 +198,12 @@ public struct RequestListView: View {
             ) {
                 selectedBoardKey = nil
             }
-            ForEach(boards) { board in
+            ForEach(resolvedBoards) { board in
                 menuRow(
-                    title: board.name,
+                    title: BoardLocalization.localizedName(
+                        board.key,
+                        fallbackName: board.name
+                    ),
                     isSelected: selectedBoardKey == board.key
                 ) {
                     selectedBoardKey = board.key
@@ -250,7 +272,10 @@ public struct RequestListView: View {
     }
 
     private func boardDisplayName(for key: String) -> String {
-        boards.first(where: { $0.key == key })?.name ?? key.capitalized
+        BoardLocalization.localizedName(
+            key,
+            fallbackName: resolvedBoards.first(where: { $0.key == key })?.name
+        )
     }
 
     @MainActor

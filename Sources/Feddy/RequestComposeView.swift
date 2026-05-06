@@ -37,8 +37,9 @@ import UIKit
 public struct RequestComposeView: View {
     @Environment(\.dismiss) private var dismiss
 
-    private let boards: [FeedbackBoard]
+    private let providedBoards: [FeedbackBoard]?
 
+    @State private var resolvedBoards: [FeedbackBoard]
     @State private var title: String = ""
     @State private var details: String = ""
     @State private var selectedBoardKey: String
@@ -50,13 +51,22 @@ public struct RequestComposeView: View {
     @State private var selectedImages: [UIImage] = []
     #endif
 
-    public init(boards: [FeedbackBoard] = FeedbackBoard.systemDefaults) {
+    /// Render the compose form against the workspace's boards.
+    ///
+    /// - Parameter boards: When `nil` (default) the SDK fetches the
+    ///   workspace's public boards from `GET /v1/boards` (1 h cached)
+    ///   and falls back to ``FeedbackBoard/systemDefaults`` while
+    ///   loading or on failure. Pass an explicit array when you need a
+    ///   curated picker that diverges from the dashboard.
+    public init(boards: [FeedbackBoard]? = nil) {
+        let initial = boards ?? FeedbackBoard.systemDefaults
         precondition(
-            !boards.isEmpty,
+            !initial.isEmpty,
             "RequestComposeView requires at least one board"
         )
-        self.boards = boards
-        self._selectedBoardKey = State(initialValue: boards[0].key)
+        self.providedBoards = boards
+        self._resolvedBoards = State(initialValue: initial)
+        self._selectedBoardKey = State(initialValue: initial[0].key)
     }
 
     public var body: some View {
@@ -76,6 +86,18 @@ public struct RequestComposeView: View {
                     // `onAppear` races the transition on iOS 15-17 and
                     // the field silently fails to receive focus.
                     titleFieldFocused = true
+                    if providedBoards == nil {
+                        let fresh = await Feddy.fetchBoards()
+                        if !fresh.isEmpty {
+                            resolvedBoards = fresh
+                            // Re-anchor selection if the fetched list
+                            // doesn't include whatever was preselected
+                            // from the bundled defaults.
+                            if !fresh.contains(where: { $0.key == selectedBoardKey }) {
+                                selectedBoardKey = fresh[0].key
+                            }
+                        }
+                    }
                 }
                 .toolbar {
                     // Icon-only cancel: localized labels for "Cancel" range
@@ -154,14 +176,20 @@ public struct RequestComposeView: View {
             // Hide the picker entirely when the host app passed a single
             // board — the user has nothing to choose, and an unselectable
             // picker is just visual noise.
-            if boards.count > 1 {
+            if resolvedBoards.count > 1 {
                 Section {
                     Picker(
                         Localization.string("feddy.compose.board.label"),
                         selection: $selectedBoardKey
                     ) {
-                        ForEach(boards) { board in
-                            Text(board.name).tag(board.key)
+                        ForEach(resolvedBoards) { board in
+                            Text(
+                                BoardLocalization.localizedName(
+                                    board.key,
+                                    fallbackName: board.name
+                                )
+                            )
+                            .tag(board.key)
                         }
                     }
                 }

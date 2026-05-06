@@ -23,13 +23,15 @@ import Foundation
 ///     .init(key: "discussions", name: "Discussions"),
 /// ])
 /// ```
-public struct FeedbackBoard: Sendable, Hashable, Identifiable {
+public struct FeedbackBoard: Sendable, Hashable, Identifiable, Codable {
     /// Maps to `board.key` in the dashboard. Sent as `request.board_key`
     /// on submit.
     public let key: String
 
-    /// Display label used in the picker. Caller is responsible for
-    /// localization unless this came from one of the static factories.
+    /// Display label used in the picker. For SDK-shipped system keys
+    /// (`features` / `bugs`) this is overridden by the bundled i18n
+    /// catalog at render time; for custom keys this is whatever the
+    /// admin typed in the dashboard (or the host explicitly passed).
     public let name: String
 
     public init(key: String, name: String) {

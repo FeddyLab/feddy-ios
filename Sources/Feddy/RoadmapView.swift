@@ -14,18 +14,30 @@ import SwiftUI
 /// ```
 @available(iOS 15.0, macOS 12.0, *)
 public struct RoadmapView: View {
-    private let boards: [FeedbackBoard]
+    private let providedBoards: [FeedbackBoard]?
 
     @Environment(\.dismiss) private var dismiss
 
+    @State private var resolvedBoards: [FeedbackBoard]
     @State private var selectedTab: Feddy.RoadmapStatus = .planned
     @State private var isComposing: Bool = false
     /// Bumps every time the compose sheet dismisses so each
     /// `RoadmapStatusPage` can `.task(id:)` on the change and reload.
     @State private var refreshToken: Int = 0
 
-    public init(boards: [FeedbackBoard] = FeedbackBoard.systemDefaults) {
-        self.boards = boards
+    /// Render the workspace's roadmap — three tabs (planned / in_progress
+    /// / completed) populated from `GET /v1/requests?status=…`.
+    ///
+    /// - Parameter boards: When `nil` (default) the SDK fetches the
+    ///   workspace's public boards from `GET /v1/boards` (1 h cached)
+    ///   and falls back to ``FeedbackBoard/systemDefaults`` while
+    ///   loading or on failure. Pass an explicit array when you need a
+    ///   curated set that diverges from the dashboard.
+    public init(boards: [FeedbackBoard]? = nil) {
+        self.providedBoards = boards
+        self._resolvedBoards = State(
+            initialValue: boards ?? FeedbackBoard.systemDefaults
+        )
     }
 
     public var body: some View {
@@ -74,7 +86,15 @@ public struct RoadmapView: View {
                     refreshToken &+= 1
                 }
             ) {
-                RequestComposeView(boards: boards)
+                RequestComposeView(boards: resolvedBoards)
+            }
+            .task {
+                if providedBoards == nil {
+                    let fresh = await Feddy.fetchBoards()
+                    if !fresh.isEmpty {
+                        resolvedBoards = fresh
+                    }
+                }
             }
         }
     }
@@ -117,7 +137,7 @@ public struct RoadmapView: View {
                 ForEach(Feddy.RoadmapStatus.allCases, id: \.self) { status in
                     RoadmapStatusPage(
                         status: status,
-                        boards: boards,
+                        boards: resolvedBoards,
                         refreshToken: refreshToken
                     )
                     .tag(status)
@@ -133,7 +153,7 @@ public struct RoadmapView: View {
             // missing on older OSes.
             RoadmapStatusPage(
                 status: selectedTab,
-                boards: boards,
+                boards: resolvedBoards,
                 refreshToken: refreshToken
             )
         }
@@ -263,7 +283,10 @@ private struct RoadmapStatusPage: View {
     }
 
     private func boardDisplayName(for key: String) -> String {
-        boards.first(where: { $0.key == key })?.name ?? key.capitalized
+        BoardLocalization.localizedName(
+            key,
+            fallbackName: boards.first(where: { $0.key == key })?.name
+        )
     }
 
     @MainActor

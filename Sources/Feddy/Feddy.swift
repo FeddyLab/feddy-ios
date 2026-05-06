@@ -45,14 +45,24 @@ public enum Feddy {
     ///     subscription state. Set to `false` if your app uses
     ///     RevenueCat or another store-of-record — pass the result of
     ///     that source to ``setSubscription(_:)`` instead.
+    ///   - boardTranslations: Display-name translations for **custom**
+    ///     board keys (anything beyond `features` / `bugs`). Keyed by
+    ///     board key, then by 2-letter locale code (`en` / `es` / `ja`
+    ///     / `de` / `fr`). Missing locales fall through to the
+    ///     server-supplied `board.name`. Has no effect on the SDK's
+    ///     system keys — those always use the bundled catalog.
     public static func configure(
         apiKey: String,
-        autoDetectSubscription: Bool = true
+        autoDetectSubscription: Bool = true,
+        boardTranslations: BoardTranslations = [:]
     ) {
         do {
             let configuration = try FeddyConfiguration(apiKey: apiKey)
             let client = FeddyClient(configuration: configuration)
             state.write { $0 = client }
+            // Wire host-supplied custom-board translations before any
+            // view renders so picker labels are correct on first paint.
+            BoardLocalization.setHostTranslations(boardTranslations)
 
             if #available(iOS 15.0, macOS 12.0, *) {
                 // Bump the Smart Review session counter once per
@@ -385,6 +395,8 @@ public enum Feddy {
             client.subscriptionStore.clearAll()
         }
         CapabilitiesFetcher.clearCache()
+        BoardsCache.clearCache()
+        BoardLocalization.clearHostTranslations()
         state.write { $0 = nil }
     }
 
