@@ -263,13 +263,29 @@ Feddy.reset()
 
 After `reset`, subsequent calls become no-ops until you call `Feddy.configure` again.
 
-### Subscription Status
+### Subscription State
 
-Feedback rows in the dashboard carry the user's current subscription state, so paying customers' reports surface clearly. By default the SDK reads `Transaction.currentEntitlements` from StoreKit 2 and attaches the result to the next identify call — no extra setup needed for native StoreKit apps.
-
-If your app uses RevenueCat (or any other store-of-record), pass the snapshot to `Feddy.setSubscription(...)` after your purchase delegate fires:
+By default the SDK reads the host app's currently-active subscription from StoreKit 2 (`Transaction.currentEntitlements`) once at `configure(...)` and again on each `identify(...)`, so feedback rows in your dashboard carry up-to-date plan info with zero extra wiring.
 
 ```swift
+Feddy.configure(apiKey: "fed_xxxxxxxxxxxx")
+// Auto-detection runs in the background.
+```
+
+After a purchase, restore, or subscription state change, ask the SDK to re-read the entitlement so the next identify carries the freshest snapshot:
+
+```swift
+Feddy.refreshSubscription()
+```
+
+If your source-of-truth for paid state is RevenueCat, Adapty, or your own server, disable auto-detection and push the state explicitly:
+
+```swift
+Feddy.configure(
+    apiKey: "fed_xxxxxxxxxxxx",
+    autoDetectSubscription: false
+)
+
 Purchases.shared.getCustomerInfo { info, _ in
     guard let info else { return }
     let isPro = info.entitlements["pro"]?.isActive == true
@@ -281,15 +297,12 @@ Purchases.shared.getCustomerInfo { info, _ in
             : .init(isPaid: false, status: .none)
     )
 }
+
+// Pass nil to clear and let auto-detection take over again.
+Feddy.setSubscription(nil)
 ```
 
-To opt out of automatic StoreKit detection (e.g. when a third-party store-of-record owns this state):
-
-```swift
-Feddy.configure(apiKey: "fed_xxxxxxxxxxxx", autoDetectSubscription: false)
-```
-
-Call `Feddy.refreshSubscription()` after a successful purchase or app foreground to re-read the current entitlements without restarting the app.
+Manual override always wins over the auto-detected snapshot. Both persist across launches; the next `Feddy.identify(...)` call attaches whichever takes precedence automatically.
 
 ### Custom Boards & i18n
 
