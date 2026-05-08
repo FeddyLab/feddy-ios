@@ -151,6 +151,22 @@ extension Feddy {
         }
     }
 
+    /// Who posted a comment. `endUser` is an SDK end user (current or
+    /// past app installer); `admin` is a workspace operator commenting
+    /// via the dashboard. `unknown` is a forward-compat fallback when
+    /// an older server returns no `author_kind` field — older comments
+    /// still display, just without the kind-specific styling.
+    public enum CommentAuthorKind: String, Sendable, Codable, Hashable {
+        case endUser = "end_user"
+        case admin
+        case unknown
+
+        public init(from decoder: Decoder) throws {
+            let raw = try decoder.singleValueContainer().decode(String.self)
+            self = CommentAuthorKind(rawValue: raw) ?? .unknown
+        }
+    }
+
     /// One comment posted by an end user (or a dashboard operator, but
     /// internal-only operator comments are filtered server-side and
     /// never reach the SDK).
@@ -158,6 +174,17 @@ extension Feddy {
         public let id: String
         public let content: String
         public let authorEndUserId: String?
+        /// Who posted this comment — used by ``RequestDetailView`` to
+        /// color the bubble (own / other end user / team reply).
+        public let authorKind: CommentAuthorKind
+        /// Display name resolved server-side. `nil` for anonymous end
+        /// users or older server versions that don't return the field.
+        public let authorDisplayName: String?
+        /// Whether the comment was posted by the calling end user.
+        /// Server computes this against the SDK's `as_external_user_id`
+        /// / `as_anonymous_token` query so it's stable across reinstalls
+        /// when the host calls `Feddy.identify` with the same `userId`.
+        public let isSelf: Bool
         public let createdAt: Date
         public let updatedAt: Date
 
@@ -165,12 +192,18 @@ extension Feddy {
             id: String,
             content: String,
             authorEndUserId: String?,
+            authorKind: CommentAuthorKind = .unknown,
+            authorDisplayName: String? = nil,
+            isSelf: Bool = false,
             createdAt: Date,
             updatedAt: Date
         ) {
             self.id = id
             self.content = content
             self.authorEndUserId = authorEndUserId
+            self.authorKind = authorKind
+            self.authorDisplayName = authorDisplayName
+            self.isSelf = isSelf
             self.createdAt = createdAt
             self.updatedAt = updatedAt
         }
@@ -178,6 +211,9 @@ extension Feddy {
         enum CodingKeys: String, CodingKey {
             case id, content
             case authorEndUserId = "author_end_user_id"
+            case authorKind = "author_kind"
+            case authorDisplayName = "author_display_name"
+            case isSelf = "is_self"
             case createdAt = "created_at"
             case updatedAt = "updated_at"
         }
@@ -187,6 +223,10 @@ extension Feddy {
             self.id = try c.decode(String.self, forKey: .id)
             self.content = try c.decode(String.self, forKey: .content)
             self.authorEndUserId = try c.decodeIfPresent(String.self, forKey: .authorEndUserId)
+            self.authorKind =
+                try c.decodeIfPresent(CommentAuthorKind.self, forKey: .authorKind) ?? .unknown
+            self.authorDisplayName = try c.decodeIfPresent(String.self, forKey: .authorDisplayName)
+            self.isSelf = try c.decodeIfPresent(Bool.self, forKey: .isSelf) ?? false
             self.createdAt = try c.decode(Date.self, forKey: .createdAt)
             // POST /v1/requests/:id/comments doesn't return updated_at on
             // the freshly-created row response; default to createdAt so

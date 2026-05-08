@@ -865,6 +865,69 @@
         }
       }
     },
+    "feddy.detail.comment.you": {
+      "comment": "Author label on the comment bubble for the current end user's own comments.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": { "state": "translated", "value": "Du" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "You" }
+        },
+        "es": {
+          "stringUnit": { "state": "translated", "value": "Tú" }
+        },
+        "fr": {
+          "stringUnit": { "state": "translated", "value": "Vous" }
+        },
+        "ja": {
+          "stringUnit": { "state": "translated", "value": "自分" }
+        }
+      }
+    },
+    "feddy.detail.comment.team": {
+      "comment": "Author label on comments posted by a workspace operator (admin reply).",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": { "state": "translated", "value": "Team" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Team" }
+        },
+        "es": {
+          "stringUnit": { "state": "translated", "value": "Equipo" }
+        },
+        "fr": {
+          "stringUnit": { "state": "translated", "value": "Équipe" }
+        },
+        "ja": {
+          "stringUnit": { "state": "translated", "value": "チーム" }
+        }
+      }
+    },
+    "feddy.detail.comment.anonymous": {
+      "comment": "Fallback author label for end-user comments with no display name.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": { "state": "translated", "value": "Anonym" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Anonymous" }
+        },
+        "es": {
+          "stringUnit": { "state": "translated", "value": "Anónimo" }
+        },
+        "fr": {
+          "stringUnit": { "state": "translated", "value": "Anonyme" }
+        },
+        "ja": {
+          "stringUnit": { "state": "translated", "value": "匿名" }
+        }
+      }
+    },
     "feddy.detail.officialReply": {
       "comment": "Section heading above the operator's official reply on detail view.",
       "extractionState": "manual",

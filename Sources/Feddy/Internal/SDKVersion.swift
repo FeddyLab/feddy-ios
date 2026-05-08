@@ -9,7 +9,7 @@ import UIKit
 /// `FeddyClient.postRawData` for where these get attached.
 enum SDKVersion {
     /// Bumped per release.
-    static let current = "0.7.2"
+    static let current = "0.7.3"
 
     /// Stable platform identifier sent as `X-Feddy-Sdk-Platform`. Always
     /// "ios" for this SDK regardless of which Apple OS we're actually

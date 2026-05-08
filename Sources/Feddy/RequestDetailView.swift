@@ -415,17 +415,74 @@ private struct AttachmentLightboxView: View {
 private struct CommentRow: View {
     let comment: Feddy.FeedbackComment
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(comment.content)
-                .font(.body)
-                .fixedSize(horizontal: false, vertical: true)
-            Text(comment.createdAt, style: .relative)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+    private var isAdmin: Bool { comment.authorKind == .admin }
+    private var isSelf: Bool { comment.isSelf }
+
+    private var accent: Color {
+        if isAdmin { return .blue }
+        if isSelf { return .orange }
+        return .secondary
+    }
+
+    private var fillColor: Color {
+        if isAdmin { return Color.blue.opacity(0.08) }
+        if isSelf { return Color.orange.opacity(0.10) }
+        return Color.clear
+    }
+
+    private var borderColor: Color {
+        if isAdmin { return Color.blue.opacity(0.35) }
+        if isSelf { return Color.orange.opacity(0.5) }
+        return Color.secondary.opacity(0.3)
+    }
+
+    private var label: String {
+        if isSelf {
+            return Localization.string("feddy.detail.comment.you")
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, 6)
+        let display = comment.authorDisplayName?.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+        if isAdmin {
+            if let display, !display.isEmpty { return display }
+            return Localization.string("feddy.detail.comment.team")
+        }
+        if let display, !display.isEmpty { return display }
+        return Localization.string("feddy.detail.comment.anonymous")
+    }
+
+    var body: some View {
+        HStack(alignment: .top) {
+            if isSelf { Spacer(minLength: 24) }
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 4) {
+                    if isAdmin {
+                        Image(systemName: "shield.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(accent)
+                    }
+                    Text(label)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(accent)
+                        .lineLimit(1)
+                }
+                Text(comment.content)
+                    .font(.body)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(comment.createdAt, style: .relative)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(fillColor, in: RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(borderColor, lineWidth: 1)
+            )
+            if !isSelf { Spacer(minLength: 24) }
+        }
+        .padding(.vertical, 4)
     }
 }
 

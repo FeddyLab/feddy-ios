@@ -64,12 +64,14 @@ extension FeddyClient {
             withAllowedCharacters: .urlPathAllowed
         ) ?? trimmed
         let clamped = max(1, min(limit, 100))
+        // Same as_user pair carried by /v1/requests so the server can
+        // tag each comment with `is_self` for the calling end user.
         return try await get(
             path: "/v1/requests/\(escaped)/comments",
-            query: [
+            query: asUserQuery().merging([
                 "limit": String(clamped),
                 "cursor": cursor,
-            ]
+            ]) { _, new in new }
         )
     }
 
