@@ -386,7 +386,7 @@ struct RequestRow: View {
         HStack(alignment: .center, spacing: 12) {
             voteButton
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(request.title)
                     .font(.body.weight(.semibold))
                     .lineLimit(2)
@@ -417,7 +417,7 @@ struct RequestRow: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 2)
     }
 
     /// Reddit / Featurebase style upvote pill: vertical chip with the
