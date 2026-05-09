@@ -61,7 +61,10 @@ public struct RoadmapView: View {
                     Button {
                         dismiss()
                     } label: {
-                        Image(systemName: "xmark")
+                        Image(systemName: "xmark.circle.fill")
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.secondary)
+                            .font(.title2)
                     }
                     .accessibilityLabel(
                         Localization.string("feddy.action.cancel")
