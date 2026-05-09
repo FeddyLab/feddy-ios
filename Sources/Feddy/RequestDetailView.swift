@@ -451,6 +451,21 @@ private struct CommentRow: View {
         return Localization.string("feddy.detail.comment.anonymous")
     }
 
+    /// Snapshot of the comment's age, computed once per render.
+    /// `Text(date, style: .relative)` would re-tick every minute and
+    /// distract a reader who's just trying to read the thread.
+    private static let relativeFormatter: RelativeDateTimeFormatter = {
+        let f = RelativeDateTimeFormatter()
+        f.unitsStyle = .abbreviated
+        return f
+    }()
+    private var relativeTime: String {
+        Self.relativeFormatter.localizedString(
+            for: comment.createdAt,
+            relativeTo: Date(),
+        )
+    }
+
     var body: some View {
         HStack(alignment: .top) {
             if isSelf { Spacer(minLength: 24) }
@@ -469,7 +484,7 @@ private struct CommentRow: View {
                 Text(comment.content)
                     .font(.body)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(comment.createdAt, style: .relative)
+                Text(relativeTime)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
