@@ -34,6 +34,18 @@
             "state": "translated",
             "value": "ディスカッション"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "讨论"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "討論"
+          }
         }
       }
     },
@@ -69,6 +81,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "キャンセル"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
           }
         }
       }
@@ -106,6 +130,18 @@
             "state": "translated",
             "value": "絞り込み"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "筛选"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "篩選"
+          }
         }
       }
     },
@@ -141,6 +177,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "更新"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新整理"
           }
         }
       }
@@ -178,6 +226,18 @@
             "state": "translated",
             "value": "再試行"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重試"
+          }
         }
       }
     },
@@ -213,6 +273,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "送信"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发送"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傳送"
           }
         }
       }
@@ -250,6 +322,18 @@
             "state": "translated",
             "value": "送信"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "送出"
+          }
         }
       }
     },
@@ -285,6 +369,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "賛成"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支持"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支持"
           }
         }
       }
@@ -322,6 +418,18 @@
             "state": "translated",
             "value": "賛成済み"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已支持"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已支持"
+          }
         }
       }
     },
@@ -357,6 +465,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "写真を追加"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加照片"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增相片"
           }
         }
       }
@@ -394,6 +514,18 @@
             "state": "translated",
             "value": "バグ"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "问题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "問題"
+          }
         }
       }
     },
@@ -429,6 +561,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "機能"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "功能"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "功能"
           }
         }
       }
@@ -466,6 +610,18 @@
             "state": "translated",
             "value": "カテゴリ"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分类"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "類別"
+          }
         }
       }
     },
@@ -501,6 +657,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "説明"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "描述"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "說明"
           }
         }
       }
@@ -538,6 +706,18 @@
             "state": "translated",
             "value": "詳細を追加（任意）"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "补充更多细节（可选）"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "補充更多細節（選填）"
+          }
         }
       }
     },
@@ -573,6 +753,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "オンラインに戻ったら送信します。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等你恢复联网后我们会自动发送。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等你恢復連線後我們會自動傳送。"
           }
         }
       }
@@ -610,6 +802,18 @@
             "state": "translated",
             "value": "フィードバックを送る"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发送反馈"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傳送回饋"
+          }
         }
       }
     },
@@ -645,6 +849,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "タイトル"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "標題"
           }
         }
       }
@@ -682,6 +898,18 @@
             "state": "translated",
             "value": "ご意見をお聞かせください"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "想说点什么？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "想說點什麼？"
+          }
         }
       }
     },
@@ -717,6 +945,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "添付ファイル"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "附件"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "附件"
           }
         }
       }
@@ -754,6 +994,18 @@
             "state": "translated",
             "value": "コメントを入力…"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写下你的评论…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "寫下你的留言…"
+          }
         }
       }
     },
@@ -789,6 +1041,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "コメントを投稿できませんでした。もう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "评论发送失败，请重试。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "留言傳送失敗，請重試。"
           }
         }
       }
@@ -826,6 +1090,18 @@
             "state": "translated",
             "value": "コメント"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "评论"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "留言"
+          }
         }
       }
     },
@@ -862,6 +1138,18 @@
             "state": "translated",
             "value": "まだコメントはありません。最初の一言をどうぞ。"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有评论。来发表第一条吧。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還沒有留言。來發表第一則吧。"
+          }
         }
       }
     },
@@ -870,19 +1158,46 @@
       "extractionState": "manual",
       "localizations": {
         "de": {
-          "stringUnit": { "state": "translated", "value": "Du" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "You" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "You"
+          }
         },
         "es": {
-          "stringUnit": { "state": "translated", "value": "Tú" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tú"
+          }
         },
         "fr": {
-          "stringUnit": { "state": "translated", "value": "Vous" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous"
+          }
         },
         "ja": {
-          "stringUnit": { "state": "translated", "value": "自分" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "自分"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我"
+          }
         }
       }
     },
@@ -891,19 +1206,46 @@
       "extractionState": "manual",
       "localizations": {
         "de": {
-          "stringUnit": { "state": "translated", "value": "Team" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Team"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "Team" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Team"
+          }
         },
         "es": {
-          "stringUnit": { "state": "translated", "value": "Equipo" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Equipo"
+          }
         },
         "fr": {
-          "stringUnit": { "state": "translated", "value": "Équipe" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Équipe"
+          }
         },
         "ja": {
-          "stringUnit": { "state": "translated", "value": "チーム" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "チーム"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "团队"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "團隊"
+          }
         }
       }
     },
@@ -912,19 +1254,46 @@
       "extractionState": "manual",
       "localizations": {
         "de": {
-          "stringUnit": { "state": "translated", "value": "Anonym" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anonym"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "Anonymous" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anonymous"
+          }
         },
         "es": {
-          "stringUnit": { "state": "translated", "value": "Anónimo" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anónimo"
+          }
         },
         "fr": {
-          "stringUnit": { "state": "translated", "value": "Anonyme" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anonyme"
+          }
         },
         "ja": {
-          "stringUnit": { "state": "translated", "value": "匿名" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "匿名"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "匿名"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "匿名"
+          }
         }
       }
     },
@@ -960,6 +1329,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "公式の回答"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "官方回复"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "官方回覆"
           }
         }
       }
@@ -997,6 +1378,18 @@
             "state": "translated",
             "value": "投票を記録できませんでした。もう一度お試しください。"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "投票失败，请重试。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "投票失敗，請重試。"
+          }
         }
       }
     },
@@ -1032,6 +1425,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "エラーが発生しました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出错了。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "發生錯誤。"
           }
         }
       }
@@ -1069,6 +1474,18 @@
             "state": "translated",
             "value": "ネットワークエラーが発生しました。接続を確認してもう一度お試しください。"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网络异常，请检查连接后重试。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "網路異常，請檢查連線後重試。"
+          }
         }
       }
     },
@@ -1104,6 +1521,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "タイトルを入力してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请填写标题。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請填寫標題。"
           }
         }
       }
@@ -1141,6 +1570,18 @@
             "state": "translated",
             "value": "すべてのボード"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全部分类"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全部類別"
+          }
         }
       }
     },
@@ -1176,6 +1617,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "ぜひ最初にご要望をお聞かせください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来当第一个分享想法的人吧。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "來當第一個分享想法的人吧。"
           }
         }
       }
@@ -1213,6 +1666,18 @@
             "state": "translated",
             "value": "まだフィードバックはありません"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有反馈"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還沒有回饋"
+          }
         }
       }
     },
@@ -1248,6 +1713,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "読み込みに失敗しました。引っ張って再試行してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载失败，下拉重试。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入失敗，請下拉重試。"
           }
         }
       }
@@ -1285,6 +1762,18 @@
             "state": "translated",
             "value": "さらに読み込み中…"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载更多…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入更多…"
+          }
         }
       }
     },
@@ -1320,6 +1809,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "フィードバック"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "反馈"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回饋"
           }
         }
       }
@@ -1357,6 +1858,18 @@
             "state": "translated",
             "value": "後ほどご確認いただくか、引っ張って更新してください。"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍后再来看看，或下拉刷新。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍後再來看看，或下拉重新整理。"
+          }
         }
       }
     },
@@ -1392,6 +1905,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "{status}の項目はまだありません"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有 {status} 的内容"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還沒有 {status} 的內容"
           }
         }
       }
@@ -1429,6 +1954,18 @@
             "state": "translated",
             "value": "ロードマップ"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "路线图"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "產品藍圖"
+          }
         }
       }
     },
@@ -1464,6 +2001,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "あまり…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不太喜欢"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不太喜歡"
           }
         }
       }
@@ -1501,6 +2050,18 @@
             "state": "translated",
             "value": "気に入ってる"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "喜欢"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "喜歡"
+          }
         }
       }
     },
@@ -1536,6 +2097,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "率直なご意見が今後の改善につながります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的真实想法能帮我们打造更好的产品。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的真實想法能幫我們打造更好的產品。"
           }
         }
       }
@@ -1573,6 +2146,18 @@
             "state": "translated",
             "value": "このアプリは気に入っていますか？"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "喜欢这个 App 吗？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "喜歡這個 App 嗎？"
+          }
         }
       }
     },
@@ -1608,6 +2193,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "もちろん"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好啊"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好啊"
           }
         }
       }
@@ -1645,6 +2242,18 @@
             "state": "translated",
             "value": "今はしない"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂时不了"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫時不要"
+          }
         }
       }
     },
@@ -1680,6 +2289,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "ほんの一瞬で終わります。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只需要一会儿。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只需要一下子。"
           }
         }
       }
@@ -1717,6 +2338,18 @@
             "state": "translated",
             "value": "App Store で評価していただけますか？"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "愿意在 App Store 给我们评分吗？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "願意到 App Store 為我們評分嗎？"
+          }
         }
       }
     },
@@ -1753,6 +2386,18 @@
             "state": "translated",
             "value": "完了"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成"
+          }
         }
       }
     },
@@ -1785,6 +2430,18 @@
           }
         },
         "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重複"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重复"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "重複"
@@ -1825,6 +2482,18 @@
             "state": "translated",
             "value": "対応中"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "进行中"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "進行中"
+          }
         }
       }
     },
@@ -1860,6 +2529,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "読み込み中…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载中…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入中…"
           }
         }
       }
@@ -1897,6 +2578,18 @@
             "state": "translated",
             "value": "確認中"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "待审核"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "待審核"
+          }
         }
       }
     },
@@ -1932,6 +2625,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "計画中"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已规划"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已規劃"
           }
         }
       }
@@ -1969,6 +2674,18 @@
             "state": "translated",
             "value": "対応しません"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不予处理"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不予處理"
+          }
         }
       }
     },
@@ -2004,6 +2721,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "確認済み"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已审核"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已審核"
           }
         }
       }

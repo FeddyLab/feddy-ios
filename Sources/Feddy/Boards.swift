@@ -2,9 +2,12 @@ import Foundation
 
 /// Display-name translations for **custom** board keys — anything beyond
 /// the two SDK-shipped system boards (`features` / `bugs`). Keyed by
-/// board key, then by 2-letter locale code (`en` / `es` / `ja` / `de`
-/// / `fr`). Missing locales fall through to the server-supplied
-/// `board.name` (whatever the admin typed in the dashboard).
+/// board key, then by locale code (`en` / `zh-Hans` / `zh-Hant` /
+/// `es` / `ja` / `de` / `fr`). Chinese supports both script-specific
+/// keys (`zh-Hans` for Simplified, `zh-Hant` for Traditional) and a
+/// plain `zh` fallback; lookup tries the script-specific key first.
+/// Missing locales fall through to the server-supplied `board.name`
+/// (whatever the admin typed in the dashboard).
 ///
 /// ```swift
 /// Feddy.configure(
@@ -12,13 +15,17 @@ import Foundation
 ///     boardTranslations: [
 ///         "roadmap-2026": [
 ///             "en": "Roadmap 2026",
-///             "ja": "ロードマップ 2026",
 ///             "es": "Hoja de ruta 2026",
+///             "ja": "ロードマップ 2026",
 ///         ],
 ///         "design": ["ja": "デザインフィードバック"],
 ///     ]
 /// )
 /// ```
+///
+/// Chinese keys (`zh-Hans` / `zh-Hant`) are accepted; the lookup
+/// resolves the device's script and tries the variant-specific key
+/// before falling back to a plain `zh` entry.
 ///
 /// Has no effect on system keys: `features` / `bugs` are always pulled
 /// from the SDK's bundled `Localizable.xcstrings` catalog so the

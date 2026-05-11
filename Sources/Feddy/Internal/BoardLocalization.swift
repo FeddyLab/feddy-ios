@@ -38,10 +38,11 @@ enum BoardLocalization {
     /// current device locale, if any. Internal — exposed only for
     /// tests.
     static func hostTranslation(forKey key: String) -> String? {
-        let locale = currentLocaleCode()
         guard let entry = translations.read({ $0[key] }) else { return nil }
-        if let value = entry[locale], !value.isEmpty {
-            return value
+        for code in currentLocaleCodes() {
+            if let value = entry[code], !value.isEmpty {
+                return value
+            }
         }
         return nil
     }
@@ -72,13 +73,43 @@ enum BoardLocalization {
         return FeedbackBoard(key: board.key, name: resolved)
     }
 
-    /// Current device locale's 2-letter language code (`en` / `es` /
-    /// `ja` / `de` / `fr`). Falls back to `"en"` when the system can't
-    /// resolve one.
-    private static func currentLocaleCode() -> String {
+    /// Ordered list of locale keys to try when looking up host
+    /// translations for the current device locale. Returns a single
+    /// 2-letter code (`en` / `es` / `ja` / `de` / `fr`) for most
+    /// languages, but for Chinese also resolves the script (`zh-Hans`
+    /// / `zh-Hant`) and falls back to the base `zh` so hosts can
+    /// supply either variant-specific or shared Chinese strings.
+    private static func currentLocaleCodes() -> [String] {
+        let language: String
+        let script: String?
+        let region: String?
         if #available(iOS 16.0, macOS 13.0, *) {
-            return Locale.current.language.languageCode?.identifier ?? "en"
+            let lang = Locale.current.language
+            language = lang.languageCode?.identifier ?? "en"
+            script = lang.script?.identifier
+            region = lang.region?.identifier
+        } else {
+            language = Locale.current.languageCode ?? "en"
+            script = nil
+            region = (Locale.current as NSLocale).object(forKey: .countryCode) as? String
         }
-        return Locale.current.languageCode ?? "en"
+
+        if language == "zh" {
+            let variant: String
+            if script == "Hans" {
+                variant = "Hans"
+            } else if script == "Hant" {
+                variant = "Hant"
+            } else if let r = region, ["CN", "SG"].contains(r) {
+                variant = "Hans"
+            } else if let r = region, ["TW", "HK", "MO"].contains(r) {
+                variant = "Hant"
+            } else {
+                variant = "Hans"
+            }
+            return ["zh-\(variant)", "zh"]
+        }
+
+        return [language]
     }
 }

@@ -97,6 +97,8 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
+				"zh-Hant",
 				es,
 				ja,
 				de,

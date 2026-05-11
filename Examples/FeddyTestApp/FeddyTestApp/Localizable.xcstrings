@@ -1,377 +1,483 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Debug — internal testing" : {
-
-    },
-    "Display name" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anzeigename"
+  "sourceLanguage": "en",
+  "strings": {
+    "Debug — internal testing": {},
+    "Display name": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anzeigename"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Display name"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display name"
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nombre visible"
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre visible"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nom affiché"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom affiché"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "表示名"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示名"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示名称"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顯示名稱"
           }
         }
       }
     },
-    "Edit DemoConfig.swift or set the FEDDY_API_KEY env var on the Run scheme." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bearbeiten Sie DemoConfig.swift oder setzen Sie die Umgebungsvariable FEDDY_API_KEY im Run-Schema."
+    "Edit DemoConfig.swift or set the FEDDY_API_KEY env var on the Run scheme.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeiten Sie DemoConfig.swift oder setzen Sie die Umgebungsvariable FEDDY_API_KEY im Run-Schema."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edit DemoConfig.swift or set the FEDDY_API_KEY env var on the Run scheme."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit DemoConfig.swift or set the FEDDY_API_KEY env var on the Run scheme."
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edita DemoConfig.swift o establece la variable de entorno FEDDY_API_KEY en el esquema de ejecución."
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edita DemoConfig.swift o establece la variable de entorno FEDDY_API_KEY en el esquema de ejecución."
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Modifiez DemoConfig.swift ou définissez la variable d'environnement FEDDY_API_KEY dans le schéma d'exécution."
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifiez DemoConfig.swift ou définissez la variable d'environnement FEDDY_API_KEY dans le schéma d'exécution."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DemoConfig.swift を編集するか、Run スキームに FEDDY_API_KEY 環境変数を設定してください。"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DemoConfig.swift を編集するか、Run スキームに FEDDY_API_KEY 環境変数を設定してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请编辑 DemoConfig.swift，或在 Run scheme 中设置 FEDDY_API_KEY 环境变量。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請編輯 DemoConfig.swift，或在 Run scheme 中設定 FEDDY_API_KEY 環境變數。"
           }
         }
       }
     },
-    "Email" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "E-Mail"
+    "Email": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-Mail"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Email"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Correo"
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correo"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "E-mail"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-mail"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メール"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メール"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "邮箱"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "電子郵件"
           }
         }
       }
     },
-    "External user ID" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Externe Benutzer-ID"
+    "External user ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Externe Benutzer-ID"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "External user ID"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "External user ID"
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ID de usuario externo"
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID de usuario externo"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ID utilisateur externe"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID utilisateur externe"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "外部ユーザー ID"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外部ユーザー ID"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外部用户 ID"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外部使用者 ID"
           }
         }
       }
     },
-    "Feddy.identify(…) ran in the host app on launch with the values above. Open dashboard.feddy.app to confirm this user appeared." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feddy.identify(…) wurde beim Start in der Host-App mit den obigen Werten ausgeführt. Öffnen Sie dashboard.feddy.app, um zu bestätigen, dass dieser Benutzer erschienen ist."
+    "Feddy.identify(…) ran in the host app on launch with the values above. Open dashboard.feddy.app to confirm this user appeared.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feddy.identify(…) wurde beim Start in der Host-App mit den obigen Werten ausgeführt. Öffnen Sie dashboard.feddy.app, um zu bestätigen, dass dieser Benutzer erschienen ist."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feddy.identify(…) ran in the host app on launch with the values above. Open dashboard.feddy.app to confirm this user appeared."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feddy.identify(…) ran in the host app on launch with the values above. Open dashboard.feddy.app to confirm this user appeared."
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feddy.identify(…) se ejecutó al iniciar la app host con los valores anteriores. Abre dashboard.feddy.app para confirmar que este usuario apareció."
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feddy.identify(…) se ejecutó al iniciar la app host con los valores anteriores. Abre dashboard.feddy.app para confirmar que este usuario apareció."
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feddy.identify(…) s'est exécuté au lancement dans l'application hôte avec les valeurs ci-dessus. Ouvrez dashboard.feddy.app pour confirmer que cet utilisateur est apparu."
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feddy.identify(…) s'est exécuté au lancement dans l'application hôte avec les valeurs ci-dessus. Ouvrez dashboard.feddy.app pour confirmer que cet utilisateur est apparu."
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feddy.identify(…) は起動時にホストアプリで上記の値で実行されました。dashboard.feddy.app を開いて、このユーザーが追加されたことを確認してください。"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feddy.identify(…) は起動時にホストアプリで上記の値で実行されました。dashboard.feddy.app を開いて、このユーザーが追加されたことを確認してください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宿主 App 在启动时使用上面的值调用了 Feddy.identify(…)。打开 dashboard.feddy.app 即可确认该用户已出现。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宿主 App 在啟動時使用上面的值呼叫了 Feddy.identify(…)。打開 dashboard.feddy.app 即可確認該使用者已出現。"
           }
         }
       }
     },
-    "Feedback" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feedback"
+    "Feedback": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feedback"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feedback"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feedback"
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comentarios"
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comentarios"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commentaires"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commentaires"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "フィードバック"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フィードバック"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "反馈"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回饋"
           }
         }
       }
     },
-    "Identity sent to Feddy" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "An Feddy übermittelte Identität"
+    "Identity sent to Feddy": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An Feddy übermittelte Identität"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Identity sent to Feddy"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Identity sent to Feddy"
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Identidad enviada a Feddy"
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Identidad enviada a Feddy"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Identité envoyée à Feddy"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Identité envoyée à Feddy"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feddy に送信した情報"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feddy に送信した情報"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已发送至 Feddy 的身份信息"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已傳送至 Feddy 的身分資訊"
           }
         }
       }
     },
-    "Manipulating UserDefaults directly is for verifying the SDK during development. Don't copy this pattern into your own integration — production hosts should just call requestReviewIfAppropriate() at appropriate moments." : {
-
-    },
-    "Profile" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Profil"
+    "Manipulating UserDefaults directly is for verifying the SDK during development. Don't copy this pattern into your own integration — production hosts should just call requestReviewIfAppropriate() at appropriate moments.": {},
+    "Profile": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Profile"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile"
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Perfil"
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perfil"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Profil"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プロフィール"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロフィール"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个人资料"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "個人資料"
           }
         }
       }
     },
-    "Reset Smart Review state" : {
-
-    },
-    "Seed gates as ready" : {
-
-    },
-    "Send Feedback" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feedback senden"
+    "Reset Smart Review state": {},
+    "Seed gates as ready": {},
+    "Send Feedback": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feedback senden"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Send Feedback"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send Feedback"
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviar comentarios"
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar comentarios"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Envoyer un commentaire"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer un commentaire"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "フィードバックを送る"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フィードバックを送る"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发送反馈"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傳送回饋"
           }
         }
       }
     },
-    "Set FEDDY_API_KEY to run the demo" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "FEDDY_API_KEY setzen, um die Demo auszuführen"
+    "Set FEDDY_API_KEY to run the demo": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FEDDY_API_KEY setzen, um die Demo auszuführen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set FEDDY_API_KEY to run the demo"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set FEDDY_API_KEY to run the demo"
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Establece FEDDY_API_KEY para ejecutar la demo"
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Establece FEDDY_API_KEY para ejecutar la demo"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Définissez FEDDY_API_KEY pour exécuter la démo"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Définissez FEDDY_API_KEY pour exécuter la démo"
           }
         },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "デモを実行するには FEDDY_API_KEY を設定してください"
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "デモを実行するには FEDDY_API_KEY を設定してください"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请设置 FEDDY_API_KEY 后再运行示例"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請設定 FEDDY_API_KEY 後再執行範例"
           }
         }
       }
     },
-    "Trigger Smart Review" : {
-
-    },
-    "View Feedback" : {
-
-    },
-    "View Roadmap" : {
-
-    }
+    "Trigger Smart Review": {},
+    "View Feedback": {},
+    "View Roadmap": {}
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

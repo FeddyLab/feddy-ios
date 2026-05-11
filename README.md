@@ -306,7 +306,7 @@ Manual override always wins over the auto-detected snapshot. Both persist across
 
 ### Custom Boards & i18n
 
-The two SDK-shipped system boards (`features` / `bugs`) come pre-translated in 5 locales (en / es / ja / de / fr) and are picked automatically based on the device locale. The bundled views fetch the workspace's full board set from `GET /v1/boards` (1 h cached) so any custom board you create in the dashboard appears without redeploying the app:
+The two SDK-shipped system boards (`features` / `bugs`) come pre-translated in 7 locales (en / zh-Hans / zh-Hant / es / ja / de / fr) and are picked automatically based on the device locale. The bundled views fetch the workspace's full board set from `GET /v1/boards` (1 h cached) so any custom board you create in the dashboard appears without redeploying the app:
 
 ```swift
 RequestComposeView()    // boards fetched in the background
@@ -366,7 +366,7 @@ let boards = try await Feddy.fetchBoards()    // for custom UIs
 - **Cross-Platform**: Native support for both iOS and macOS
 - **Anonymous Fallback**: Collect feedback before users sign in via a per-install anonymous token — end users never need a Feddy account
 - **Fire-and-Forget Writes**: `submitRequest` returns immediately — no `try` / `await` boilerplate; reads (`fetchRequests` / `fetchRequest` / `upvote` / `addComment`) are `async throws` for typed error handling
-- **Localized**: Built-in `en` / `es` / `ja` / `de` / `fr` translations for end-user-facing strings
+- **Localized**: Built-in `en` / `zh-Hans` / `zh-Hant` / `es` / `ja` / `de` / `fr` translations for end-user-facing strings
 - **Open Source**: MIT licensed; no proprietary runtime dependencies
 
 ## License

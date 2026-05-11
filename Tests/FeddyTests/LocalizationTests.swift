@@ -10,7 +10,7 @@ import XCTest
 /// contents by parsing the `.xcstrings` JSON directly. That catches dropped
 /// translations and missing locales, which are the realistic regressions.
 final class LocalizationTests: XCTestCase {
-    private static let expectedLocales: Set<String> = ["en", "es", "ja", "de", "fr"]
+    private static let expectedLocales: Set<String> = ["en", "zh-Hans", "zh-Hant", "es", "ja", "de", "fr"]
 
     func test_catalogShipsInResourceBundle() {
         XCTAssertNotNil(
