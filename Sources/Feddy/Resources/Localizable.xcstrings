@@ -1432,80 +1432,116 @@
         }
       }
     },
-    "feddy.smartReview.prompt.cancel": {
-      "comment": "Dismiss action on the SmartReview pre-prompt sheet.",
+    "feddy.smartReview.step1.dislike": {
+      "comment": "Step 1 negative button. Routes to private feedback compose (the review shield).",
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nicht jetzt"
+            "value": "Nicht wirklich"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Not now"
+            "value": "Not really"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ahora no"
+            "value": "La verdad no"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pas maintenant"
+            "value": "Pas vraiment"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "今はしない"
+            "value": "あまり…"
           }
         }
       }
     },
-    "feddy.smartReview.prompt.subtitle": {
-      "comment": "Subtitle below the SmartReview pre-prompt title, instructing the user to tap a star.",
+    "feddy.smartReview.step1.like": {
+      "comment": "Step 1 affirmative button. Transitions the sheet to the step 2 confirmation.",
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tippe auf einen Stern, um deine Erfahrung zu bewerten."
+            "value": "Mir gefällt sie"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tap a star to rate your experience."
+            "value": "I like it"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toca una estrella para valorar tu experiencia."
+            "value": "Me gusta"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Appuyez sur une étoile pour évaluer votre expérience."
+            "value": "J'aime bien"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "星をタップして体験を評価してください。"
+            "value": "気に入ってる"
           }
         }
       }
     },
-    "feddy.smartReview.prompt.title": {
-      "comment": "Title of the SmartReview pre-prompt sheet shown before the system review prompt.",
+    "feddy.smartReview.step1.subtitle": {
+      "comment": "Supporting copy below the step 1 title that softens the ask.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine ehrliche Meinung hilft uns weiter."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your honest take helps shape what we build next."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu opinión sincera nos ayuda a mejorar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre avis sincère nous aide à avancer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "率直なご意見が今後の改善につながります。"
+          }
+        }
+      }
+    },
+    "feddy.smartReview.step1.title": {
+      "comment": "Title of step 1 of the SmartReview pre-prompt sheet.",
       "extractionState": "manual",
       "localizations": {
         "de": {
@@ -1540,38 +1576,146 @@
         }
       }
     },
-    "feddy.smartReview.star.a11y": {
-      "comment": "VoiceOver label for each star button in the SmartReview pre-prompt sheet. %lld is the star count (1...5).",
+    "feddy.smartReview.step2.confirm": {
+      "comment": "Step 2 affirmative button. Invokes SKStoreReviewController.",
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld Sterne geben"
+            "value": "Klar"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rate %lld star(s)"
+            "value": "Sure"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Valorar con %lld estrellas"
+            "value": "Claro"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Noter %lld étoiles"
+            "value": "Bien sûr"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "星 %lld 個で評価"
+            "value": "もちろん"
+          }
+        }
+      }
+    },
+    "feddy.smartReview.step2.dismiss": {
+      "comment": "Step 2 dismiss button. User liked the app but does not want to rate right now.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht jetzt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora no"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas maintenant"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今はしない"
+          }
+        }
+      }
+    },
+    "feddy.smartReview.step2.subtitle": {
+      "comment": "Supporting copy below the step 2 title, reassuring brevity.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dauert nur einen Moment."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It only takes a moment."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo te llevará un momento."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cela ne prend qu'un instant."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ほんの一瞬で終わります。"
+          }
+        }
+      }
+    },
+    "feddy.smartReview.step2.title": {
+      "comment": "Title of step 2, asking the user to confirm they want to leave an App Store rating now.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Magst du uns im App Store bewerten?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mind rating us on the App Store?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Te animas a valorarnos en la App Store?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voudriez-vous nous noter sur l'App Store ?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Store で評価していただけますか？"
           }
         }
       }

@@ -11,8 +11,9 @@ import StoreKit
 /// to find a presentation host, evaluates the rule engine against the
 /// store, and either:
 ///
-/// - Presents ``SmartReviewSheet`` and routes the rating outcome
-///   (≥4 → system review prompt, ≤3 → ``RequestComposeView``); or
+/// - Presents ``SmartReviewSheet`` (two-step like / dislike) and
+///   routes the outcome — like + confirm → system review prompt,
+///   dislike → ``RequestComposeView``; or
 /// - Logs the skip reason from the engine and returns silently.
 ///
 /// `inFlight` is a process-wide latch that prevents the sheet from
@@ -20,7 +21,7 @@ import StoreKit
 /// ``Feddy/requestReviewIfAppropriate(boardKey:)`` from multiple
 /// callbacks in quick succession (e.g. a save-success handler that
 /// fires twice). The latch releases on every terminal path —
-/// dismiss, rating, system review trigger, presentation failure.
+/// dismiss, confirmed routing, presentation failure.
 @available(iOS 15.0, *)
 @MainActor
 enum SmartReviewPresenter {
@@ -69,47 +70,76 @@ enum SmartReviewPresenter {
         }
 
         let sheet = SmartReviewSheet(
-            onRated: { stars in
+            onLiked: {
+                // Non-terminal: user tapped "like" in step 1. The
+                // sheet stays on screen and transitions internally to
+                // step 2. Record engagement (cooldown bookkeeping)
+                // and the `liked` funnel event here so we still get
+                // the signal if the user later dismisses step 2.
                 store.markShown(at: Date())
                 ReviewPromptEventLogger.log(
-                    stage: .rated,
-                    rating: stars,
+                    stage: .liked,
                     trigger: trigger,
                     client: client
                 )
-                if stars >= 4 {
-                    triggerSystemReview(from: presenter)
-                    ReviewPromptEventLogger.log(
-                        stage: .routedStore,
-                        rating: stars,
-                        trigger: trigger,
-                        client: client
-                    )
-                } else {
-                    presentCompose(from: presenter, boardKey: boardKey)
-                    ReviewPromptEventLogger.log(
-                        stage: .routedFeedback,
-                        rating: stars,
-                        trigger: trigger,
-                        client: client
-                    )
-                }
+            },
+            onDisliked: {
+                store.markShown(at: Date())
+                ReviewPromptEventLogger.log(
+                    stage: .disliked,
+                    trigger: trigger,
+                    client: client
+                )
+                presentCompose(from: presenter, boardKey: boardKey)
+                ReviewPromptEventLogger.log(
+                    stage: .routedFeedback,
+                    trigger: trigger,
+                    client: client
+                )
                 release()
             },
-            onCancel: {
-                // Cancel does NOT call markShown — the user never saw
-                // the actual review UI, so cooldown / yearly cap stay
-                // untouched. We also don't log a wire event here;
-                // `shown` already covered "we offered the prompt"
-                // and a missing `rated` is itself the cancel signal
-                // when reading the funnel.
+            onStoreConfirmed: {
+                triggerSystemReview(from: presenter)
+                ReviewPromptEventLogger.log(
+                    stage: .routedStore,
+                    trigger: trigger,
+                    client: client
+                )
+                release()
+            },
+            onStoreDismissed: {
+                // User reached step 2 but declined to rate. The
+                // `liked` engagement was already recorded; just log
+                // the funnel terminus.
+                ReviewPromptEventLogger.log(
+                    stage: .dismissedStoreConfirm,
+                    trigger: trigger,
+                    client: client
+                )
+                release()
+            },
+            onSheetDismissedBeforeChoice: {
+                // Drag-away on step 1. Do NOT call markShown — the
+                // user never engaged with the rating UI, so cooldown
+                // / yearly cap stay untouched.
+                ReviewPromptEventLogger.log(
+                    stage: .dismissed,
+                    trigger: trigger,
+                    client: client
+                )
                 release()
             }
         )
         let host = UIHostingController(rootView: sheet)
         host.modalPresentationStyle = .formSheet
         if #available(iOS 16.0, *) {
-            host.sheetPresentationController?.detents = [.medium()]
+            // Custom detent sized to the two-button content. `.medium()`
+            // (~50% of screen) was for the legacy 5-star UI and leaves a
+            // big empty area under the buttons in the new design.
+            let fit = UISheetPresentationController.Detent.custom(
+                identifier: .init("feddy.smartReview.fit")
+            ) { _ in 260 }
+            host.sheetPresentationController?.detents = [fit]
             host.sheetPresentationController?.prefersGrabberVisible = true
         }
         presenter.present(host, animated: true) {

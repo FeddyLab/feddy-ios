@@ -13,17 +13,19 @@ extension Feddy {
     /// - At most 3 presentations in any rolling 365-day window
     ///   (matches Apple's own throttle)
     ///
-    /// If all gates pass, the SDK shows a 5-star pre-prompt sheet:
+    /// If all gates pass, the SDK shows a two-step pre-prompt sheet:
     ///
-    /// - **≥ 4 stars** → triggers the system review prompt via
-    ///   `SKStoreReviewController`. The 5-star App Store action is
-    ///   handed to Apple's UI; the SDK never sees the rating the
-    ///   user types into the App Store sheet.
-    /// - **≤ 3 stars** → presents ``RequestComposeView`` so the
-    ///   feedback is captured privately in the host workspace
-    ///   instead of as a public 1-3 star App Store review. This is
-    ///   the "review shield" — keeps low ratings off the App Store
-    ///   and turns them into actionable bug reports.
+    /// 1. **"Enjoying this app?"** with two buttons. Tapping the
+    ///    negative answer routes immediately to
+    ///    ``RequestComposeView`` so the feedback is captured
+    ///    privately in the host workspace instead of as a public
+    ///    1-star App Store review (the "review shield").
+    /// 2. **"Mind rating us?"** appears only after the user picks
+    ///    the positive answer. Tapping the affirmative
+    ///    call-to-action invokes `SKStoreReviewController`. The
+    ///    second step guards Apple's three-per-year quota so a user
+    ///    who picked "like" but isn't actually about to rate doesn't
+    ///    burn the prompt.
     ///
     /// Fire-and-forget: returns immediately. No-op if `configure`
     /// has not yet been called or if any gate fails (a console line

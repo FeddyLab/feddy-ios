@@ -1,30 +1,36 @@
 import Foundation
 
-/// Funnel telemetry for Smart Review. Four wire stages match the
-/// server schema (`feddy-api/src/ingest/review-prompt-events.ts`):
+/// Funnel telemetry for Smart Review. Wire stages match the server
+/// schema (`feddy-api/src/ingest/review-prompt-events.ts`):
 ///
-/// - `shown` — sheet first appears (no rating yet).
-/// - `rated` — user picks a star (1...5). Carries the rating.
-/// - `routed_store` — user picked ≥4 and was forwarded to
-///   `SKStoreReviewController`. Carries the rating.
-/// - `routed_feedback` — user picked ≤3 and was forwarded to
-///   ``RequestComposeView`` for private capture. Carries the rating.
+/// - `shown` — sheet first appears (no choice yet).
+/// - `liked` — user picked "like" in step 1.
+/// - `disliked` — user picked "not really" in step 1.
+/// - `routed_store` — user confirmed in step 2 and
+///   `SKStoreReviewController` was invoked.
+/// - `routed_feedback` — user picked "not really" and was forwarded
+///   to ``RequestComposeView`` for private capture.
+/// - `dismissed_store_confirm` — user reached step 2 then declined
+///   ("Not now" or drag-away).
+/// - `dismissed` — user closed the sheet on step 1 without choosing.
 ///
 /// Fire-and-forget: any network or encoding failure is logged and
 /// dropped. Funnel telemetry must never affect the user's prompt
 /// experience (no retries, no offline queue, no thrown errors).
 enum ReviewPromptEventStage: String {
     case shown
-    case rated
+    case liked
+    case disliked
     case routedStore = "routed_store"
     case routedFeedback = "routed_feedback"
+    case dismissedStoreConfirm = "dismissed_store_confirm"
+    case dismissed
 }
 
 enum ReviewPromptEventLogger {
     @available(iOS 15.0, macOS 12.0, *)
     static func log(
         stage: ReviewPromptEventStage,
-        rating: Int? = nil,
         trigger: String? = nil,
         client: FeddyClient
     ) {
@@ -33,7 +39,6 @@ enum ReviewPromptEventLogger {
             anonymousToken:
                 client.lastExternalUserId == nil ? client.anonymousToken : nil,
             stage: stage.rawValue,
-            rating: rating,
             trigger: trigger
         )
         Task {
@@ -55,14 +60,12 @@ private struct EventBody: Encodable {
     let externalUserId: String?
     let anonymousToken: String?
     let stage: String
-    let rating: Int?
     let trigger: String?
 
     enum CodingKeys: String, CodingKey {
         case externalUserId = "external_user_id"
         case anonymousToken = "anonymous_token"
         case stage
-        case rating
         case trigger
     }
 }

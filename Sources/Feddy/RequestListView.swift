@@ -77,15 +77,7 @@ public struct RequestListView: View {
                         Button {
                             dismiss()
                         } label: {
-                            // Mirrors Apple's own sheet close (Mail
-                            // compose, Settings) — filled circle with
-                            // hierarchical secondary fill reads as
-                            // "dismiss this sheet" instead of a bare
-                            // glyph floating in the nav bar.
-                            Image(systemName: "xmark.circle.fill")
-                                .symbolRenderingMode(.hierarchical)
-                                .foregroundStyle(.secondary)
-                                .font(.title2)
+                            Image(systemName: "xmark")
                         }
                         .accessibilityLabel(
                             Localization.string("feddy.action.cancel")
