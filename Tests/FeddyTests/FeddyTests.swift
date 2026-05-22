@@ -243,4 +243,14 @@ final class FeddyNotConfiguredTests: XCTestCase {
         // configure should log + return cleanly, no throw, no crash.
         Feddy.identify(userId: "anyone")
     }
+
+    @available(iOS 15.0, *)
+    @MainActor
+    func test_publicRequestSystemReviewDirect_withoutConfigure_doesNotCrash() {
+        Feddy.reset()
+        // Same fire-and-forget contract as identify — should print to
+        // console and return cleanly without invoking SKStoreReviewController.
+        Feddy.requestSystemReviewDirect(trigger: "test_trigger")
+        Feddy.requestSystemReviewDirect()
+    }
 }

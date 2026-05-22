@@ -239,6 +239,32 @@ let posted = try await Feddy.addComment(requestId: "req_xyz", body: "Looking for
 
 All read methods are `async throws`; errors surface as `FeddyError.network` or `FeddyError.http(status:code:message:)` so the caller can switch on the server's `code` string for typed handling.
 
+## Review Prompts
+
+Two complementary ways to ask users for an App Store rating. Pick per moment, not per app.
+
+### Smart Review (shield flow)
+
+Default for moments where you're **not sure** the user is happy. A pre-prompt asks "Enjoying this app?" first; a negative answer routes silently to your `RequestComposeView` so the user never reaches the App Store with a 1-star review. A positive answer leads to `SKStoreReviewController`.
+
+```swift
+// Onboarding wrapped up, save succeeded, level cleared, etc.
+Feddy.requestReviewIfAppropriate(trigger: "task_50_complete")
+```
+
+Built-in gates: 7 days since install, 5 cumulative sessions, 90-day cooldown, max 3 prompts per rolling year (matches Apple's own throttle). Override these per-workspace in the dashboard.
+
+### System-Direct Review (bypass)
+
+For moments where you've **already decided** the user is happy — most commonly the instant a paywall purchase completes. Skips the pre-prompt and invokes `SKStoreReviewController` immediately.
+
+```swift
+// Immediately inside your StoreKit purchase-success handler
+Feddy.requestSystemReviewDirect(trigger: "paywall_purchase_success")
+```
+
+No SDK gates (Apple's opaque per-app yearly cap still applies). No private feedback fallback. Both APIs report `trigger`-tagged events to your dashboard funnel, so you can compare conversion by call site.
+
 ## Advanced Usage
 
 ### Anonymous Tracking

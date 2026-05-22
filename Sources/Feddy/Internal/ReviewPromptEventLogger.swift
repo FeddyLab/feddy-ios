@@ -13,6 +13,10 @@ import Foundation
 /// - `dismissed_store_confirm` — user reached step 2 then declined
 ///   ("Not now" or drag-away).
 /// - `dismissed` — user closed the sheet on step 1 without choosing.
+/// - `system_direct` — host bypassed the review shield via
+///   ``Feddy/requestSystemReviewDirect(trigger:)`` and the SDK
+///   invoked `SKStoreReviewController` directly. Has no preceding
+///   `shown` / `liked` / `disliked` row in the same flow.
 ///
 /// Fire-and-forget: any network or encoding failure is logged and
 /// dropped. Funnel telemetry must never affect the user's prompt
@@ -25,6 +29,7 @@ enum ReviewPromptEventStage: String {
     case routedFeedback = "routed_feedback"
     case dismissedStoreConfirm = "dismissed_store_confirm"
     case dismissed
+    case systemDirect = "system_direct"
 }
 
 enum ReviewPromptEventLogger {
