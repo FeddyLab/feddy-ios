@@ -37,9 +37,15 @@ struct Part: Decodable, Identifiable {
     let authorType: String
     let body: String
     let createdAt: Date
+    let authorName: String?
+    let authorAvatarUrl: String?
 
     var id: Int { seq }
     var isFromContact: Bool { authorType == "contact" }
+
+    /// Consecutive messages by the same author render as one visual run
+    /// (avatar and name shown once).
+    var authorRunKey: String { "\(authorType):\(authorName ?? "")" }
 }
 
 struct ConversationDetail: Decodable {

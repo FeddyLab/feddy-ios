@@ -12,7 +12,8 @@ final class ModelsTests: XCTestCase {
           "meta": null,
           "parts": [
             { "seq": 1, "author_type": "contact", "body": "Hello", "created_at": "2026-08-19T07:01:02.123Z" },
-            { "seq": 2, "author_type": "teammate", "body": "Hi!", "created_at": "2026-08-19T07:05:00Z" }
+            { "seq": 2, "author_type": "teammate", "body": "Hi!", "created_at": "2026-08-19T07:05:00Z",
+              "author_name": "Yu", "author_avatar_url": "https://example.com/yu.png" }
           ]
         }
         """
@@ -21,7 +22,11 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(detail.lastSeq, 2)
         XCTAssertEqual(detail.parts.count, 2)
         XCTAssertTrue(detail.parts[0].isFromContact)
+        XCTAssertNil(detail.parts[0].authorName)
         XCTAssertFalse(detail.parts[1].isFromContact)
+        XCTAssertEqual(detail.parts[1].authorName, "Yu")
+        XCTAssertEqual(detail.parts[1].authorAvatarUrl, "https://example.com/yu.png")
+        XCTAssertNotEqual(detail.parts[0].authorRunKey, detail.parts[1].authorRunKey)
     }
 
     func testDecodesConversationListWithUnread() throws {

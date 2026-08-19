@@ -26,9 +26,14 @@ struct ConversationDetailView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 10) {
-                    ForEach(model.parts) { part in
-                        MessageBubble(part: part, accent: accent)
-                            .id(part.seq)
+                    ForEach(Array(model.parts.enumerated()), id: \.element.seq) { index, part in
+                        MessageBubble(
+                            part: part,
+                            accent: accent,
+                            startsRun: index == 0
+                                || model.parts[index - 1].authorRunKey != part.authorRunKey
+                        )
+                        .id(part.seq)
                     }
                 }
                 .padding(16)
@@ -110,25 +115,76 @@ struct ConversationDetailView: View {
 private struct MessageBubble: View {
     let part: Part
     let accent: Color
+    let startsRun: Bool
+
+    private var authorLabel: String? {
+        guard !part.isFromContact, startsRun else { return nil }
+        return part.authorName ?? FeddyCore.shared.config?.brand.name
+    }
 
     var body: some View {
         VStack(alignment: part.isFromContact ? .trailing : .leading, spacing: 3) {
-            Text(part.body)
-                .font(.subheadline)
-                .padding(.horizontal, 13)
-                .padding(.vertical, 9)
-                .background(part.isFromContact ? accent : Color(.secondarySystemGroupedBackground))
-                .foregroundStyle(part.isFromContact ? Color.white : Color.primary)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            if let authorLabel {
+                Text(authorLabel)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .padding(.leading, 34)
+            }
+            HStack(alignment: .top, spacing: 8) {
+                if !part.isFromContact {
+                    avatar
+                }
+                Text(part.body)
+                    .font(.subheadline)
+                    .padding(.horizontal, 13)
+                    .padding(.vertical, 9)
+                    .background(
+                        part.isFromContact ? accent : Color(.secondarySystemGroupedBackground)
+                    )
+                    .foregroundStyle(part.isFromContact ? Color.white : Color.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
             Text(Self.timeFormatter.string(from: part.createdAt))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
+                .padding(.leading, part.isFromContact ? 0 : 34)
         }
         .frame(
             maxWidth: .infinity,
             alignment: part.isFromContact ? .trailing : .leading
         )
         .padding(part.isFromContact ? .leading : .trailing, 48)
+    }
+
+    @ViewBuilder
+    private var avatar: some View {
+        if startsRun {
+            if let urlString = part.authorAvatarUrl, let url = URL(string: urlString) {
+                AsyncImage(url: url) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    initialsCircle
+                }
+                .frame(width: 26, height: 26)
+                .clipShape(Circle())
+            } else {
+                initialsCircle
+            }
+        } else {
+            Color.clear.frame(width: 26, height: 26)
+        }
+    }
+
+    private var initialsCircle: some View {
+        let name = part.authorName ?? FeddyCore.shared.config?.brand.name ?? "?"
+        return Circle()
+            .fill(accent)
+            .frame(width: 26, height: 26)
+            .overlay(
+                Text(String(name.prefix(1)).uppercased())
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.white)
+            )
     }
 
     private static let timeFormatter: DateFormatter = {
