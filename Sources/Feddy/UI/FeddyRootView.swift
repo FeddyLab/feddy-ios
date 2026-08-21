@@ -108,6 +108,7 @@ struct FeddyRootView: View {
     /// Opening the new thread waits for the compose sheet to finish
     /// dismissing, so the push animates instead of being swallowed, and
     /// waits for the reload so the row the link binds to exists.
+    @MainActor
     private func openPendingConversation() {
         guard let id = pendingOpenId else { return }
         pendingOpenId = nil
