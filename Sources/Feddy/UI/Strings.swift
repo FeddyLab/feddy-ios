@@ -24,6 +24,7 @@ enum Strings {
     static let errorGeneric = "Something went wrong. Please try again."
     static let rateLimited = "Too many messages. Please try again later."
     static let close = "Close"
+    static let cancel = "Cancel"
     static let notificationBody = "You have a new reply. Tap to read it."
     static let justNow = "Just now"
 }

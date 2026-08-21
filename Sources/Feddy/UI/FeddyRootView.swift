@@ -6,7 +6,8 @@ struct FeddyRootView: View {
 
     @StateObject private var model = ConversationListModel()
     @State private var showCompose = false
-    @State private var pushedConversationId: String?
+    @State private var selectedConversationId: String?
+    @State private var pendingOpenId: String?
     @Environment(\.presentationMode) private var presentationMode
 
     private var accent: Color { Theme.accent(FeddyCore.shared.config) }
@@ -18,7 +19,12 @@ struct FeddyRootView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button(Strings.close) { presentationMode.wrappedValue.dismiss() }
+                        Button {
+                            presentationMode.wrappedValue.dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                        }
+                        .accessibilityLabel(Strings.close)
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
@@ -29,21 +35,28 @@ struct FeddyRootView: View {
                         .accessibilityLabel(Strings.newMessage)
                     }
                 }
-                .background(navigationLinks)
         }
         .navigationViewStyle(.stack)
-        .accentColor(accent)
-        .sheet(isPresented: $showCompose) {
+        .sheet(isPresented: $showCompose, onDismiss: openPendingConversation) {
             NewConversationView { conversationId in
+                pendingOpenId = conversationId
                 showCompose = false
-                pushedConversationId = conversationId
-                Task { await model.load() }
             }
         }
         .task {
             await FeddyCore.shared.loadConfig()
             await model.load()
             if startInCompose { showCompose = true }
+        }
+        .onChange(of: selectedConversationId) { id in
+            if let id {
+                // Clear the row's dot immediately; the detail view reports
+                // the read to the server as soon as the thread is on screen.
+                model.markReadLocally(id)
+            } else {
+                // Back from a thread: pick up read state and any new replies.
+                Task { await model.load() }
+            }
         }
         .onDisappear { FeddyCore.shared.refresh() }
     }
@@ -62,12 +75,11 @@ struct FeddyRootView: View {
 
     private var conversationList: some View {
         List(model.conversations) { conversation in
-            Button {
-                pushedConversationId = conversation.id
+            NavigationLink(tag: conversation.id, selection: $selectedConversationId) {
+                ConversationDetailView(conversationId: conversation.id)
             } label: {
                 ConversationRow(conversation: conversation, accent: accent)
             }
-            .buttonStyle(.plain)
         }
         .listStyle(.plain)
         .refreshable { await model.load() }
@@ -93,24 +105,15 @@ struct FeddyRootView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    /// Single programmatic push target: rows and the compose flow both
-    /// navigate by setting pushedConversationId.
-    @ViewBuilder
-    private var navigationLinks: some View {
-        if let id = pushedConversationId {
-            NavigationLink(
-                isActive: Binding(
-                    get: { pushedConversationId != nil },
-                    set: { active in
-                        if !active { pushedConversationId = nil }
-                    }
-                )
-            ) {
-                ConversationDetailView(conversationId: id)
-            } label: {
-                EmptyView()
-            }
-            .hidden()
+    /// Opening the new thread waits for the compose sheet to finish
+    /// dismissing, so the push animates instead of being swallowed, and
+    /// waits for the reload so the row the link binds to exists.
+    private func openPendingConversation() {
+        guard let id = pendingOpenId else { return }
+        pendingOpenId = nil
+        Task {
+            await model.load()
+            selectedConversationId = id
         }
     }
 }
@@ -146,12 +149,8 @@ private struct ConversationRow: View {
                     .fill(accent)
                     .frame(width: 9, height: 9)
             }
-            Image(systemName: "chevron.right")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.tertiary)
         }
         .padding(.vertical, 4)
-        .contentShape(Rectangle())
     }
 
     private static let relativeFormatter: RelativeDateTimeFormatter = {

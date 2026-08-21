@@ -31,73 +31,94 @@ struct NewConversationView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(Strings.close) { presentationMode.wrappedValue.dismiss() }
+                    // A form sheet cancels; only the root panel closes.
+                    Button(Strings.cancel) { presentationMode.wrappedValue.dismiss() }
                 }
             }
         }
         .navigationViewStyle(.stack)
-        .accentColor(accent)
     }
 
     private var composeForm: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             if !categories.isEmpty {
-                Picker(Strings.category, selection: $model.categoryCode) {
-                    Text(Strings.categoryNone).tag(String?.none)
-                    ForEach(categories, id: \.code) { category in
-                        Text(category.label).tag(String?.some(category.code))
-                    }
-                }
-                .pickerStyle(.menu)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Color(.secondarySystemGroupedBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                categoryField
             }
-
-            ZStack(alignment: .topLeading) {
-                TextEditor(text: $model.text)
-                    .frame(minHeight: 140)
-                    .padding(8)
-                    .background(Color(.secondarySystemGroupedBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                if model.text.isEmpty {
-                    Text(Strings.composePlaceholder)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 16)
-                        .allowsHitTesting(false)
-                }
-            }
-
+            editor
             if let error = model.submitError {
                 Text(error)
                     .font(.footnote)
                     .foregroundStyle(.red)
             }
-
-            Button {
-                Task { await model.submit() }
-            } label: {
-                if model.isSubmitting {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                } else {
-                    Text(Strings.send)
-                        .frame(maxWidth: .infinity)
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(accent)
-            .disabled(
-                model.isSubmitting
-                    || model.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            )
-
-            Spacer()
         }
         .padding(16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(.systemGroupedBackground))
+        .safeAreaInset(edge: .bottom, spacing: 0) { sendBar }
+    }
+
+    private var categoryField: some View {
+        HStack {
+            Text(Strings.category)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 12)
+            Picker(Strings.category, selection: $model.categoryCode) {
+                Text(Strings.categoryNone).tag(String?.none)
+                ForEach(categories, id: \.code) { category in
+                    Text(category.label).tag(String?.some(category.code))
+                }
+            }
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .tint(.primary)
+        }
+        .padding(.leading, 14)
+        .padding(.trailing, 6)
+        .padding(.vertical, 4)
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private var editor: some View {
+        ZStack(alignment: .topLeading) {
+            TextEditor(text: $model.text)
+                .padding(.horizontal, 9)
+                .padding(.vertical, 8)
+                .frame(maxHeight: .infinity)
+                .background(Color(.secondarySystemGroupedBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            if model.text.isEmpty {
+                Text(Strings.composePlaceholder)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 16)
+                    .allowsHitTesting(false)
+            }
+        }
+    }
+
+    private var sendBar: some View {
+        Button {
+            Task { await model.submit() }
+        } label: {
+            if model.isSubmitting {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+            } else {
+                Text(Strings.send)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .tint(accent)
+        .disabled(
+            model.isSubmitting
+                || model.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        )
+        .padding(16)
+        .background(.bar)
     }
 }
 

@@ -23,7 +23,7 @@ struct ConversationSummary: Decodable, Identifiable {
     let status: String
     let lastSeq: Int
     let lastMessageAt: Date
-    let seenSeq: Int
+    var seenSeq: Int
 
     var hasUnread: Bool { lastSeq > seenSeq }
 }

@@ -7,10 +7,17 @@ final class ConversationListModel: ObservableObject {
     @Published var isLoading = false
     @Published var loadFailed = false
 
+    private var hasLoaded = false
+
     func load() async {
         guard let client = FeddyCore.shared.client else { return }
-        if conversations.isEmpty { isLoading = true }
-        defer { isLoading = false }
+        // Only the very first load swaps the whole screen for a spinner;
+        // later refreshes update in place.
+        if !hasLoaded { isLoading = true }
+        defer {
+            isLoading = false
+            hasLoaded = true
+        }
         do {
             conversations = try await client.conversations().conversations
             loadFailed = false
@@ -18,12 +25,20 @@ final class ConversationListModel: ObservableObject {
             loadFailed = conversations.isEmpty
         }
     }
+
+    /// Opening a thread clears its unread dot without waiting for the
+    /// round trip; the detail view reports the read to the server.
+    func markReadLocally(_ conversationId: String) {
+        guard let index = conversations.firstIndex(where: { $0.id == conversationId }) else { return }
+        conversations[index].seenSeq = conversations[index].lastSeq
+    }
 }
 
 @MainActor
 final class ConversationDetailModel: ObservableObject {
     @Published private(set) var conversationId: String
     @Published var parts: [Part] = []
+    @Published var subject: String?
     @Published var status = "open"
     @Published var isSending = false
     @Published var sendError: String?
@@ -42,6 +57,7 @@ final class ConversationDetailModel: ObservableObject {
         guard let client = FeddyCore.shared.client else { return }
         guard let detail = try? await client.conversation(id: conversationId) else { return }
         parts = detail.parts
+        subject = detail.subject
         status = detail.status
         await reportRead()
     }
@@ -58,6 +74,7 @@ final class ConversationDetailModel: ObservableObject {
         guard let client = FeddyCore.shared.client else { return }
         guard let fresh = try? await client.conversation(id: conversationId, sinceSeq: maxSeq)
         else { return }
+        subject = fresh.subject ?? subject
         status = fresh.status
         guard !fresh.parts.isEmpty else { return }
         merge(fresh.parts)
