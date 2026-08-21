@@ -4,7 +4,7 @@ import UIKit
 #endif
 
 enum DeviceContext {
-    static let sdkVersion = "0.1.0"
+    static let sdkVersion = "0.1.1"
 
     /// Context keys for platform "ios" (server renders them by a fixed
     /// key order; unknown keys are listed verbatim).
