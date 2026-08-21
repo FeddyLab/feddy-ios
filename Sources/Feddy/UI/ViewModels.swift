@@ -26,6 +26,16 @@ final class ConversationListModel: ObservableObject {
         }
     }
 
+    /// Keeps the list fresh while the panel is open: without this a reply
+    /// arriving mid-session only shows up on a manual refresh.
+    func pollLoop() async {
+        while !Task.isCancelled {
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
+            guard !Task.isCancelled else { return }
+            await load()
+        }
+    }
+
     /// Opening a thread clears its unread dot without waiting for the
     /// round trip; the detail view reports the read to the server.
     func markReadLocally(_ conversationId: String) {

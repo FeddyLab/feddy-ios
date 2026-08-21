@@ -47,6 +47,7 @@ struct FeddyRootView: View {
             await FeddyCore.shared.loadConfig()
             await model.load()
             if startInCompose { showCompose = true }
+            await model.pollLoop()
         }
         .onChange(of: selectedConversationId) { id in
             if let id {
