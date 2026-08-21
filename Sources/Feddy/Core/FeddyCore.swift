@@ -15,6 +15,12 @@ final class FeddyCore: @unchecked Sendable {
     private let stateQueue = DispatchQueue(label: "app.feddy.sdk.state")
     private var notifiedSeqs: [String: Int]
     private var refreshTask: Task<Void, Never>?
+    private var pollTask: Task<Void, Never>?
+
+    /// Spec 5.1: the entry-point badge is fed by a foreground poll as well
+    /// as by explicit refreshes. iOS suspends the task in the background,
+    /// so this costs nothing while the app is away.
+    private static let pollInterval: UInt64 = 30_000_000_000
 
     private static let notifiedSeqsKey = "feddy.notified_seqs"
     private static let emailKnownKey = "feddy.email_known"
@@ -34,6 +40,18 @@ final class FeddyCore: @unchecked Sendable {
         client = APIClient(apiKey: apiKey, baseURL: apiURL, anonId: AnonIdStore.anonId())
         Task { await self.loadConfig() }
         refresh()
+        startPolling()
+    }
+
+    private func startPolling() {
+        pollTask?.cancel()
+        pollTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: Self.pollInterval)
+                guard !Task.isCancelled, let self else { return }
+                self.refresh()
+            }
+        }
     }
 
     func loadConfig() async {
