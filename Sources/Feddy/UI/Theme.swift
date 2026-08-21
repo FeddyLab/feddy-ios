@@ -6,6 +6,12 @@ enum Theme {
     /// tint rather than imposing one of its own.
     static let fallbackAccent = Color.accentColor
 
+    /// Messages-style ladder: a plain page with raised surfaces on top.
+    /// The grouped ladder washes the whole screen in (242, 242, 247),
+    /// which reads as a purple tint at full-screen size.
+    static let page = Color(.systemBackground)
+    static let surface = Color(.systemGray6)
+
     /// Brand accent from the project config, falling back to the host tint.
     static func accent(_ config: FeddyConfig?) -> Color {
         guard let hex = config?.brand.color, let color = Color(hex: hex) else {
@@ -13,29 +19,23 @@ enum Theme {
         }
         return color
     }
-}
 
-extension Theme {
-    /// Messages-style ladder: a plain page with raised surfaces on top.
-    /// The grouped ladder washes the whole screen in (242, 242, 247),
-    /// which reads as a purple tint at full-screen size.
-    static let page = Color(.systemBackground)
-    static let surface = Color(.systemGray6)
+    /// Readable text on a solid accent fill. The brand colour is whatever
+    /// hex the developer configured, so a light one needs dark text.
+    static func onAccent(_ config: FeddyConfig?) -> Color {
+        guard let hex = config?.brand.color,
+              let rgb = RGB(hex: hex)
+        else {
+            return .white
+        }
+        return rgb.needsDarkText ? .black : .white
+    }
 }
 
 extension Color {
     init?(hex: String) {
-        var value = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        if value.hasPrefix("#") { value.removeFirst() }
-        if value.count == 3 {
-            value = value.map { "\($0)\($0)" }.joined()
-        }
-        guard value.count == 6, let rgb = UInt64(value, radix: 16) else { return nil }
-        self.init(
-            red: Double((rgb >> 16) & 0xFF) / 255,
-            green: Double((rgb >> 8) & 0xFF) / 255,
-            blue: Double(rgb & 0xFF) / 255
-        )
+        guard let rgb = RGB(hex: hex) else { return nil }
+        self.init(red: rgb.red, green: rgb.green, blue: rgb.blue)
     }
 }
 #endif

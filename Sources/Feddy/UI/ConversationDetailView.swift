@@ -174,9 +174,9 @@ private struct MessageBubble: View {
                     .padding(.horizontal, 13)
                     .padding(.vertical, 9)
                     .background(
-                        part.isFromContact ? accent : Theme.surface
+                        part.isFromContact ? accent.opacity(0.15) : Theme.surface
                     )
-                    .foregroundStyle(part.isFromContact ? Color.white : Color.primary)
+                    .foregroundStyle(Color.primary)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             Text(Self.timeFormatter.string(from: part.createdAt))
@@ -218,7 +218,7 @@ private struct MessageBubble: View {
             .overlay(
                 Text(String(name.prefix(1)).uppercased())
                     .font(.caption2.weight(.bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.onAccent(FeddyCore.shared.config))
             )
     }
 

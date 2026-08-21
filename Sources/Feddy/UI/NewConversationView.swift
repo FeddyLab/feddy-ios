@@ -83,7 +83,11 @@ struct NewConversationView: View {
                             .background(
                                 isSelected ? accent : Theme.surface
                             )
-                            .foregroundStyle(isSelected ? Color.white : Color.primary)
+                            .foregroundStyle(
+                                isSelected
+                                    ? Theme.onAccent(FeddyCore.shared.config)
+                                    : Color.primary
+                            )
                             .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)

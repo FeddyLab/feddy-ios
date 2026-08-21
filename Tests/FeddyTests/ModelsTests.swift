@@ -100,3 +100,22 @@ final class DeviceContextTests: XCTestCase {
         XCTAssertFalse(DeviceContext.modelIdentifier().isEmpty)
     }
 }
+
+final class BrandColorTests: XCTestCase {
+    func testParsesShorthandAndPrefixedHex() {
+        XCTAssertEqual(RGB(hex: "#fff"), RGB(hex: "FFFFFF"))
+        XCTAssertEqual(RGB(hex: " #000000 ")?.luminance, 0)
+    }
+
+    func testRejectsMalformedHex() {
+        XCTAssertNil(RGB(hex: "12345"))
+        XCTAssertNil(RGB(hex: "gggggg"))
+    }
+
+    func testLightBrandColoursAskForDarkText() {
+        XCTAssertTrue(RGB(hex: "#FFEB3B")!.needsDarkText)
+        XCTAssertTrue(RGB(hex: "#FFFFFF")!.needsDarkText)
+        XCTAssertFalse(RGB(hex: "#6366F1")!.needsDarkText)
+        XCTAssertFalse(RGB(hex: "#000000")!.needsDarkText)
+    }
+}
