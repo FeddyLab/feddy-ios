@@ -27,6 +27,12 @@ enum DeviceContext {
     }
 
     static func modelIdentifier() -> String {
+        // uname() reports the host architecture under the simulator, so
+        // prefer the simulated device when one is set.
+        let environment = ProcessInfo.processInfo.environment
+        if let simulated = environment["SIMULATOR_MODEL_IDENTIFIER"], !simulated.isEmpty {
+            return simulated
+        }
         var systemInfo = utsname()
         uname(&systemInfo)
         let mirror = Mirror(reflecting: systemInfo.machine)
