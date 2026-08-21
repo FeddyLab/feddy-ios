@@ -119,34 +119,3 @@ final class BrandColorTests: XCTestCase {
         XCTAssertFalse(RGB(hex: "#000000")!.needsDarkText)
     }
 }
-
-final class BrandTintTests: XCTestCase {
-    private let step = 0.90
-
-    func testEveryHueLandsOnTheSameLightness() {
-        for hex in ["#FFEB3B", "#0A1F44", "#6366F1", "#FF0000", "#00FF88"] {
-            let tint = RGB(hex: hex)!.normalisedLightness(step, maxSaturation: 0.85)
-            XCTAssertEqual(tint.hsl.lightness, step, accuracy: 0.01, hex)
-        }
-    }
-
-    func testHueSurvivesTheTint() {
-        let yellow = RGB(hex: "#FFEB3B")!
-        let tint = yellow.normalisedLightness(step, maxSaturation: 0.85)
-        XCTAssertEqual(tint.hsl.hue, yellow.hsl.hue, accuracy: 0.01)
-        XCTAssertGreaterThan(tint.red, tint.blue)
-    }
-
-    func testSaturationIsCapped() {
-        let neon = RGB(hex: "#00FF00")!
-        XCTAssertEqual(neon.hsl.saturation, 1, accuracy: 0.01)
-        let tint = neon.normalisedLightness(step, maxSaturation: 0.85)
-        XCTAssertLessThanOrEqual(tint.hsl.saturation, 0.86)
-    }
-
-    func testGreyBrandStaysGrey() {
-        let tint = RGB(hex: "#808080")!.normalisedLightness(step, maxSaturation: 0.85)
-        XCTAssertEqual(tint.red, tint.green, accuracy: 0.001)
-        XCTAssertEqual(tint.green, tint.blue, accuracy: 0.001)
-    }
-}

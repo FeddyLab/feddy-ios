@@ -28,18 +28,14 @@ enum Theme {
         return rgb.needsDarkText ? .black : .white
     }
 
-    /// Fill for the contact's own bubble. Lightness is normalised rather
-    /// than faded with an alpha, so every brand colour lands on the same
-    /// readable step in both colour schemes.
-    static func ownBubble(_ config: FeddyConfig?, scheme: ColorScheme) -> Color {
-        guard let rgb = accentComponents(config) else {
-            return scheme == .dark ? Color(.systemGray5) : Color(.systemGray4)
-        }
-        let tint = scheme == .dark
-            ? rgb.normalisedLightness(0.28, maxSaturation: 0.55)
-            : rgb.normalisedLightness(0.90, maxSaturation: 0.85)
-        return Color(red: tint.red, green: tint.green, blue: tint.blue)
-    }
+    /// The contact's own bubble. Deliberately fixed rather than derived
+    /// from the brand colour: the widget sits inside someone else's app,
+    /// and a large tinted surface reads as a claim about that app.
+    static let ownBubble = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.11, green: 0.17, blue: 0.26, alpha: 1)
+            : UIColor(red: 0.91, green: 0.94, blue: 0.99, alpha: 1)
+    })
 
     /// The configured hex when there is one, otherwise whatever the host
     /// app's tint resolves to right now.
