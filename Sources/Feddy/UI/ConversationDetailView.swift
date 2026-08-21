@@ -152,6 +152,8 @@ private struct MessageBubble: View {
     let accent: Color
     let startsRun: Bool
 
+    @Environment(\.colorScheme) private var colorScheme
+
     private var authorLabel: String? {
         guard !part.isFromContact, startsRun else { return nil }
         return part.authorName ?? FeddyCore.shared.config?.brand.name
@@ -174,7 +176,9 @@ private struct MessageBubble: View {
                     .padding(.horizontal, 13)
                     .padding(.vertical, 9)
                     .background(
-                        part.isFromContact ? accent.opacity(0.15) : Theme.surface
+                        part.isFromContact
+                            ? Theme.ownBubble(FeddyCore.shared.config, scheme: colorScheme)
+                            : Theme.surface
                     )
                     .foregroundStyle(Color.primary)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
