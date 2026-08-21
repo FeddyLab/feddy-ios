@@ -15,7 +15,7 @@ struct ConversationDetailView: View {
     var body: some View {
         messageList
             .safeAreaInset(edge: .bottom, spacing: 0) { bottomBar }
-            .navigationTitle(model.subject ?? FeddyCore.shared.config?.brand.name ?? Strings.messages)
+            .navigationTitle(FeddyCore.shared.config?.brand.name ?? Strings.messages)
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await model.loadInitial()

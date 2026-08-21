@@ -21,6 +21,7 @@ enum Strings {
     static let closedNotice =
         "This conversation is closed. Reply within 7 days to continue it; after that a new conversation starts."
     static let statusClosed = "Closed"
+    static let newReply = "New reply"
     static let errorGeneric = "Something went wrong. Please try again."
     static let rateLimited = "Too many messages. Please try again later."
     static let close = "Close"

@@ -2,9 +2,11 @@
 import SwiftUI
 
 enum Theme {
-    static let fallbackAccent = Color(red: 0.31, green: 0.27, blue: 0.90)
+    /// With no brand colour configured the widget borrows the host app's
+    /// tint rather than imposing one of its own.
+    static let fallbackAccent = Color.accentColor
 
-    /// Brand accent from the project config, falling back to indigo.
+    /// Brand accent from the project config, falling back to the host tint.
     static func accent(_ config: FeddyConfig?) -> Color {
         guard let hex = config?.brand.color, let color = Color(hex: hex) else {
             return fallbackAccent

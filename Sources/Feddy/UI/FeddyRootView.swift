@@ -125,10 +125,13 @@ private struct ConversationRow: View {
 
     var body: some View {
         HStack(spacing: 10) {
+            Circle()
+                .fill(conversation.hasUnread ? accent : Color.clear)
+                .frame(width: 8, height: 8)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
                     Text(conversation.subject ?? "…")
-                        .font(.subheadline.weight(.medium))
+                        .font(.subheadline.weight(conversation.hasUnread ? .semibold : .regular))
                         .lineLimit(1)
                     if conversation.status == "closed" {
                         Text(Strings.statusClosed)
@@ -140,16 +143,19 @@ private struct ConversationRow: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                Text(Self.relativeFormatter.localizedString(for: conversation.lastMessageAt, relativeTo: Date()))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 4) {
+                    Text(Self.relativeFormatter.localizedString(for: conversation.lastMessageAt, relativeTo: Date()))
+                        .foregroundStyle(.secondary)
+                    if conversation.hasUnread {
+                        Text("·")
+                            .foregroundStyle(.secondary)
+                        Text(Strings.newReply)
+                            .foregroundStyle(accent)
+                    }
+                }
+                .font(.caption)
             }
-            Spacer()
-            if conversation.hasUnread {
-                Circle()
-                    .fill(accent)
-                    .frame(width: 9, height: 9)
-            }
+            Spacer(minLength: 8)
         }
         .padding(.vertical, 4)
     }
