@@ -11,7 +11,12 @@ struct NewConversationView: View {
     @Environment(\.presentationMode) private var presentationMode
 
     private var accent: Color { Theme.accent(FeddyCore.shared.config) }
-    private var categories: [FeddyConfig.Category] { FeddyCore.shared.config?.categories ?? [] }
+    /// Never empty: a topic is required, so a failed config fetch falls
+    /// back to the seeded set rather than leaving nothing to pick.
+    private var categories: [FeddyConfig.Category] {
+        let configured = FeddyCore.shared.config?.categories ?? []
+        return configured.isEmpty ? FeddyConfig.fallbackCategories : configured
+    }
 
     var body: some View {
         NavigationView {
@@ -152,10 +157,7 @@ struct NewConversationView: View {
         .tint(accent)
         .disabled(
             model.isSubmitting
-                // Required only when the project actually offers topics:
-                // with none configured (or a failed config fetch) this
-                // would lock the user out of submitting entirely.
-                || (!categories.isEmpty && model.categoryCode == nil)
+                || model.categoryCode == nil
                 || model.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         )
         .padding(16)
