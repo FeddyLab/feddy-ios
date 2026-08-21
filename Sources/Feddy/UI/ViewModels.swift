@@ -32,6 +32,10 @@ final class ConversationListModel: ObservableObject {
         while !Task.isCancelled {
             try? await Task.sleep(nanoseconds: 5_000_000_000)
             guard !Task.isCancelled else { return }
+            // A failed config fetch leaves the compose form without topics,
+            // so keep retrying it alongside the list. Once loaded this is
+            // a no-op.
+            await FeddyCore.shared.loadConfig()
             await load()
         }
     }
