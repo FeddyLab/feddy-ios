@@ -13,6 +13,11 @@ enum Theme {
     static let page = Color(.systemBackground)
     static let surface = Color(.systemGray6)
 
+    /// Sheets render in an elevated trait context where the page and the
+    /// surface collapse to nearly the same grey, so interactive surfaces
+    /// carry an explicit border rather than relying on the fill contrast.
+    static let hairline = Color(.separator)
+
     /// Brand accent from the project config, falling back to the host tint.
     static func accent(_ config: FeddyConfig?) -> Color {
         guard let hex = config?.brand.color, let color = Color(hex: hex) else {

@@ -110,6 +110,10 @@ struct ConversationDetailView: View {
                 .padding(.vertical, 8)
                 .background(Theme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .strokeBorder(Theme.hairline, lineWidth: 1)
+                )
             Button(action: send) {
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.system(size: 30))

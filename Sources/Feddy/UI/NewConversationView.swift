@@ -47,7 +47,12 @@ struct NewConversationView: View {
     private var composeForm: some View {
         VStack(alignment: .leading, spacing: 12) {
             if !categories.isEmpty {
-                categoryField
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(Strings.categoryHint)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    categoryField
+                }
             }
             editor
             if let error = model.submitError {
@@ -80,15 +85,20 @@ struct NewConversationView: View {
                             .font(.subheadline)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 7)
-                            .background(
-                                isSelected ? accent : Theme.surface
-                            )
+                            .background(isSelected ? accent : Theme.surface)
                             .foregroundStyle(
                                 isSelected
                                     ? Theme.onAccent(FeddyCore.shared.config)
                                     : Color.primary
                             )
                             .clipShape(Capsule())
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(
+                                        isSelected ? Color.clear : Theme.hairline,
+                                        lineWidth: 1
+                                    )
+                            )
                     }
                     .buttonStyle(.plain)
                 }
@@ -106,6 +116,10 @@ struct NewConversationView: View {
                 .frame(maxHeight: .infinity)
                 .background(Theme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(Theme.hairline, lineWidth: 1)
+                )
             if model.text.isEmpty {
                 Text(Strings.composePlaceholder)
                     .foregroundStyle(.secondary)
