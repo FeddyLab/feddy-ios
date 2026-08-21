@@ -5,6 +5,7 @@ struct ConversationDetailView: View {
     @StateObject private var model: ConversationDetailModel
     @State private var draft = ""
     @State private var emailBannerDismissed = false
+    @FocusState private var replyFocused: Bool
 
     private var accent: Color { Theme.accent(FeddyCore.shared.config) }
 
@@ -17,6 +18,12 @@ struct ConversationDetailView: View {
             .safeAreaInset(edge: .bottom, spacing: 0) { bottomBar }
             .navigationTitle(FeddyCore.shared.config?.brand.name ?? Strings.messages)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button(Strings.done) { replyFocused = false }
+                }
+            }
             .task {
                 await model.loadInitial()
                 await model.pollLoop()
@@ -39,7 +46,13 @@ struct ConversationDetailView: View {
                 }
                 .padding(16)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(
+                Color(.systemGroupedBackground)
+                    .onTapGesture { replyFocused = false }
+            )
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 12).onChanged { _ in replyFocused = false }
+            )
             .onChange(of: model.parts.count) { _ in
                 scrollToBottom(proxy, animated: true)
             }
@@ -86,21 +99,42 @@ struct ConversationDetailView: View {
         !FeddyCore.shared.emailKnown && !emailBannerDismissed && model.hasTeammateReply
     }
 
+    private var canSend: Bool {
+        !model.isSending && !draft.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
     private var composer: some View {
-        HStack(spacing: 8) {
-            TextField(Strings.replyPlaceholder, text: $draft)
-                .textFieldStyle(.roundedBorder)
-                .submitLabel(.send)
-                .onSubmit { send() }
+        HStack(alignment: .bottom, spacing: 8) {
+            replyField
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color(.secondarySystemGroupedBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             Button(action: send) {
                 Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 28))
-                    .foregroundStyle(accent)
+                    .font(.system(size: 30))
+                    .foregroundStyle(canSend ? accent : Color(.tertiaryLabel))
             }
-            .disabled(model.isSending || draft.trimmingCharacters(in: .whitespaces).isEmpty)
+            .disabled(!canSend)
             .accessibilityLabel(Strings.send)
         }
-        .padding(12)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+    }
+
+    /// Grows with the reply instead of scrolling a single line sideways.
+    @ViewBuilder
+    private var replyField: some View {
+        if #available(iOS 16.0, *) {
+            TextField(Strings.replyPlaceholder, text: $draft, axis: .vertical)
+                .lineLimit(1...5)
+                .focused($replyFocused)
+        } else {
+            TextField(Strings.replyPlaceholder, text: $draft)
+                .submitLabel(.send)
+                .onSubmit { send() }
+                .focused($replyFocused)
+        }
     }
 
     private func send() {

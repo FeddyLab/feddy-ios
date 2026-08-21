@@ -26,6 +26,7 @@ enum Strings {
     static let rateLimited = "Too many messages. Please try again later."
     static let close = "Close"
     static let cancel = "Cancel"
+    static let done = "Done"
     static let notificationBody = "You have a new reply. Tap to read it."
     static let justNow = "Just now"
 }

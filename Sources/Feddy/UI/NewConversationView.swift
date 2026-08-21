@@ -7,6 +7,7 @@ struct NewConversationView: View {
     let onOpenConversation: (String) -> Void
 
     @StateObject private var model = ComposeModel()
+    @FocusState private var editorFocused: Bool
     @Environment(\.presentationMode) private var presentationMode
 
     private var accent: Color { Theme.accent(FeddyCore.shared.config) }
@@ -34,6 +35,10 @@ struct NewConversationView: View {
                     // A form sheet cancels; only the root panel closes.
                     Button(Strings.cancel) { presentationMode.wrappedValue.dismiss() }
                 }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button(Strings.done) { editorFocused = false }
+                }
             }
         }
         .navigationViewStyle(.stack)
@@ -53,36 +58,45 @@ struct NewConversationView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color(.systemGroupedBackground))
+        .background(
+            Color(.systemGroupedBackground)
+                .onTapGesture { editorFocused = false }
+        )
         .safeAreaInset(edge: .bottom, spacing: 0) { sendBar }
     }
 
+    /// One tap, always one line: a dropdown that wrapped onto two lines
+    /// read as a form field nobody wanted to fill in.
     private var categoryField: some View {
-        HStack {
-            Text(Strings.category)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Spacer(minLength: 12)
-            Picker(Strings.category, selection: $model.categoryCode) {
-                Text(Strings.categoryNone).tag(String?.none)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
                 ForEach(categories, id: \.code) { category in
-                    Text(category.label).tag(String?.some(category.code))
+                    let isSelected = model.categoryCode == category.code
+                    Button {
+                        editorFocused = false
+                        model.categoryCode = isSelected ? nil : category.code
+                    } label: {
+                        Text(category.label)
+                            .font(.subheadline)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 7)
+                            .background(
+                                isSelected ? accent : Color(.secondarySystemGroupedBackground)
+                            )
+                            .foregroundStyle(isSelected ? Color.white : Color.primary)
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
                 }
             }
-            .pickerStyle(.menu)
-            .labelsHidden()
-            .tint(.primary)
+            .padding(.vertical, 2)
         }
-        .padding(.leading, 14)
-        .padding(.trailing, 6)
-        .padding(.vertical, 4)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     private var editor: some View {
         ZStack(alignment: .topLeading) {
             TextEditor(text: $model.text)
+                .focused($editorFocused)
                 .padding(.horizontal, 9)
                 .padding(.vertical, 8)
                 .frame(maxHeight: .infinity)
