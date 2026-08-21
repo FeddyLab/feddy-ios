@@ -11,7 +11,16 @@ enum Theme {
     /// The grouped ladder washes the whole screen in (242, 242, 247),
     /// which reads as a purple tint at full-screen size.
     static let page = Color(.systemBackground)
-    static let surface = Color(.systemGray6)
+
+    /// Raised surfaces (incoming bubbles, inputs, chips). Fixed rather
+    /// than a system grey: sheets render in an elevated trait context
+    /// where systemGray6 collapses into the page colour and every
+    /// surface loses its edge.
+    static let surface = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.17, green: 0.17, blue: 0.18, alpha: 1)
+            : UIColor(red: 0.95, green: 0.95, blue: 0.97, alpha: 1)
+    })
 
     /// Sheets render in an elevated trait context where the page and the
     /// surface collapse to nearly the same grey, so interactive surfaces

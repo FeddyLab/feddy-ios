@@ -33,7 +33,12 @@ struct NewConversationView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     // A form sheet cancels; only the root panel closes.
-                    Button(Strings.cancel) { presentationMode.wrappedValue.dismiss() }
+                    Button {
+                        presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    .accessibilityLabel(Strings.cancel)
                 }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
@@ -79,7 +84,7 @@ struct NewConversationView: View {
                     let isSelected = model.categoryCode == category.code
                     Button {
                         editorFocused = false
-                        model.categoryCode = isSelected ? nil : category.code
+                        model.categoryCode = category.code
                     } label: {
                         Text(category.label)
                             .font(.subheadline)
@@ -147,6 +152,10 @@ struct NewConversationView: View {
         .tint(accent)
         .disabled(
             model.isSubmitting
+                // Required only when the project actually offers topics:
+                // with none configured (or a failed config fetch) this
+                // would lock the user out of submitting entirely.
+                || (!categories.isEmpty && model.categoryCode == nil)
                 || model.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         )
         .padding(16)

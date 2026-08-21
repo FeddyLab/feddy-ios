@@ -8,7 +8,7 @@ enum Strings {
     static let send = "Send"
     static let composePlaceholder = "Describe the problem or share an idea…"
     static let replyPlaceholder = "Write a reply…"
-    static let categoryHint = "Topic (optional)"
+    static let categoryHint = "Topic"
     static let emptyTitle = "No messages yet"
     static let emptyBody = "Questions, bugs, ideas — send us a message and we will get back to you."
     static let submittedFallback = "Got it! We usually reply within 24 hours."
