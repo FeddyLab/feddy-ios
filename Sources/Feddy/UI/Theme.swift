@@ -15,6 +15,14 @@ enum Theme {
     }
 }
 
+extension Theme {
+    /// Messages-style ladder: a plain page with raised surfaces on top.
+    /// The grouped ladder washes the whole screen in (242, 242, 247),
+    /// which reads as a purple tint at full-screen size.
+    static let page = Color(.systemBackground)
+    static let surface = Color(.systemGray6)
+}
+
 extension Color {
     init?(hex: String) {
         var value = hex.trimmingCharacters(in: .whitespacesAndNewlines)

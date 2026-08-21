@@ -59,7 +59,7 @@ struct NewConversationView: View {
         .padding(16)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(
-            Color(.systemGroupedBackground)
+            Theme.page
                 .onTapGesture { editorFocused = false }
         )
         .safeAreaInset(edge: .bottom, spacing: 0) { sendBar }
@@ -81,7 +81,7 @@ struct NewConversationView: View {
                             .padding(.horizontal, 14)
                             .padding(.vertical, 7)
                             .background(
-                                isSelected ? accent : Color(.secondarySystemGroupedBackground)
+                                isSelected ? accent : Theme.surface
                             )
                             .foregroundStyle(isSelected ? Color.white : Color.primary)
                             .clipShape(Capsule())
@@ -100,7 +100,7 @@ struct NewConversationView: View {
                 .padding(.horizontal, 9)
                 .padding(.vertical, 8)
                 .frame(maxHeight: .infinity)
-                .background(Color(.secondarySystemGroupedBackground))
+                .background(Theme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             if model.text.isEmpty {
                 Text(Strings.composePlaceholder)
@@ -176,7 +176,7 @@ private struct SubmittedView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGroupedBackground))
+        .background(Theme.page)
     }
 
     private func save() {

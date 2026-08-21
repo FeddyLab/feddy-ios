@@ -47,7 +47,7 @@ struct ConversationDetailView: View {
                 .padding(16)
             }
             .background(
-                Color(.systemGroupedBackground)
+                Theme.page
                     .onTapGesture { replyFocused = false }
             )
             .simultaneousGesture(
@@ -108,7 +108,7 @@ struct ConversationDetailView: View {
             replyField
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(Color(.secondarySystemGroupedBackground))
+                .background(Theme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             Button(action: send) {
                 Image(systemName: "arrow.up.circle.fill")
@@ -174,7 +174,7 @@ private struct MessageBubble: View {
                     .padding(.horizontal, 13)
                     .padding(.vertical, 9)
                     .background(
-                        part.isFromContact ? accent : Color(.secondarySystemGroupedBackground)
+                        part.isFromContact ? accent : Theme.surface
                     )
                     .foregroundStyle(part.isFromContact ? Color.white : Color.primary)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -266,7 +266,7 @@ private struct EmailCaptureBanner: View {
             }
         }
         .padding(12)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(Theme.surface)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .opacity(saved ? 0 : 1)
     }
