@@ -42,13 +42,6 @@ struct ContentView: View {
                     }
                     .buttonStyle(.plain)
 
-                    // A plain trailing value, for comparison: this is the
-                    // slot a badge occupies and the colour it inherits.
-                    HStack {
-                        Text("Cache")
-                        Spacer()
-                        Text("17.9 MB").foregroundStyle(.secondary)
-                    }
                 } header: {
                     Text("Support")
                 }
