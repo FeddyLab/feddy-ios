@@ -9,6 +9,10 @@ import Foundation
 public enum Feddy {
     /// Fired on the main thread whenever the unread count changes.
     /// Drive your own badge with it.
+    ///
+    /// Main-actor isolated: a bare mutable static is not concurrency-safe,
+    /// and referencing one is a hard error under the Swift 6 language mode.
+    @MainActor
     public static var onUnreadCountChanged: ((Int) -> Void)?
 
     /// Call once at launch (AppDelegate or `App.init`). Subsequent calls
