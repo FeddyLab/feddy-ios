@@ -10,6 +10,11 @@ struct FeddyConfig: Decodable {
     struct Category: Decodable {
         let code: String
         let label: String
+
+        /// What the chip actually shows. See `Strings.builtInCategoryLabel`.
+        var displayLabel: String {
+            Strings.builtInCategoryLabel(code) ?? label
+        }
     }
 
     let brand: Brand

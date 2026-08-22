@@ -17,7 +17,8 @@ let package = Package(
         .target(
             name: "Feddy",
             resources: [
-                .copy("PrivacyInfo.xcprivacy")
+                .copy("PrivacyInfo.xcprivacy"),
+                .process("Resources"),
             ]
         ),
         .testTarget(
