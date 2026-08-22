@@ -23,7 +23,7 @@ import Feddy
 @main
 struct MyApp: App {
     init() {
-        Feddy.configure(apiKey: "fd_live_...")
+        Feddy.configure(apiKey: "fd_...")
     }
     var body: some Scene { WindowGroup { ContentView() } }
 }
@@ -31,7 +31,7 @@ struct MyApp: App {
 // UIKit
 func application(_ application: UIApplication,
                  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    Feddy.configure(apiKey: "fd_live_...")
+    Feddy.configure(apiKey: "fd_...")
     return true
 }
 ```

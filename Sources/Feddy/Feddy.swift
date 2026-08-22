@@ -3,7 +3,7 @@ import Foundation
 /// In-app support for your users: submit feedback, get replies, done.
 ///
 /// ```swift
-/// Feddy.configure(apiKey: "fd_live_...")
+/// Feddy.configure(apiKey: "fd_...")
 /// Feddy.present()
 /// ```
 public enum Feddy {
