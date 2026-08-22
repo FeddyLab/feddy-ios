@@ -43,6 +43,11 @@ struct ConversationDetailView: View {
                         )
                         .id(part.seq)
                     }
+                    if showEmailBanner {
+                        EmailCaptureBanner(accent: accent) { emailBannerDismissed = true }
+                            .id(Self.emailBannerID)
+                            .padding(.top, 2)
+                    }
                 }
                 .padding(16)
             }
@@ -60,12 +65,20 @@ struct ConversationDetailView: View {
         }
     }
 
+    private static let emailBannerID = "feddy-email-ask"
+
     private func scrollToBottom(_ proxy: ScrollViewProxy, animated: Bool) {
-        guard let last = model.parts.last else { return }
+        let scroll = {
+            if showEmailBanner {
+                proxy.scrollTo(Self.emailBannerID, anchor: .bottom)
+            } else if let last = model.parts.last {
+                proxy.scrollTo(last.seq, anchor: .bottom)
+            }
+        }
         if animated {
-            withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo(last.seq, anchor: .bottom) }
+            withAnimation(.easeOut(duration: 0.2), scroll)
         } else {
-            proxy.scrollTo(last.seq, anchor: .bottom)
+            scroll()
         }
     }
 
@@ -78,11 +91,6 @@ struct ConversationDetailView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-            }
-            if showEmailBanner {
-                EmailCaptureBanner(accent: accent) { emailBannerDismissed = true }
-                    .padding(.horizontal, 12)
-                    .padding(.top, 8)
             }
             if let error = model.sendError {
                 Text(error)
@@ -254,32 +262,40 @@ private struct EmailCaptureBanner: View {
     @State private var saved = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(Strings.emailPromptTitle)
-                .font(.footnote.weight(.semibold))
-            HStack(spacing: 8) {
-                TextField(Strings.emailPlaceholder, text: $email)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                Button(Strings.emailSave) { save() }
-                    .buttonStyle(.borderedProminent)
-                    .tint(accent)
-                    .controlSize(.small)
-                Button(Strings.emailSkip, action: onDismiss)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
+                .font(.subheadline.weight(.semibold))
+            // A line of its own: side by side with the buttons it was just
+            // another field competing with the reply box below it.
+            TextField(Strings.emailPlaceholder, text: $email)
+                .textFieldStyle(.plain)
+                .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .padding(.horizontal, 12)
+                .padding(.vertical, 9)
+                .background(Theme.page)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             if let error {
                 Text(error)
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color(.systemRed))
             }
+            // Declining is a peer of accepting, not a footnote hanging off it.
+            HStack(spacing: 8) {
+                Button(Strings.emailSave) { save() }
+                    .buttonStyle(.borderedProminent)
+                    .tint(accent)
+                Button(Strings.emailSkip, action: onDismiss)
+                    .buttonStyle(.bordered)
+                    .tint(.secondary)
+            }
+            .controlSize(.small)
         }
-        .padding(12)
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .opacity(saved ? 0 : 1)
     }
 
