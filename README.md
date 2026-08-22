@@ -80,8 +80,26 @@ Form {
 }
 ```
 
-`List`, `Form`, and `TabView` render badges; anywhere else, observe the
-count and draw your own:
+A badge is placed at the very end of the row, so the row must not draw a
+trailing chevron of its own — the badge would land outside it and read
+backwards. Leave the trailing edge to the system (a plain row, or a
+`NavigationLink`, which the system badges in front of the chevron).
+
+`List`, `Form`, and `TabView` render badges. For a row that draws its own
+chevron — or anywhere a red marker suits better than grey text — use the
+marker instead, which you can put wherever the row wants it:
+
+```swift
+HStack {
+    Text("Support")
+    Spacer()
+    FeddyUnreadDot()                    // or FeddyUnreadDot(showsCount: true)
+    Image(systemName: "chevron.forward")
+}
+```
+
+Both stay current on their own. To place the count somewhere neither
+fits, observe it:
 
 ```swift
 @ObservedObject private var unread = FeddyUnread.shared

@@ -41,9 +41,10 @@ struct ContentView: View {
                         row("New conversation")
                     }
                     .buttonStyle(.plain)
-
                 } header: {
                     Text("Support")
+                } footer: {
+                    Text("A badge sits at the very end of the row, so the row must not draw a trailing chevron of its own — that belongs to NavigationLink, which the system knows to badge in front of.")
                 }
 
                 Section {
@@ -75,34 +76,24 @@ struct ContentView: View {
         HStack {
             Text(title)
             Spacer()
-            Image(systemName: "chevron.forward")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(.tertiary)
         }
         .contentShape(Rectangle())
     }
 }
 
-/// The same count, drawn by hand — a red pill rather than the system's
-/// grey text. Both are on screen at once so the difference is visible.
+/// The same count as the row above, in the marker iOS uses for rows that
+/// want attention. Both are on screen at once so the difference is visible.
 private struct CustomUnreadRow: View {
-    @ObservedObject private var unread = FeddyUnread.shared
-
     var body: some View {
         HStack {
             Text("Unread replies")
             Spacer()
-            if unread.count > 0 {
-                Text("\(unread.count)")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color(.systemRed), in: Capsule())
-            } else {
-                Text("None")
-                    .foregroundStyle(.secondary)
-            }
+            // Free to sit before the chevron, which is exactly what a list
+            // badge cannot do.
+            FeddyUnreadDot(showsCount: true)
+            Image(systemName: "chevron.forward")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
         }
     }
 }
