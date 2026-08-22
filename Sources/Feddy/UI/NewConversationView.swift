@@ -134,20 +134,28 @@ struct NewConversationView: View {
         Button {
             Task { await model.submit() }
         } label: {
-            if model.isSubmitting {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-            } else {
+            ZStack {
+                // Kept in place, merely hidden: the label is what gives the
+                // button its height, so swapping it out makes the bar jump.
                 Text(Strings.send)
-                    .frame(maxWidth: .infinity)
+                    .opacity(model.isSubmitting ? 0 : 1)
+                if model.isSubmitting {
+                    ProgressView()
+                        // `controlSize(.large)` sizes the button, but it also
+                        // reaches the label and blows the spinner up.
+                        .controlSize(.regular)
+                        .tint(Theme.onAccent(FeddyCore.shared.config))
+                }
             }
+            .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .tint(accent)
+        // Submitting keeps the filled look so the spinner stays legible; the
+        // model already refuses a second submit while one is in flight.
         .disabled(
-            model.isSubmitting
-                || model.categoryCode == nil
+            model.categoryCode == nil
                 || model.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         )
         .padding(.horizontal, 16)

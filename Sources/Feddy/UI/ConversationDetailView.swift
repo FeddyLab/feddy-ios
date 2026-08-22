@@ -107,13 +107,24 @@ struct ConversationDetailView: View {
         HStack(alignment: .bottom, spacing: 8) {
             replyField
                 .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.vertical, 6)
                 .background(Theme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             Button(action: send) {
-                Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 30))
-                    .foregroundStyle(canSend ? accent : Color(.tertiaryLabel))
+                ZStack {
+                    if model.isSending {
+                        ProgressView().controlSize(.small)
+                    } else {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 26))
+                            .foregroundStyle(canSend ? accent : Color(.tertiaryLabel))
+                    }
+                }
+                // Matches the field's single-line height (line + 12pt of
+                // padding), so bottom alignment reads as centred on one line
+                // and pins to the last line once the field grows.
+                .frame(width: 26, height: 26)
+                .padding(.vertical, 6)
             }
             .disabled(!canSend)
             .accessibilityLabel(Strings.send)
@@ -140,7 +151,10 @@ struct ConversationDetailView: View {
     private func send() {
         let text = draft
         Task {
-            if await model.send(text) {
+            // Clearing unconditionally would swallow anything typed while the
+            // request was in flight; a failure leaves the draft alone so the
+            // message is never lost.
+            if await model.send(text), draft == text {
                 draft = ""
             }
         }
