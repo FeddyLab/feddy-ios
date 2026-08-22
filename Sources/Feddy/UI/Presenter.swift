@@ -8,7 +8,7 @@ import UIKit
 enum Presenter {
     static func present(startInCompose: Bool) {
         guard FeddyCore.shared.isConfigured else {
-            NSLog("[Feddy] present() called before configure(apiKey:)")
+            NSLog("[Feddy] present() called before configure(projectId:)")
             return
         }
         guard let top = topViewController(), !(top is FeddyHostingController) else { return }

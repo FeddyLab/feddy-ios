@@ -9,10 +9,14 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.1.1")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.2.0")
 ```
 
 ## Quick start
+
+Copy your project's ID from the Feddy dashboard (**Settings → Project ID**).
+It ships inside your binary, so it is public by design — checking it into
+source control is fine.
 
 Configure once at launch, then present the support UI from anywhere:
 
@@ -23,7 +27,7 @@ import Feddy
 @main
 struct MyApp: App {
     init() {
-        Feddy.configure(apiKey: "fd_...")
+        Feddy.configure(projectId: "fd_...")
     }
     var body: some Scene { WindowGroup { ContentView() } }
 }
@@ -31,7 +35,7 @@ struct MyApp: App {
 // UIKit
 func application(_ application: UIApplication,
                  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    Feddy.configure(apiKey: "fd_...")
+    Feddy.configure(projectId: "fd_...")
     return true
 }
 ```
@@ -93,6 +97,6 @@ no analytics.
 
 ## Example app
 
-Open `Example/FeddyExample.xcodeproj`, paste a project API key into
+Open `Example/FeddyExample.xcodeproj`, paste a project ID into
 `FeddyExampleApp.swift`, and run. Point `apiURL` at your own deployment
 or `http://localhost:3000` for local development.

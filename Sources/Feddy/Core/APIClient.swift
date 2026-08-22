@@ -11,14 +11,14 @@ struct APIError: Error {
 /// through JSONSerialization because identify() carries heterogeneous
 /// attribute values; responses decode via Codable.
 final class APIClient: @unchecked Sendable {
-    private let apiKey: String
+    private let projectId: String
     private let baseURL: URL
     private let anonId: String
     private let session: URLSession
     private let decoder = FeddyDecoding.decoder()
 
-    init(apiKey: String, baseURL: URL, anonId: String, session: URLSession = .shared) {
-        self.apiKey = apiKey
+    init(projectId: String, baseURL: URL, anonId: String, session: URLSession = .shared) {
+        self.projectId = projectId
         self.baseURL = baseURL
         self.anonId = anonId
         self.session = session
@@ -115,7 +115,7 @@ final class APIClient: @unchecked Sendable {
         }
         var request = URLRequest(url: url)
         request.httpMethod = method
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(projectId)", forHTTPHeaderField: "Authorization")
         request.setValue(anonId, forHTTPHeaderField: "X-Feddy-Anon-Id")
         if let idempotencyKey {
             request.setValue(idempotencyKey, forHTTPHeaderField: "Idempotency-Key")

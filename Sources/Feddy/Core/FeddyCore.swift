@@ -35,9 +35,9 @@ final class FeddyCore: @unchecked Sendable {
 
     // MARK: - Lifecycle
 
-    func configure(apiKey: String, apiURL: URL) {
+    func configure(projectId: String, apiURL: URL) {
         guard client == nil else { return }
-        client = APIClient(apiKey: apiKey, baseURL: apiURL, anonId: AnonIdStore.anonId())
+        client = APIClient(projectId: projectId, baseURL: apiURL, anonId: AnonIdStore.anonId())
         Task { await self.loadConfig() }
         refresh()
         startPolling()

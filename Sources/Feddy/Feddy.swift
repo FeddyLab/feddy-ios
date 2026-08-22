@@ -3,7 +3,7 @@ import Foundation
 /// In-app support for your users: submit feedback, get replies, done.
 ///
 /// ```swift
-/// Feddy.configure(apiKey: "fd_...")
+/// Feddy.configure(projectId: "fd_...")
 /// Feddy.present()
 /// ```
 public enum Feddy {
@@ -13,11 +13,14 @@ public enum Feddy {
 
     /// Call once at launch (AppDelegate or `App.init`). Subsequent calls
     /// are ignored.
+    /// - Parameter projectId: the project's ID, copied from the dashboard.
+    ///   It ships inside your binary, so it is public by design — checking it
+    ///   into source control is fine.
     public static func configure(
-        apiKey: String,
+        projectId: String,
         apiURL: URL = URL(string: "https://core.feddy.app")!
     ) {
-        FeddyCore.shared.configure(apiKey: apiKey, apiURL: apiURL)
+        FeddyCore.shared.configure(projectId: projectId, apiURL: apiURL)
     }
 
     /// Optionally bind the logged-in user. Attribute values may be

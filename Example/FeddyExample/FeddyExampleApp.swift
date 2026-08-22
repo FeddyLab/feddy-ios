@@ -1,9 +1,9 @@
 import SwiftUI
 import Feddy
 
-// Paste a project API key from the dashboard. For local development,
+// Paste your project ID from the dashboard. For local development,
 // point apiURL at your API dev server; the default below is production.
-private let apiKey = "fd_live_replace_me"
+private let projectId = "fd_replace_me"
 private let apiURL = URL(string: "https://core.feddy.app")!
 
 @main
@@ -11,7 +11,7 @@ struct FeddyExampleApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
-        Feddy.configure(apiKey: apiKey, apiURL: apiURL)
+        Feddy.configure(projectId: projectId, apiURL: apiURL)
     }
 
     var body: some Scene {
