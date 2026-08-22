@@ -9,7 +9,7 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.2.0")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.2.1")
 ```
 
 ## Quick start
@@ -87,6 +87,17 @@ after the user's first successful submission.
 
 If the user leaves an email, replies also go out by email with the full
 message content, which covers the time between app sessions.
+
+## Localization
+
+The panel follows the device language and ships in ten: English, 简体中文,
+繁體中文, 日本語, 한국어, Deutsch, Français, Español, Português (Brasil),
+and Русский. Anything else falls back to English.
+
+The four topics every project starts with — Bug, Feature request,
+Question, Other — are translated by the SDK. Topics you add in the
+dashboard appear exactly as you typed them, since their labels live in
+your project rather than in the package.
 
 ## Privacy
 
