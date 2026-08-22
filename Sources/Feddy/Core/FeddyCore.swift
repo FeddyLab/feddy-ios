@@ -95,7 +95,10 @@ final class FeddyCore: @unchecked Sendable {
             return true
         }
         guard changed else { return }
-        Task { @MainActor in Feddy.onUnreadCountChanged?(count) }
+        Task { @MainActor in
+            FeddyUnread.shared.update(count)
+            Feddy.onUnreadCountChanged?(count)
+        }
     }
 
     private func notifyNewReplies(client: APIClient) async {

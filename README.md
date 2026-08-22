@@ -70,11 +70,31 @@ reinstalls.
 
 ## Unread badge
 
+In SwiftUI, mark the row with the system's own badge — the one it puts
+on rows in Settings — and the SDK keeps it current:
+
+```swift
+Form {
+    Button(action: { Feddy.present() }) { Text("Support") }
+        .feddyUnreadBadge()
+}
+```
+
+`List`, `Form`, and `TabView` render badges; anywhere else, observe the
+count and draw your own:
+
+```swift
+@ObservedObject private var unread = FeddyUnread.shared
+```
+
+From UIKit, or to drive something outside a view hierarchy:
+
 ```swift
 Feddy.unreadCount { count in badge.isHidden = count == 0 }
 Feddy.onUnreadCountChanged = { count in badge.isHidden = count == 0 }
-Feddy.refresh()   // call when your app enters the foreground
 ```
+
+Call `Feddy.refresh()` when your app enters the foreground.
 
 ## Reply notifications
 
