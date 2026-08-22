@@ -47,6 +47,9 @@ struct ConversationDetailView: View {
                         EmailCaptureBanner(accent: accent) { emailBannerDismissed = true }
                             .id(Self.emailBannerID)
                             .padding(.top, 2)
+                            // Sits on the teammate's side rather than spanning
+                            // both, the way every bubble around it does.
+                            .padding(.trailing, 24)
                     }
                 }
                 .padding(16)
@@ -281,14 +284,16 @@ private struct EmailCaptureBanner: View {
                     .font(.caption)
                     .foregroundStyle(Color(.systemRed))
             }
-            // Declining is a peer of accepting, not a footnote hanging off it.
+            // Trailing, with the primary action last: the leading corner is
+            // where the system puts what you are meant to skip past.
             HStack(spacing: 8) {
-                Button(Strings.emailSave) { save() }
-                    .buttonStyle(.borderedProminent)
-                    .tint(accent)
+                Spacer(minLength: 0)
                 Button(Strings.emailSkip, action: onDismiss)
                     .buttonStyle(.bordered)
                     .tint(.secondary)
+                Button(Strings.emailSave) { save() }
+                    .buttonStyle(.borderedProminent)
+                    .tint(accent)
             }
             .controlSize(.small)
         }
