@@ -9,6 +9,7 @@ final class FeddyCore: @unchecked Sendable {
     static let shared = FeddyCore()
 
     private(set) var client: APIClient?
+    private var mayRequestNotificationPermission = false
     private(set) var config: FeddyConfig?
     private(set) var unreadCount = 0
 
@@ -35,8 +36,9 @@ final class FeddyCore: @unchecked Sendable {
 
     // MARK: - Lifecycle
 
-    func configure(projectId: String, apiURL: URL) {
+    func configure(projectId: String, apiURL: URL, requestsNotificationPermission: Bool) {
         guard client == nil else { return }
+        mayRequestNotificationPermission = requestsNotificationPermission
         client = APIClient(projectId: projectId, baseURL: apiURL, anonId: AnonIdStore.anonId())
         Task { await self.loadConfig() }
         refresh()
@@ -131,7 +133,13 @@ final class FeddyCore: @unchecked Sendable {
 
     /// Asked once, after the first successful submission — never at
     /// configure time, so the permission prompt has context.
+    ///
+    /// Only when the host app opted in: the system prompt can be answered
+    /// once per install, and a refusal costs the host every notification it
+    /// might want later. Replies still surface as local notifications when
+    /// permission is already granted, and by email regardless.
     func requestNotificationPermissionIfNeeded() {
+        guard mayRequestNotificationPermission else { return }
         #if canImport(UserNotifications)
         let defaults = UserDefaults.standard
         guard !defaults.bool(forKey: Self.notificationsRequestedKey) else { return }

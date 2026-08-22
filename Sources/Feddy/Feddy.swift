@@ -17,14 +17,26 @@ public enum Feddy {
 
     /// Call once at launch (AppDelegate or `App.init`). Subsequent calls
     /// are ignored.
-    /// - Parameter projectId: the project's ID, copied from the dashboard.
-    ///   It ships inside your binary, so it is public by design — checking it
-    ///   into source control is fine.
+    /// - Parameters:
+    ///   - projectId: the project's ID, copied from the dashboard. It ships
+    ///     inside your binary, so it is public by design — checking it into
+    ///     source control is fine.
+    ///   - requestsNotificationPermission: whether the SDK may show the
+    ///     system permission prompt. Off by default: the prompt can only be
+    ///     answered once per install, and spending your app's one chance on
+    ///     a support reply is your call to make, not the SDK's. Replies are
+    ///     posted as local notifications whenever permission already exists,
+    ///     with or without this flag.
     public static func configure(
         projectId: String,
-        apiURL: URL = URL(string: "https://core.feddy.app")!
+        apiURL: URL = URL(string: "https://core.feddy.app")!,
+        requestsNotificationPermission: Bool = false
     ) {
-        FeddyCore.shared.configure(projectId: projectId, apiURL: apiURL)
+        FeddyCore.shared.configure(
+            projectId: projectId,
+            apiURL: apiURL,
+            requestsNotificationPermission: requestsNotificationPermission
+        )
     }
 
     /// Optionally bind the logged-in user. Attribute values may be

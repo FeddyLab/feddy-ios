@@ -9,7 +9,7 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.2.1")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.2.2")
 ```
 
 ## Quick start
@@ -78,12 +78,22 @@ Feddy.refresh()   // call when your app enters the foreground
 
 ## Reply notifications
 
-The SDK does not use remote push. When `refresh()` (or a presented
-screen) pulls a new reply, it posts a **local notification** so the
-banner and lock-screen behavior match a push. Honest limitation: this
-only fires when the user opens your app again — replies never wake the
-app from the outside. Notification permission is requested once, right
-after the user's first successful submission.
+The SDK does not use remote push, so there is no APNs key to configure.
+When `refresh()` (or a presented screen) pulls a new reply, it posts a
+**local notification** so the banner and lock-screen behavior match a
+push. Honest limitation: this only fires when the user opens your app
+again — replies never wake the app from the outside.
+
+**The SDK never asks for notification permission on its own.** If your
+app already has permission, replies show up as notifications and nothing
+else is needed. If it does not, the SDK stays quiet rather than spending
+your one prompt — a refusal is permanent, and you may want that prompt
+for something else. Hand it over only if you want the SDK to ask (once,
+right after the user's first successful submission):
+
+```swift
+Feddy.configure(projectId: "fd_...", requestsNotificationPermission: true)
+```
 
 If the user leaves an email, replies also go out by email with the full
 message content, which covers the time between app sessions.
