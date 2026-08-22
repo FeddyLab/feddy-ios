@@ -91,7 +91,7 @@ struct NewConversationView: View {
                         editorFocused = false
                         model.categoryCode = category.code
                     } label: {
-                        Text(category.label)
+                        Text(category.displayLabel)
                             .font(.subheadline)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 7)
@@ -102,13 +102,6 @@ struct NewConversationView: View {
                                     : Color.primary
                             )
                             .clipShape(Capsule())
-                            .overlay(
-                                Capsule()
-                                    .strokeBorder(
-                                        isSelected ? Color.clear : Theme.hairline,
-                                        lineWidth: 1
-                                    )
-                            )
                     }
                     .buttonStyle(.plain)
                 }
@@ -121,15 +114,12 @@ struct NewConversationView: View {
         ZStack(alignment: .topLeading) {
             TextEditor(text: $model.text)
                 .focused($editorFocused)
+                .transparentScrollBackground()
                 .padding(.horizontal, 9)
                 .padding(.vertical, 8)
                 .frame(maxHeight: .infinity)
                 .background(Theme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .strokeBorder(Theme.hairline, lineWidth: 1)
-                )
             if model.text.isEmpty {
                 Text(Strings.composePlaceholder)
                     .foregroundStyle(.secondary)
@@ -160,8 +150,31 @@ struct NewConversationView: View {
                 || model.categoryCode == nil
                 || model.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         )
-        .padding(16)
-        .background(.bar)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(alignment: .top) {
+            // Same ground as the page, parted by a hairline: `.bar` reads as
+            // a second panel bolted to the bottom of the form.
+            ZStack(alignment: .top) {
+                Theme.page
+                Theme.hairline.frame(height: 0.5)
+            }
+            .ignoresSafeArea()
+        }
+    }
+}
+
+private extension View {
+    /// `TextEditor` paints its own opaque background, which sits on top of
+    /// the surface fill and reads as a box inside a box. Hiding it is iOS 16+;
+    /// on iOS 15 the editor keeps the system fill, which is legible on its own.
+    @ViewBuilder
+    func transparentScrollBackground() -> some View {
+        if #available(iOS 16.0, *) {
+            scrollContentBackground(.hidden)
+        } else {
+            self
+        }
     }
 }
 

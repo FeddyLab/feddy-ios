@@ -9,22 +9,21 @@ enum Theme {
 
     /// Messages-style ladder: a plain page with raised surfaces on top.
     /// The grouped ladder washes the whole screen in (242, 242, 247),
-    /// which reads as a purple tint at full-screen size.
+    /// which reads as a purple tint at full-screen size — one more reason
+    /// the surfaces above are fills rather than greys.
     static let page = Color(.systemBackground)
 
-    /// Raised surfaces (incoming bubbles, inputs, chips). Fixed rather
-    /// than a system grey: sheets render in an elevated trait context
-    /// where systemGray6 collapses into the page colour and every
-    /// surface loses its edge.
-    static let surface = Color(UIColor { traits in
-        traits.userInterfaceStyle == .dark
-            ? UIColor(red: 0.17, green: 0.17, blue: 0.18, alpha: 1)
-            : UIColor(red: 0.95, green: 0.95, blue: 0.97, alpha: 1)
-    })
+    /// Raised surfaces: inputs, chips, and the teammate's bubbles. Apple
+    /// documents this fill for exactly these shapes ("input fields, search
+    /// bars, or buttons"), and the fill palette is translucent by design,
+    /// so it keeps its contrast in the elevated trait context a sheet
+    /// renders in — which is where the grey *background* colours collapse
+    /// into the page and every surface loses its edge.
+    static let surface = Color(.tertiarySystemFill)
 
-    /// Sheets render in an elevated trait context where the page and the
-    /// surface collapse to nearly the same grey, so interactive surfaces
-    /// carry an explicit border rather than relying on the fill contrast.
+    /// Rules that separate regions — never an outline around a control.
+    /// Filled surfaces carry their own edge, the way the system's own
+    /// chips and search fields do.
     static let hairline = Color(.separator)
 
     /// Brand accent from the project config, falling back to the host tint.
@@ -42,14 +41,11 @@ enum Theme {
         return rgb.needsDarkText ? .black : .white
     }
 
-    /// The contact's own bubble. Deliberately fixed rather than derived
-    /// from the brand colour: the widget sits inside someone else's app,
-    /// and a large tinted surface reads as a claim about that app.
-    static let ownBubble = Color(UIColor { traits in
-        traits.userInterfaceStyle == .dark
-            ? UIColor(red: 0.11, green: 0.17, blue: 0.26, alpha: 1)
-            : UIColor(red: 0.91, green: 0.94, blue: 0.99, alpha: 1)
-    })
+    /// The contact's own bubble: one step heavier than `surface`, so the
+    /// two sides of a thread read apart without either being tinted.
+    /// Deliberately not the brand colour — the panel sits inside someone
+    /// else's app, and a large tinted surface reads as a claim about it.
+    static let ownBubble = Color(.secondarySystemFill)
 
     /// The configured hex when there is one, otherwise whatever the host
     /// app's tint resolves to right now.

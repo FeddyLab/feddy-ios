@@ -46,7 +46,13 @@ struct FeddyRootView: View {
         .task {
             await FeddyCore.shared.loadConfig()
             await model.load()
-            if startInCompose { showCompose = true }
+            // Nobody opens a support panel to admire an empty list: with no
+            // thread to read, go straight to the compose form. A failed load
+            // is not "empty" — dropping someone into a blank form would hide
+            // the history they came back for.
+            if startInCompose || (model.conversations.isEmpty && !model.loadFailed) {
+                showCompose = true
+            }
             await model.pollLoop()
         }
         .onChange(of: selectedConversationId) { id in
@@ -139,7 +145,7 @@ private struct ConversationRow: View {
                             .font(.caption2.weight(.semibold))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color(.systemGray5))
+                            .background(Theme.surface)
                             .clipShape(Capsule())
                             .foregroundStyle(.secondary)
                     }
