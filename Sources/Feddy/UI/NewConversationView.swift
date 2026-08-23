@@ -18,6 +18,14 @@ struct NewConversationView: View {
         return configured.isEmpty ? FeddyConfig.fallbackCategories : configured
     }
 
+    private var hasText: Bool {
+        !model.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Something is written and the topic is the only thing left in the way,
+    /// which is the one moment a disabled send button needs explaining.
+    private var topicIsBlocking: Bool { hasText && model.categoryCode == nil }
+
     var body: some View {
         NavigationView {
             Group {
@@ -58,9 +66,18 @@ struct NewConversationView: View {
         VStack(alignment: .leading, spacing: 12) {
             if !categories.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(Strings.categoryHint)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    // The label doubles as the empty-state prompt: a row of
+                    // unselected chips has nowhere to put a placeholder, and
+                    // "Topic" alone never says a topic is required.
+                    Text(
+                        model.categoryCode == nil
+                            ? Strings.categoryChoose
+                            : Strings.categoryHint
+                    )
+                    .font(.footnote)
+                    // Speak up only once the topic is the one thing left
+                    // holding up a send; picking one silences it again.
+                    .foregroundStyle(topicIsBlocking ? accent : Color.secondary)
                     categoryField
                 }
             }
@@ -154,10 +171,7 @@ struct NewConversationView: View {
         .tint(accent)
         // Submitting keeps the filled look so the spinner stays legible; the
         // model already refuses a second submit while one is in flight.
-        .disabled(
-            model.categoryCode == nil
-                || model.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        )
+        .disabled(model.categoryCode == nil || !hasText)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(alignment: .top) {

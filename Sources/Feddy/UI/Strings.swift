@@ -9,6 +9,7 @@ enum Strings {
     static var composePlaceholder: String { localized("compose_placeholder") }
     static var replyPlaceholder: String { localized("reply_placeholder") }
     static var categoryHint: String { localized("topic") }
+    static var categoryChoose: String { localized("topic_choose") }
     static var emptyTitle: String { localized("empty_title") }
     static var emptyBody: String { localized("empty_body") }
     static var submittedFallback: String { localized("submitted_fallback") }
