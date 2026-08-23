@@ -20,7 +20,6 @@
 "close" = "Close";
 "cancel" = "Cancel";
 "done" = "Done";
-"notification_body" = "You have a new reply. Tap to read it.";
 "category.bug" = "Bug";
 "category.feature" = "Feature request";
 "category.question" = "Question";

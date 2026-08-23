@@ -21,22 +21,11 @@ public enum Feddy {
     ///   - projectId: the project's ID, copied from the dashboard. It ships
     ///     inside your binary, so it is public by design — checking it into
     ///     source control is fine.
-    ///   - requestsNotificationPermission: whether the SDK may show the
-    ///     system permission prompt. Off by default: the prompt can only be
-    ///     answered once per install, and spending your app's one chance on
-    ///     a support reply is your call to make, not the SDK's. Replies are
-    ///     posted as local notifications whenever permission already exists,
-    ///     with or without this flag.
     public static func configure(
         projectId: String,
-        apiURL: URL = URL(string: "https://core.feddy.app")!,
-        requestsNotificationPermission: Bool = false
+        apiURL: URL = URL(string: "https://core.feddy.app")!
     ) {
-        FeddyCore.shared.configure(
-            projectId: projectId,
-            apiURL: apiURL,
-            requestsNotificationPermission: requestsNotificationPermission
-        )
+        FeddyCore.shared.configure(projectId: projectId, apiURL: apiURL)
     }
 
     /// Optionally bind the logged-in user. Attribute values may be
@@ -61,8 +50,8 @@ public enum Feddy {
         FeddyCore.shared.unreadCount(completion)
     }
 
-    /// Re-pulls unread state and posts local notifications for new
-    /// replies. Call when your app enters the foreground.
+    /// Re-pulls the unread count behind the entry-point badge. Call when
+    /// your app enters the foreground.
     public static func refresh() {
         FeddyCore.shared.refresh()
     }

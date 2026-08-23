@@ -20,7 +20,6 @@
 "close" = "닫기";
 "cancel" = "취소";
 "done" = "완료";
-"notification_body" = "새 답장이 도착했습니다. 탭하여 확인하세요.";
 "category.bug" = "오류";
 "category.feature" = "기능 제안";
 "category.question" = "문의";

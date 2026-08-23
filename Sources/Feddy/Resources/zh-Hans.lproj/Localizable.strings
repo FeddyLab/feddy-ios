@@ -20,7 +20,6 @@
 "close" = "关闭";
 "cancel" = "取消";
 "done" = "完成";
-"notification_body" = "你有一条新回复，点击查看。";
 "category.bug" = "问题";
 "category.feature" = "功能建议";
 "category.question" = "咨询";

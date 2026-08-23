@@ -20,7 +20,6 @@
 "close" = "關閉";
 "cancel" = "取消";
 "done" = "完成";
-"notification_body" = "你有一則新回覆，點一下查看。";
 "category.bug" = "問題";
 "category.feature" = "功能建議";
 "category.question" = "諮詢";

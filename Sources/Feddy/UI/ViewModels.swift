@@ -172,7 +172,6 @@ final class ComposeModel: ObservableObject {
             )
             pendingIdempotencyKey = nil
             createdConversationId = created.id
-            FeddyCore.shared.requestNotificationPermissionIfNeeded()
         } catch let error as APIError {
             submitError = error.isRateLimited ? Strings.rateLimited : Strings.errorGeneric
         } catch {

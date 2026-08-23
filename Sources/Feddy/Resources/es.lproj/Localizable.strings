@@ -20,7 +20,6 @@
 "close" = "Cerrar";
 "cancel" = "Cancelar";
 "done" = "Listo";
-"notification_body" = "Tienes una nueva respuesta. Toca para leerla.";
 "category.bug" = "Error";
 "category.feature" = "Sugerencia";
 "category.question" = "Pregunta";

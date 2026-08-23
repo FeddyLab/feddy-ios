@@ -1,7 +1,4 @@
 import Foundation
-#if canImport(UserNotifications)
-import UserNotifications
-#endif
 
 /// Internal singleton behind the static `Feddy` facade: holds the
 /// configuration, API client, cached config, and unread state.
@@ -9,12 +6,10 @@ final class FeddyCore: @unchecked Sendable {
     static let shared = FeddyCore()
 
     private(set) var client: APIClient?
-    private var mayRequestNotificationPermission = false
     private(set) var config: FeddyConfig?
     private(set) var unreadCount = 0
 
     private let stateQueue = DispatchQueue(label: "app.feddy.sdk.state")
-    private var notifiedSeqs: [String: Int]
     private var refreshTask: Task<Void, Never>?
     private var pollTask: Task<Void, Never>?
 
@@ -23,22 +18,16 @@ final class FeddyCore: @unchecked Sendable {
     /// so this costs nothing while the app is away.
     private static let pollInterval: UInt64 = 30_000_000_000
 
-    private static let notifiedSeqsKey = "feddy.notified_seqs"
     private static let emailKnownKey = "feddy.email_known"
-    private static let notificationsRequestedKey = "feddy.notifications_requested"
 
-    private init() {
-        let stored = UserDefaults.standard.dictionary(forKey: Self.notifiedSeqsKey) as? [String: Int]
-        notifiedSeqs = stored ?? [:]
-    }
+    private init() {}
 
     var isConfigured: Bool { client != nil }
 
     // MARK: - Lifecycle
 
-    func configure(projectId: String, apiURL: URL, requestsNotificationPermission: Bool) {
+    func configure(projectId: String, apiURL: URL) {
         guard client == nil else { return }
-        mayRequestNotificationPermission = requestsNotificationPermission
         client = APIClient(projectId: projectId, baseURL: apiURL, anonId: AnonIdStore.anonId())
         Task { await self.loadConfig() }
         refresh()
@@ -61,10 +50,9 @@ final class FeddyCore: @unchecked Sendable {
         config = try? await client.config()
     }
 
-    // MARK: - Unread + local notifications
+    // MARK: - Unread
 
-    /// Pulls the unread count (entry-point badge) and posts local
-    /// notifications for replies that arrived since the last check.
+    /// Pulls the unread count that feeds the entry-point badge.
     func refresh() {
         guard let client else { return }
         refreshTask?.cancel()
@@ -72,7 +60,6 @@ final class FeddyCore: @unchecked Sendable {
             if let unread = try? await client.unreadCount() {
                 self.setUnread(unread.unreadCount)
             }
-            await self.notifyNewReplies(client: client)
         }
     }
 
@@ -99,58 +86,6 @@ final class FeddyCore: @unchecked Sendable {
             FeddyUnread.shared.update(count)
             Feddy.onUnreadCountChanged?(count)
         }
-    }
-
-    private func notifyNewReplies(client: APIClient) async {
-        guard let list = try? await client.conversations() else { return }
-        var pending: [(conversation: ConversationSummary, seq: Int)] = []
-        stateQueue.sync {
-            for conversation in list.conversations where conversation.hasUnread {
-                let notified = notifiedSeqs[conversation.id] ?? conversation.seenSeq
-                if conversation.lastSeq > notified {
-                    pending.append((conversation, conversation.lastSeq))
-                    notifiedSeqs[conversation.id] = conversation.lastSeq
-                }
-            }
-            UserDefaults.standard.set(notifiedSeqs, forKey: Self.notifiedSeqsKey)
-        }
-        guard !pending.isEmpty else { return }
-        #if canImport(UserNotifications)
-        let center = UNUserNotificationCenter.current()
-        let settings = await center.notificationSettings()
-        guard settings.authorizationStatus == .authorized else { return }
-        for item in pending {
-            let content = UNMutableNotificationContent()
-            content.title = config?.brand.name ?? "Support"
-            content.body = Strings.notificationBody
-            content.sound = .default
-            let request = UNNotificationRequest(
-                identifier: "feddy-\(item.conversation.id)-\(item.seq)",
-                content: content,
-                trigger: nil
-            )
-            try? await center.add(request)
-        }
-        #endif
-    }
-
-    /// Asked once, after the first successful submission — never at
-    /// configure time, so the permission prompt has context.
-    ///
-    /// Only when the host app opted in: the system prompt can be answered
-    /// once per install, and a refusal costs the host every notification it
-    /// might want later. Replies still surface as local notifications when
-    /// permission is already granted, and by email regardless.
-    func requestNotificationPermissionIfNeeded() {
-        guard mayRequestNotificationPermission else { return }
-        #if canImport(UserNotifications)
-        let defaults = UserDefaults.standard
-        guard !defaults.bool(forKey: Self.notificationsRequestedKey) else { return }
-        defaults.set(true, forKey: Self.notificationsRequestedKey)
-        UNUserNotificationCenter.current().requestAuthorization(
-            options: [.alert, .sound, .badge]
-        ) { _, _ in }
-        #endif
     }
 
     // MARK: - Email capture state

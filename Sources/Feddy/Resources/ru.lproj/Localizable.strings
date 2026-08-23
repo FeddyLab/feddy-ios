@@ -20,7 +20,6 @@
 "close" = "Закрыть";
 "cancel" = "Отмена";
 "done" = "Готово";
-"notification_body" = "Вам ответили. Нажмите, чтобы прочитать.";
 "category.bug" = "Ошибка";
 "category.feature" = "Предложение";
 "category.question" = "Вопрос";

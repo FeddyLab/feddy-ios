@@ -26,7 +26,6 @@ enum Strings {
     static var close: String { localized("close") }
     static var cancel: String { localized("cancel") }
     static var done: String { localized("done") }
-    static var notificationBody: String { localized("notification_body") }
 
     /// The four topics every project is seeded with. Their labels live in
     /// the project row as English text, which cannot follow the user's

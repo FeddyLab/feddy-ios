@@ -20,7 +20,6 @@
 "close" = "閉じる";
 "cancel" = "キャンセル";
 "done" = "完了";
-"notification_body" = "新しい返信があります。タップして確認してください。";
 "category.bug" = "不具合";
 "category.feature" = "機能のご要望";
 "category.question" = "質問";
