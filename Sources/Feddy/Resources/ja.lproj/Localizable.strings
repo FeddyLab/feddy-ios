@@ -11,6 +11,7 @@
 "email_placeholder" = "you@example.com";
 "email_save" = "知らせる";
 "email_skip" = "スキップ";
+"email_add" = "メール通知";
 "email_invalid" = "メールアドレスをご確認ください。";
 "closed_notice" = "この会話は終了しました。7 日以内に返信すると続けられます。それ以降は新しい会話が始まります。";
 "status_closed" = "終了";

@@ -11,6 +11,7 @@
 "email_placeholder" = "you@example.com";
 "email_save" = "Avisar-me";
 "email_skip" = "Pular";
+"email_add" = "Notificações por e-mail";
 "email_invalid" = "Esse e-mail não parece certo.";
 "closed_notice" = "Esta conversa foi encerrada. Responda em até 7 dias para continuá-la; depois disso, uma nova conversa começa.";
 "status_closed" = "Encerrada";

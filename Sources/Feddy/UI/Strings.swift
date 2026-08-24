@@ -17,6 +17,7 @@ enum Strings {
     static var emailPlaceholder: String { localized("email_placeholder") }
     static var emailSave: String { localized("email_save") }
     static var emailSkip: String { localized("email_skip") }
+    static var emailAdd: String { localized("email_add") }
     static var emailInvalid: String { localized("email_invalid") }
     static var closedNotice: String { localized("closed_notice") }
     static var statusClosed: String { localized("status_closed") }

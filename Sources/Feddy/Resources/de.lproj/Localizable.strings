@@ -11,6 +11,7 @@
 "email_placeholder" = "you@example.com";
 "email_save" = "Benachrichtigen";
 "email_skip" = "Überspringen";
+"email_add" = "E-Mail-Benachrichtigungen";
 "email_invalid" = "Diese E-Mail-Adresse sieht nicht richtig aus.";
 "closed_notice" = "Diese Unterhaltung ist abgeschlossen. Antworte innerhalb von 7 Tagen, um sie fortzusetzen; danach beginnt eine neue.";
 "status_closed" = "Abgeschlossen";

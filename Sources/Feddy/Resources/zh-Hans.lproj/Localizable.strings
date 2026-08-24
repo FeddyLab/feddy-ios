@@ -11,6 +11,7 @@
 "email_placeholder" = "you@example.com";
 "email_save" = "通知我";
 "email_skip" = "跳过";
+"email_add" = "邮件通知";
 "email_invalid" = "这个邮箱地址看起来不太对。";
 "closed_notice" = "此会话已结束。7 天内回复可以继续，超过后将新建会话。";
 "status_closed" = "已结束";

@@ -11,6 +11,7 @@
 "email_placeholder" = "you@example.com";
 "email_save" = "알림 받기";
 "email_skip" = "건너뛰기";
+"email_add" = "이메일 알림";
 "email_invalid" = "이메일 주소를 다시 확인해주세요.";
 "closed_notice" = "종료된 대화입니다. 7일 이내에 답장하면 이어서 진행되고, 이후에는 새 대화가 시작됩니다.";
 "status_closed" = "종료됨";

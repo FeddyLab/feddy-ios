@@ -30,7 +30,10 @@ struct NewConversationView: View {
         NavigationView {
             Group {
                 if let conversationId = model.createdConversationId {
-                    if FeddyCore.shared.emailKnown {
+                    // Someone who declined the ask once is not asked again
+                    // on the next submit — without the dismissed check this
+                    // screen reappeared after every message they sent.
+                    if FeddyCore.shared.emailKnown || FeddyCore.shared.emailAskDismissed {
                         Color.clear.onAppear { onOpenConversation(conversationId) }
                     } else {
                         SubmittedView(accent: accent) {
@@ -239,8 +242,11 @@ private struct SubmittedView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(accent)
                 .disabled(isSaving || email.trimmingCharacters(in: .whitespaces).isEmpty)
-            Button(Strings.emailSkip, action: onContinue)
-                .foregroundStyle(.secondary)
+            Button(Strings.emailSkip) {
+                FeddyCore.shared.markEmailAskDismissed()
+                onContinue()
+            }
+            .foregroundStyle(.secondary)
         }
         .padding(24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -248,23 +254,16 @@ private struct SubmittedView: View {
     }
 
     private func save() {
-        let trimmed = email.trimmingCharacters(in: .whitespaces)
-        guard EmailValidation.isValid(trimmed) else {
-            error = Strings.emailInvalid
-            return
-        }
-        error = nil
         isSaving = true
         Task {
             defer { isSaving = false }
-            guard let client = FeddyCore.shared.client else { return }
-            do {
-                _ = try await client.setEmail(trimmed)
-                FeddyCore.shared.markEmailKnown()
-                onContinue()
-            } catch {
-                self.error = Strings.errorGeneric
+            let message = await EmailCapture.save(email)
+            guard message == nil else {
+                error = message
+                return
             }
+            error = nil
+            onContinue()
         }
     }
 }

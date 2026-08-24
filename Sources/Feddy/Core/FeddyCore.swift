@@ -19,6 +19,7 @@ final class FeddyCore: @unchecked Sendable {
     private static let pollInterval: UInt64 = 30_000_000_000
 
     private static let emailKnownKey = "feddy.email_known"
+    private static let emailAskDismissedKey = "feddy.email_ask_dismissed"
 
     private init() {}
 
@@ -96,5 +97,18 @@ final class FeddyCore: @unchecked Sendable {
 
     func markEmailKnown() {
         UserDefaults.standard.set(true, forKey: Self.emailKnownKey)
+    }
+
+    /// Skipping is a decision, not per-screen state. Held only in a view's
+    /// `@State`, it reset on every visit to a thread and on every submit,
+    /// so someone who had already declined kept being asked. Once this is
+    /// set the SDK never asks unprompted again; the thread's toolbar button
+    /// stays as the way back in.
+    var emailAskDismissed: Bool {
+        UserDefaults.standard.bool(forKey: Self.emailAskDismissedKey)
+    }
+
+    func markEmailAskDismissed() {
+        UserDefaults.standard.set(true, forKey: Self.emailAskDismissedKey)
     }
 }

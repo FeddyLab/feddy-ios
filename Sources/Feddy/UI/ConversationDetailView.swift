@@ -4,7 +4,12 @@ import SwiftUI
 struct ConversationDetailView: View {
     @StateObject private var model: ConversationDetailModel
     @State private var draft = ""
+    /// Mirrors of state that lives in `UserDefaults`, which publishes
+    /// nothing: without them a save or a skip would not redraw the view
+    /// it happened in.
     @State private var emailBannerDismissed = false
+    @State private var emailKnown = FeddyCore.shared.emailKnown
+    @State private var showEmailSheet = false
     @FocusState private var replyFocused: Bool
 
     private var accent: Color { Theme.accent(FeddyCore.shared.config) }
@@ -19,10 +24,26 @@ struct ConversationDetailView: View {
             .navigationTitle(FeddyCore.shared.config?.brand.name ?? Strings.messages)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                // Stays for as long as we have no email, whether the ask
+                // was skipped or never shown: skipping is honoured for
+                // good, so there has to be a way back to it.
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if !emailKnown {
+                        Button {
+                            showEmailSheet = true
+                        } label: {
+                            Image(systemName: "envelope")
+                        }
+                        .accessibilityLabel(Strings.emailAdd)
+                    }
+                }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button(Strings.done) { replyFocused = false }
                 }
+            }
+            .sheet(isPresented: $showEmailSheet) {
+                EmailAskSheet(accent: accent) { emailKnown = true }
             }
             .task {
                 await model.loadInitial()
@@ -44,7 +65,17 @@ struct ConversationDetailView: View {
                         .id(part.seq)
                     }
                     if showEmailBanner {
-                        EmailCaptureBanner(accent: accent) { emailBannerDismissed = true }
+                        EmailCaptureBanner(
+                            accent: accent,
+                            onSkip: {
+                                FeddyCore.shared.markEmailAskDismissed()
+                                emailBannerDismissed = true
+                            },
+                            onSaved: {
+                                emailKnown = true
+                                emailBannerDismissed = true
+                            }
+                        )
                             .id(Self.emailBannerID)
                             .padding(.top, 2)
                             // Sits on the teammate's side rather than spanning
@@ -107,7 +138,8 @@ struct ConversationDetailView: View {
     }
 
     private var showEmailBanner: Bool {
-        !FeddyCore.shared.emailKnown && !emailBannerDismissed && model.hasTeammateReply
+        !emailKnown && !emailBannerDismissed && !FeddyCore.shared.emailAskDismissed
+            && model.hasTeammateReply
     }
 
     private var canSend: Bool {
@@ -258,7 +290,8 @@ private struct MessageBubble: View {
 /// no email for this contact yet.
 private struct EmailCaptureBanner: View {
     let accent: Color
-    let onDismiss: () -> Void
+    let onSkip: () -> Void
+    let onSaved: () -> Void
 
     @State private var email = ""
     @State private var error: String?
@@ -288,7 +321,7 @@ private struct EmailCaptureBanner: View {
             // where the system puts what you are meant to skip past.
             HStack(spacing: 8) {
                 Spacer(minLength: 0)
-                Button(Strings.emailSkip, action: onDismiss)
+                Button(Strings.emailSkip, action: onSkip)
                     .buttonStyle(.bordered)
                     .tint(.secondary)
                 Button(Strings.emailSave) { save() }
@@ -305,22 +338,15 @@ private struct EmailCaptureBanner: View {
     }
 
     private func save() {
-        let trimmed = email.trimmingCharacters(in: .whitespaces)
-        guard EmailValidation.isValid(trimmed) else {
-            error = Strings.emailInvalid
-            return
-        }
-        error = nil
         Task {
-            guard let client = FeddyCore.shared.client else { return }
-            do {
-                _ = try await client.setEmail(trimmed)
-                FeddyCore.shared.markEmailKnown()
-                saved = true
-                onDismiss()
-            } catch {
-                self.error = Strings.errorGeneric
+            let message = await EmailCapture.save(email)
+            guard message == nil else {
+                error = message
+                return
             }
+            error = nil
+            saved = true
+            onSaved()
         }
     }
 }
