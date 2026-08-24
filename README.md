@@ -9,7 +9,7 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.3.0")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.3.1")
 ```
 
 ## Quick start
@@ -124,7 +124,10 @@ permission.** A reply reaches the user two ways:
   `FeddyUnreadDot` / `.feddyUnreadBadge()` views mark your entry point,
   refreshed by a foreground poll and by `refresh()`.
 - **Away from the app** — if the user left an email address, the reply is
-  emailed to them in full.
+  emailed to them in full. The panel asks for one after the first message
+  is sent, and again when a teammate replies. Someone who skips is not
+  asked again; the envelope button in the panel's toolbar stays as the way
+  back for as long as no address is on file.
 
 Local notifications were tried and removed in 0.3.0: they can only be
 posted while the app is in the foreground, and iOS does not present a
