@@ -28,5 +28,10 @@ struct RGB: Equatable {
     }
 
     /// A light brand colour needs dark text on top of it.
-    var needsDarkText: Bool { luminance > 0.6 }
+    ///
+    /// Measured as the contrast white would actually get, not as a luminance
+    /// cut: at any fixed cut the mid-bright hues still come out white at about
+    /// 2.2:1, which cannot be read. 3:1 is what WCAG asks of a UI component
+    /// and roughly where the system's own filled buttons sit.
+    var needsDarkText: Bool { 1.05 / (luminance + 0.05) < 3 }
 }
