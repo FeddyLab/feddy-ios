@@ -62,6 +62,12 @@ final class ConversationDetailModel: ObservableObject {
     @Published var isRating = false
     /// Shown briefly where the rating buttons were, after an answer.
     @Published var thanksSeq: Int?
+    /// A typing bubble stands in for an auto-reply for a moment: the answer
+    /// is written in the same transaction as the question, and landing in
+    /// the same instant reads as a reflex rather than a reply.
+    @Published var isBotTyping = false
+
+    private static let botTypingSeconds: UInt64 = 1_100_000_000
 
     private var reportedSeq = 0
     private var pendingIdempotencyKey: String?
@@ -104,6 +110,11 @@ final class ConversationDetailModel: ObservableObject {
                 status = "closed"
                 resolvedByUser = true
             }
+            // A "no" is answered with the fallback message; fetch it now.
+            if result.replySeq != nil {
+                isRating = false
+                await pollOnce(revealBot: true)
+            }
         } catch {
             // Rated from another device already, or offline: the next poll
             // draws the truth, and there is nothing further to ask here.
@@ -130,13 +141,21 @@ final class ConversationDetailModel: ObservableObject {
         }
     }
 
-    func pollOnce() async {
+    /// revealBot: the poll right after the user's own message (or their
+    /// rating), where an auto-reply is likely waiting — hold it behind the
+    /// typing bubble for a beat before it shows.
+    func pollOnce(revealBot: Bool = false) async {
         guard let client = FeddyCore.shared.client else { return }
         guard let fresh = try? await client.conversation(id: conversationId, sinceSeq: maxSeq)
         else { return }
         subject = fresh.subject ?? subject
         status = fresh.status
         guard !fresh.parts.isEmpty else { return }
+        if revealBot, fresh.parts.contains(where: { $0.isFromBot }) {
+            isBotTyping = true
+            try? await Task.sleep(nanoseconds: Self.botTypingSeconds)
+            isBotTyping = false
+        }
         merge(fresh.parts)
         await reportRead()
     }
@@ -162,7 +181,7 @@ final class ConversationDetailModel: ObservableObject {
                 reportedSeq = 0
                 await loadInitial()
             } else {
-                await pollOnce()
+                await pollOnce(revealBot: true)
             }
             return true
         } catch let error as APIError {

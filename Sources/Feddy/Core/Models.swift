@@ -93,6 +93,9 @@ struct BotFeedbackResponse: Decodable {
     let ok: Bool
     /// "closed" after a helpful vote: the user resolved the thread.
     let status: String
+    /// Set when a "no" was answered with the fallback message: the seq of
+    /// that new bot message, worth fetching right away.
+    let replySeq: Int?
 }
 
 struct UnreadCount: Decodable {

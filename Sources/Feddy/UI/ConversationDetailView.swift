@@ -68,7 +68,10 @@ struct ConversationDetailView: View {
                     // stack caches its children by identity, and swapping two
                     // different views in and out at the same spot left the old
                     // row on screen with its props frozen.
-                    if let state = feedbackState {
+                    if model.isBotTyping {
+                        TypingBubble(accent: accent)
+                            .id(Self.typingID)
+                    } else if let state = feedbackState {
                         FeedbackRow(state: state, accent: accent) { seq, helpful in
                             Task { await model.rate(seq: seq, helpful: helpful) }
                         }
@@ -104,11 +107,19 @@ struct ConversationDetailView: View {
             .onChange(of: model.parts.count) { _ in
                 scrollToBottom(proxy, animated: true)
             }
+            .onChange(of: model.isBotTyping) { typing in
+                if typing {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        proxy.scrollTo(Self.typingID, anchor: .bottom)
+                    }
+                }
+            }
             .onAppear { scrollToBottom(proxy, animated: false) }
         }
     }
 
     private static let emailBannerID = "feddy-email-ask"
+    private static let typingID = "feddy-typing"
 
     private var feedbackState: FeedbackRow.State? {
         if let target = model.feedbackTarget {
@@ -281,16 +292,14 @@ private struct MessageBubble: View {
         }
     }
 
+    // A bot with no picture gets a spark, not an initial: an automatic
+    // answer must never read as a person called "A".
     private var initialsCircle: some View {
-        let name = part.authorName ?? FeddyCore.shared.config?.brand.name ?? "?"
-        return Circle()
-            .fill(accent)
-            .frame(width: 26, height: 26)
-            .overlay(
-                Text(String(name.prefix(1)).uppercased())
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(Theme.onAccent(FeddyCore.shared.config))
-            )
+        BotOrInitialCircle(
+            isBot: part.isFromBot,
+            name: part.authorName ?? FeddyCore.shared.config?.brand.name ?? "?",
+            accent: accent
+        )
     }
 
     private static let timeFormatter: DateFormatter = {
@@ -300,6 +309,62 @@ private struct MessageBubble: View {
         formatter.doesRelativeDateFormatting = true
         return formatter
     }()
+}
+
+private struct BotOrInitialCircle: View {
+    let isBot: Bool
+    let name: String
+    let accent: Color
+
+    var body: some View {
+        Circle()
+            .fill(accent)
+            .frame(width: 26, height: 26)
+            .overlay(
+                Group {
+                    if isBot {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 12, weight: .semibold))
+                    } else {
+                        Text(String(name.prefix(1)).uppercased())
+                            .font(.caption2.weight(.bold))
+                    }
+                }
+                .foregroundStyle(Theme.onAccent(FeddyCore.shared.config))
+            )
+    }
+}
+
+/// Three pulsing dots in the bot's bubble while an auto-reply is held back.
+private struct TypingBubble: View {
+    let accent: Color
+    @State private var phase = 0
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            BotOrInitialCircle(isBot: true, name: "", accent: accent)
+            HStack(spacing: 4) {
+                ForEach(0..<3, id: \.self) { index in
+                    Circle()
+                        .fill(Color.secondary)
+                        .frame(width: 6, height: 6)
+                        .opacity(phase == index ? 1 : 0.3)
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 13)
+            .background(Theme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.trailing, 48)
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 300_000_000)
+                withAnimation(.easeInOut(duration: 0.25)) { phase = (phase + 1) % 3 }
+            }
+        }
+    }
 }
 
 /// "Was this helpful?" under the latest auto-reply, then a thank-you once
