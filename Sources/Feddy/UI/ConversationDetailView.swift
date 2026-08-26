@@ -64,18 +64,14 @@ struct ConversationDetailView: View {
                         )
                         .id(part.seq)
                     }
-                    if let target = model.feedbackTarget {
-                        FeedbackRow(accent: accent, disabled: model.isRating) { helpful in
-                            Task { await model.rate(seq: target.seq, helpful: helpful) }
+                    // One view for both states rather than an if/else: a lazy
+                    // stack caches its children by identity, and swapping two
+                    // different views in and out at the same spot left the old
+                    // row on screen with its props frozen.
+                    if let state = feedbackState {
+                        FeedbackRow(state: state, accent: accent) { seq, helpful in
+                            Task { await model.rate(seq: seq, helpful: helpful) }
                         }
-                        .id(Self.feedbackRowID)
-                    } else if model.thanksSeq != nil {
-                        Text(Strings.feedbackThanks)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading, 34)
-                            .id(Self.feedbackRowID)
                     }
                     if showEmailBanner {
                         EmailCaptureBanner(
@@ -113,7 +109,13 @@ struct ConversationDetailView: View {
     }
 
     private static let emailBannerID = "feddy-email-ask"
-    private static let feedbackRowID = "feddy-feedback"
+
+    private var feedbackState: FeedbackRow.State? {
+        if let target = model.feedbackTarget {
+            return .ask(seq: target.seq, disabled: model.isRating)
+        }
+        return model.thanksSeq != nil ? .thanks : nil
+    }
 
     private func scrollToBottom(_ proxy: ScrollViewProxy, animated: Bool) {
         let scroll = {
@@ -300,28 +302,45 @@ private struct MessageBubble: View {
     }()
 }
 
-/// "Was this helpful?" under the latest auto-reply. Two answers, asked once;
-/// the row goes away as soon as a person on the team replies.
+/// "Was this helpful?" under the latest auto-reply, then a thank-you once
+/// answered. The row goes away as soon as a person on the team replies.
 private struct FeedbackRow: View {
+    enum State: Equatable {
+        case ask(seq: Int, disabled: Bool)
+        case thanks
+    }
+
+    let state: State
     let accent: Color
-    let disabled: Bool
-    let onAnswer: (Bool) -> Void
+    let onAnswer: (Int, Bool) -> Void
 
     var body: some View {
         HStack(spacing: 8) {
-            Text(Strings.feedbackPrompt)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Button(Strings.feedbackYes) { onAnswer(true) }
-            Button(Strings.feedbackNo) { onAnswer(false) }
+            switch state {
+            case let .ask(seq, _):
+                Text(Strings.feedbackPrompt)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Button(Strings.feedbackYes) { onAnswer(seq, true) }
+                Button(Strings.feedbackNo) { onAnswer(seq, false) }
+            case .thanks:
+                Text(Strings.feedbackThanks)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
         .buttonStyle(.bordered)
         .tint(accent)
         .controlSize(.mini)
-        .disabled(disabled)
+        .disabled(isDisabled)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, 34)
         .padding(.trailing, 48)
+    }
+
+    private var isDisabled: Bool {
+        if case let .ask(_, disabled) = state { return disabled }
+        return false
     }
 }
 
