@@ -6,7 +6,7 @@
 "topic" = "Tema";
 "empty_title" = "Aún no hay mensajes";
 "empty_body" = "Dudas, errores, ideas: escríbenos y te responderemos.";
-"submitted_fallback" = "¡Recibido! Solemos responder en menos de 24 horas.";
+"submitted_fallback" = "¡Recibido! Solemos responder en un plazo de 24 a 48 horas.";
 "email_prompt_title" = "¿Quieres un correo cuando respondamos?";
 "email_placeholder" = "you@example.com";
 "email_save" = "Avisarme";

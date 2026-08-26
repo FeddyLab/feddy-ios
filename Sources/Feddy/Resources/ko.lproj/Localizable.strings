@@ -6,7 +6,7 @@
 "topic" = "유형";
 "empty_title" = "아직 메시지가 없습니다";
 "empty_body" = "궁금한 점, 오류, 아이디어 무엇이든 보내주세요. 확인 후 답장드리겠습니다.";
-"submitted_fallback" = "접수되었습니다. 보통 24시간 이내에 답장드립니다.";
+"submitted_fallback" = "접수되었습니다. 보통 24~48시간 이내에 답장드립니다.";
 "email_prompt_title" = "답장이 오면 이메일로 알려드릴까요?";
 "email_placeholder" = "you@example.com";
 "email_save" = "알림 받기";

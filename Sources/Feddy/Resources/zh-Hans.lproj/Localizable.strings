@@ -6,7 +6,7 @@
 "topic" = "分类";
 "empty_title" = "还没有消息";
 "empty_body" = "有疑问、发现问题，或者有好点子，都可以发消息给我们，我们会回复你。";
-"submitted_fallback" = "已收到！我们通常在 24 小时内回复。";
+"submitted_fallback" = "已收到！我们通常在 24–48 小时内回复。";
 "email_prompt_title" = "回复时用邮件通知你？";
 "email_placeholder" = "you@example.com";
 "email_save" = "通知我";

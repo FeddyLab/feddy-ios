@@ -155,8 +155,10 @@ and Русский. Anything else falls back to English.
 
 The four topics every project starts with — Bug, Feature request,
 Question, Other — are translated by the SDK. Topics you add in the
-dashboard appear exactly as you typed them, since their labels live in
-your project rather than in the package.
+dashboard, the reply-time promise and auto-reply answers are translated
+server-side: the SDK sends the device language as `X-Feddy-Locale`, and
+whatever you filled in under Translations in the dashboard comes back in
+that language, falling back to the default text otherwise.
 
 ## Privacy
 

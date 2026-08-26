@@ -6,7 +6,7 @@
 "topic" = "分類";
 "empty_title" = "還沒有訊息";
 "empty_body" = "有疑問、發現問題，或是有好點子，都可以傳訊息給我們，我們會回覆你。";
-"submitted_fallback" = "已收到！我們通常在 24 小時內回覆。";
+"submitted_fallback" = "已收到！我們通常在 24–48 小時內回覆。";
 "email_prompt_title" = "回覆時以電子郵件通知你？";
 "email_placeholder" = "you@example.com";
 "email_save" = "通知我";

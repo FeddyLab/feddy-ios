@@ -117,6 +117,12 @@ final class APIClient: @unchecked Sendable {
 
     // MARK: - Transport
 
+    /// The same value DeviceContext reports, so the server sees one
+    /// language per device rather than two that could disagree.
+    static var preferredLocale: String {
+        Locale.preferredLanguages.first ?? Locale.current.identifier
+    }
+
     private func request<T: Decodable>(
         _ path: String,
         method: String = "GET",
@@ -130,6 +136,10 @@ final class APIClient: @unchecked Sendable {
         request.httpMethod = method
         request.setValue("Bearer \(projectId)", forHTTPHeaderField: "Authorization")
         request.setValue(anonId, forHTTPHeaderField: "X-Feddy-Anon-Id")
+        // The language developer-written text comes back in (topic names,
+        // the reply promise, auto-replies); the API translates server-side
+        // and falls back to the default text for anything it lacks.
+        request.setValue(Self.preferredLocale, forHTTPHeaderField: "X-Feddy-Locale")
         if let idempotencyKey {
             request.setValue(idempotencyKey, forHTTPHeaderField: "Idempotency-Key")
         }
