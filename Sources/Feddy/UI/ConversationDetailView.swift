@@ -68,10 +68,7 @@ struct ConversationDetailView: View {
                     // stack caches its children by identity, and swapping two
                     // different views in and out at the same spot left the old
                     // row on screen with its props frozen.
-                    if model.isBotTyping {
-                        TypingBubble(accent: accent)
-                            .id(Self.typingID)
-                    } else if let state = feedbackState {
+                    if let state = feedbackState {
                         FeedbackRow(state: state, accent: accent) { seq, helpful in
                             Task { await model.rate(seq: seq, helpful: helpful) }
                         }
@@ -107,19 +104,12 @@ struct ConversationDetailView: View {
             .onChange(of: model.parts.count) { _ in
                 scrollToBottom(proxy, animated: true)
             }
-            .onChange(of: model.isBotTyping) { typing in
-                if typing {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        proxy.scrollTo(Self.typingID, anchor: .bottom)
-                    }
-                }
-            }
+
             .onAppear { scrollToBottom(proxy, animated: false) }
         }
     }
 
     private static let emailBannerID = "feddy-email-ask"
-    private static let typingID = "feddy-typing"
 
     private var feedbackState: FeedbackRow.State? {
         if let target = model.feedbackTarget {
@@ -332,38 +322,6 @@ private struct BotOrInitialCircle: View {
                 }
                 .foregroundStyle(Theme.onAccent(FeddyCore.shared.config))
             )
-    }
-}
-
-/// Three pulsing dots in the bot's bubble while an auto-reply is held back.
-private struct TypingBubble: View {
-    let accent: Color
-    @State private var phase = 0
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 8) {
-            BotOrInitialCircle(isBot: true, name: "", accent: accent)
-            HStack(spacing: 4) {
-                ForEach(0..<3, id: \.self) { index in
-                    Circle()
-                        .fill(Color.secondary)
-                        .frame(width: 6, height: 6)
-                        .opacity(phase == index ? 1 : 0.3)
-                }
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 13)
-            .background(Theme.surface)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.trailing, 48)
-        .task {
-            while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 300_000_000)
-                withAnimation(.easeInOut(duration: 0.25)) { phase = (phase + 1) % 3 }
-            }
-        }
     }
 }
 
