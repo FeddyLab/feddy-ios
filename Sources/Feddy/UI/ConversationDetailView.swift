@@ -111,11 +111,16 @@ struct ConversationDetailView: View {
 
     private static let emailBannerID = "feddy-email-ask"
 
+    // The thank-you belongs to the message it answered: it stays where the
+    // buttons were and goes with the next message, whoever sends it.
     private var feedbackState: FeedbackRow.State? {
         if let target = model.feedbackTarget {
             return .ask(seq: target.seq, disabled: model.isRating)
         }
-        return model.thanksSeq != nil ? .thanks : nil
+        if let thanks = model.thanksSeq, thanks == model.parts.last?.seq {
+            return .thanks
+        }
+        return nil
     }
 
     private func scrollToBottom(_ proxy: ScrollViewProxy, animated: Bool) {
