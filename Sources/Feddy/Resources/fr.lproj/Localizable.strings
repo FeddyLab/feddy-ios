@@ -26,3 +26,8 @@
 "category.question" = "Question";
 "category.other" = "Autre";
 "topic_choose" = "Choisir un sujet";
+"feedback_prompt" = "Cette réponse vous a-t-elle aidé ?";
+"feedback_yes" = "Oui";
+"feedback_no" = "Non";
+"feedback_thanks" = "Merci pour votre retour.";
+"resolved_notice" = "Ravi que cela ait aidé — cette conversation est maintenant close. Répondez sous 7 jours pour la poursuivre ; passé ce délai, une nouvelle conversation démarrera.";

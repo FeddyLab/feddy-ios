@@ -26,3 +26,8 @@
 "category.question" = "咨询";
 "category.other" = "其他";
 "topic_choose" = "选择一个分类";
+"feedback_prompt" = "这个回答有帮助吗？";
+"feedback_yes" = "有帮助";
+"feedback_no" = "没帮助";
+"feedback_thanks" = "感谢你的反馈。";
+"resolved_notice" = "很高兴帮到你——本会话已关闭。7 天内回复可以继续，超过后将新建会话。";

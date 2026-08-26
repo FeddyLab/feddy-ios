@@ -26,3 +26,8 @@
 "category.question" = "Вопрос";
 "category.other" = "Другое";
 "topic_choose" = "Выберите тему";
+"feedback_prompt" = "Этот ответ помог?";
+"feedback_yes" = "Да";
+"feedback_no" = "Нет";
+"feedback_thanks" = "Спасибо за ответ.";
+"resolved_notice" = "Рады, что помогло — это обращение закрыто. Ответьте в течение 7 дней, чтобы продолжить его; позже начнётся новое.";

@@ -9,7 +9,7 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.3.2")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.4.0")
 ```
 
 ## Quick start
@@ -135,6 +135,17 @@ foreground notification unless the host app implements
 `UNUserNotificationCenterDelegate`. Claiming the delegate would take it
 away from your app, and the one case worth notifying about — a reply
 arriving while the app is closed — is unreachable either way.
+
+## Auto-replies
+
+If auto-reply is switched on in the dashboard, a matching answer appears in
+the thread under the bot's name the moment the user sends a message, and
+keeps doing so until someone on the team replies. The panel asks "Was this
+helpful?" under the latest auto-reply. Yes closes the conversation as
+resolved by the user — they can still reply within 7 days to reopen it. No
+leaves it open and flags the reply in the dashboard. The question goes away
+once answered or once a person has replied. Nothing to configure on the app
+side: the strings ship in the SDK's ten languages.
 
 ## Localization
 

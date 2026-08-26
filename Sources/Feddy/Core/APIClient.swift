@@ -91,6 +91,19 @@ final class APIClient: @unchecked Sendable {
         )
     }
 
+    /// "Was this helpful?" on an auto-reply. One answer per bot message;
+    /// a yes closes the conversation server-side.
+    func sendBotFeedback(
+        conversationId: String,
+        seq: Int,
+        helpful: Bool
+    ) async throws -> BotFeedbackResponse {
+        try await request(
+            "v1/conversations/\(conversationId)/bot_feedback",
+            method: "POST", body: ["seq": seq, "helpful": helpful]
+        )
+    }
+
     func markRead(conversationId: String, seenSeq: Int) async throws -> OkResponse {
         try await request(
             "v1/conversations/\(conversationId)/read",

@@ -56,6 +56,12 @@ final class ConversationDetailModel: ObservableObject {
     @Published var status = "open"
     @Published var isSending = false
     @Published var sendError: String?
+    /// The user just closed this thread by rating an auto-reply helpful.
+    /// Drives the wording under the composer; the server state is `status`.
+    @Published var resolvedByUser = false
+    @Published var isRating = false
+    /// Shown briefly where the rating buttons were, after an answer.
+    @Published var thanksSeq: Int?
 
     private var reportedSeq = 0
     private var pendingIdempotencyKey: String?
@@ -65,7 +71,47 @@ final class ConversationDetailModel: ObservableObject {
     }
 
     var maxSeq: Int { parts.last?.seq ?? 0 }
-    var hasTeammateReply: Bool { parts.contains { !$0.isFromContact } }
+    /// The email ask follows a person's reply, not the bot's: a bot answer
+    /// gives no reason to expect mail worth being notified about.
+    var hasTeammateReply: Bool { parts.contains { $0.authorType == "teammate" } }
+
+    /// The auto-reply that can still be rated: the latest bot message, as
+    /// long as nobody has rated it and no teammate has replied since. The
+    /// user's own follow-ups leave the question standing.
+    var feedbackTarget: Part? {
+        guard let bot = parts.last(where: { $0.isFromBot }), bot.botFeedback == nil else {
+            return nil
+        }
+        if parts.contains(where: { $0.seq > bot.seq && $0.authorType == "teammate" }) {
+            return nil
+        }
+        return bot
+    }
+
+    func rate(seq: Int, helpful: Bool) async {
+        guard let client = FeddyCore.shared.client, !isRating else { return }
+        isRating = true
+        defer { isRating = false }
+        do {
+            let result = try await client.sendBotFeedback(
+                conversationId: conversationId, seq: seq, helpful: helpful
+            )
+            if let index = parts.firstIndex(where: { $0.seq == seq }) {
+                parts[index].botFeedback = helpful ? "helpful" : "not_helpful"
+            }
+            thanksSeq = seq
+            if result.status == "closed", status != "closed" {
+                status = "closed"
+                resolvedByUser = true
+            }
+        } catch {
+            // Rated from another device already, or offline: the next poll
+            // draws the truth, and there is nothing further to ask here.
+            if let index = parts.firstIndex(where: { $0.seq == seq }) {
+                parts[index].botFeedback = "unknown"
+            }
+        }
+    }
 
     func loadInitial() async {
         guard let client = FeddyCore.shared.client else { return }

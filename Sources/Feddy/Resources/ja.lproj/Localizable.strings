@@ -26,3 +26,8 @@
 "category.question" = "質問";
 "category.other" = "その他";
 "topic_choose" = "種類を選択";
+"feedback_prompt" = "この回答は役に立ちましたか？";
+"feedback_yes" = "はい";
+"feedback_no" = "いいえ";
+"feedback_thanks" = "ご回答ありがとうございます。";
+"resolved_notice" = "お役に立ててうれしいです。この会話は終了しました。7 日以内に返信すると続けられます。それ以降は新しい会話が始まります。";

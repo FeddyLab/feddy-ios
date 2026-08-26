@@ -26,3 +26,8 @@
 "category.question" = "문의";
 "category.other" = "기타";
 "topic_choose" = "유형 선택";
+"feedback_prompt" = "이 답변이 도움이 되었나요?";
+"feedback_yes" = "예";
+"feedback_no" = "아니요";
+"feedback_thanks" = "알려주셔서 감사합니다.";
+"resolved_notice" = "도움이 되었다니 다행입니다. 이 대화는 종료되었습니다. 7일 이내에 답장하면 이어서 진행되고, 이후에는 새 대화가 시작됩니다.";

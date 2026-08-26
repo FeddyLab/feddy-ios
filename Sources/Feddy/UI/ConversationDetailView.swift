@@ -64,6 +64,19 @@ struct ConversationDetailView: View {
                         )
                         .id(part.seq)
                     }
+                    if let target = model.feedbackTarget {
+                        FeedbackRow(accent: accent, disabled: model.isRating) { helpful in
+                            Task { await model.rate(seq: target.seq, helpful: helpful) }
+                        }
+                        .id(Self.feedbackRowID)
+                    } else if model.thanksSeq != nil {
+                        Text(Strings.feedbackThanks)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, 34)
+                            .id(Self.feedbackRowID)
+                    }
                     if showEmailBanner {
                         EmailCaptureBanner(
                             accent: accent,
@@ -100,6 +113,7 @@ struct ConversationDetailView: View {
     }
 
     private static let emailBannerID = "feddy-email-ask"
+    private static let feedbackRowID = "feddy-feedback"
 
     private func scrollToBottom(_ proxy: ScrollViewProxy, animated: Bool) {
         let scroll = {
@@ -119,7 +133,7 @@ struct ConversationDetailView: View {
     private var bottomBar: some View {
         VStack(spacing: 0) {
             if model.status == "closed" {
-                Text(Strings.closedNotice)
+                Text(model.resolvedByUser ? Strings.resolvedNotice : Strings.closedNotice)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -284,6 +298,31 @@ private struct MessageBubble: View {
         formatter.doesRelativeDateFormatting = true
         return formatter
     }()
+}
+
+/// "Was this helpful?" under the latest auto-reply. Two answers, asked once;
+/// the row goes away as soon as a person on the team replies.
+private struct FeedbackRow: View {
+    let accent: Color
+    let disabled: Bool
+    let onAnswer: (Bool) -> Void
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(Strings.feedbackPrompt)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Button(Strings.feedbackYes) { onAnswer(true) }
+            Button(Strings.feedbackNo) { onAnswer(false) }
+        }
+        .buttonStyle(.bordered)
+        .tint(accent)
+        .controlSize(.mini)
+        .disabled(disabled)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.leading, 34)
+        .padding(.trailing, 48)
+    }
 }
 
 /// Second-chance email ask (spec flow): a teammate replied but we have

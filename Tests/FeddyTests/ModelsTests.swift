@@ -13,14 +13,19 @@ final class ModelsTests: XCTestCase {
           "parts": [
             { "seq": 1, "author_type": "contact", "body": "Hello", "created_at": "2026-08-19T07:01:02.123Z" },
             { "seq": 2, "author_type": "teammate", "body": "Hi!", "created_at": "2026-08-19T07:05:00Z",
-              "author_name": "Yu", "author_avatar_url": "https://example.com/yu.png" }
+              "author_name": "Yu", "author_avatar_url": "https://example.com/yu.png", "bot_feedback": null },
+            { "seq": 3, "author_type": "bot", "body": "Try updating.", "created_at": "2026-08-19T07:06:00Z",
+              "author_name": "Helper", "author_avatar_url": null, "bot_feedback": "helpful" }
           ]
         }
         """
         let detail = try FeddyDecoding.decoder()
             .decode(ConversationDetail.self, from: Data(json.utf8))
         XCTAssertEqual(detail.lastSeq, 2)
-        XCTAssertEqual(detail.parts.count, 2)
+        XCTAssertEqual(detail.parts.count, 3)
+        XCTAssertTrue(detail.parts[2].isFromBot)
+        XCTAssertEqual(detail.parts[2].botFeedback, "helpful")
+        XCTAssertNil(detail.parts[1].botFeedback)
         XCTAssertTrue(detail.parts[0].isFromContact)
         XCTAssertNil(detail.parts[0].authorName)
         XCTAssertFalse(detail.parts[1].isFromContact)

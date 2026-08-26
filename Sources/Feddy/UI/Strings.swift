@@ -20,6 +20,11 @@ enum Strings {
     static var emailAdd: String { localized("email_add") }
     static var emailInvalid: String { localized("email_invalid") }
     static var closedNotice: String { localized("closed_notice") }
+    static var resolvedNotice: String { localized("resolved_notice") }
+    static var feedbackPrompt: String { localized("feedback_prompt") }
+    static var feedbackYes: String { localized("feedback_yes") }
+    static var feedbackNo: String { localized("feedback_no") }
+    static var feedbackThanks: String { localized("feedback_thanks") }
     static var statusClosed: String { localized("status_closed") }
     static var newReply: String { localized("new_reply") }
     static var errorGeneric: String { localized("error_generic") }

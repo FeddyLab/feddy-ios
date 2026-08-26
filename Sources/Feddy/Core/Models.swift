@@ -55,9 +55,13 @@ struct Part: Decodable, Identifiable {
     let createdAt: Date
     let authorName: String?
     let authorAvatarUrl: String?
+    /// Auto-replies only: "helpful", "not_helpful", or nil until the user
+    /// answers. Mutable so a rating shows at once, before the next poll.
+    var botFeedback: String?
 
     var id: Int { seq }
     var isFromContact: Bool { authorType == "contact" }
+    var isFromBot: Bool { authorType == "bot" }
 
     /// Consecutive messages by the same author render as one visual run
     /// (avatar and name shown once).
@@ -83,6 +87,12 @@ struct AppendedPart: Decodable {
     let seq: Int
     let status: String
     let renewedFrom: String?
+}
+
+struct BotFeedbackResponse: Decodable {
+    let ok: Bool
+    /// "closed" after a helpful vote: the user resolved the thread.
+    let status: String
 }
 
 struct UnreadCount: Decodable {
