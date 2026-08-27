@@ -32,8 +32,11 @@ struct NewConversationView: View {
                 if let conversationId = model.createdConversationId {
                     // Someone who declined the ask once is not asked again
                     // on the next submit — without the dismissed check this
-                    // screen reappeared after every message they sent.
-                    if FeddyCore.shared.emailKnown || FeddyCore.shared.emailAskDismissed {
+                    // screen reappeared after every message they sent. A
+                    // project that cannot email replies never asks at all.
+                    if !FeddyCore.shared.emailCaptureEnabled
+                        || FeddyCore.shared.emailKnown
+                        || FeddyCore.shared.emailAskDismissed {
                         Color.clear.onAppear { onOpenConversation(conversationId) }
                     } else {
                         SubmittedView(accent: accent) {

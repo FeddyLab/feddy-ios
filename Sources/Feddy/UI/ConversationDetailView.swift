@@ -26,9 +26,10 @@ struct ConversationDetailView: View {
             .toolbar {
                 // Stays for as long as we have no email, whether the ask
                 // was skipped or never shown: skipping is honoured for
-                // good, so there has to be a way back to it.
+                // good, so there has to be a way back to it. Gone entirely
+                // when the project cannot email replies.
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    if !emailKnown {
+                    if FeddyCore.shared.emailCaptureEnabled && !emailKnown {
                         Button {
                             showEmailSheet = true
                         } label: {
@@ -160,7 +161,8 @@ struct ConversationDetailView: View {
     }
 
     private var showEmailBanner: Bool {
-        !emailKnown && !emailBannerDismissed && !FeddyCore.shared.emailAskDismissed
+        FeddyCore.shared.emailCaptureEnabled
+            && !emailKnown && !emailBannerDismissed && !FeddyCore.shared.emailAskDismissed
             && model.hasTeammateReply
     }
 

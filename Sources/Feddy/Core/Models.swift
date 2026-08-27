@@ -20,6 +20,14 @@ struct FeddyConfig: Decodable {
     let brand: Brand
     let replySlaText: String?
     let categories: [Category]
+    /// Whether the project can email replies (it has a verified sending
+    /// domain). Optional so a server that predates the field decodes; see
+    /// `emailCaptureEnabled` for the default.
+    let emailCapture: Bool?
+
+    /// False hides every email ask: a project that cannot mail replies must
+    /// not collect addresses it will never write to. Absent means true.
+    var emailCaptureEnabled: Bool { emailCapture ?? true }
 
     /// Mirrors the topics every project is seeded with. A topic is
     /// required, so the form needs something to offer even when the

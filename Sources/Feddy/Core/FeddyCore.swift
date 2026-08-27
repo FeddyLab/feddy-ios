@@ -91,6 +91,10 @@ final class FeddyCore: @unchecked Sendable {
 
     // MARK: - Email capture state
 
+    /// Server-side gate on every email ask. True while the config has not
+    /// arrived, matching what a server without the field means.
+    var emailCaptureEnabled: Bool { config?.emailCaptureEnabled ?? true }
+
     var emailKnown: Bool {
         UserDefaults.standard.bool(forKey: Self.emailKnownKey)
     }

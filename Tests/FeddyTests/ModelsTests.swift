@@ -55,6 +55,24 @@ final class ModelsTests: XCTestCase {
         XCTAssertTrue(list.conversations[0].hasUnread)
     }
 
+    func testConfigEmailCaptureDefaultsToTrueWhenAbsent() throws {
+        let withField = """
+        { "brand": { "name": "Acme", "color": null, "logo_url": null },
+          "reply_sla_text": null, "email_capture": false, "categories": [] }
+        """
+        let gated = try FeddyDecoding.decoder()
+            .decode(FeddyConfig.self, from: Data(withField.utf8))
+        XCTAssertFalse(gated.emailCaptureEnabled)
+
+        let older = """
+        { "brand": { "name": "Acme", "color": null, "logo_url": null },
+          "reply_sla_text": null, "categories": [] }
+        """
+        let legacy = try FeddyDecoding.decoder()
+            .decode(FeddyConfig.self, from: Data(older.utf8))
+        XCTAssertTrue(legacy.emailCaptureEnabled)
+    }
+
     func testRejectsMalformedDates() {
         let json = """
         { "unread_count": 1 }
