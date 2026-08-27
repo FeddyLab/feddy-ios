@@ -9,7 +9,7 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.4.0")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.5.0")
 ```
 
 ## Quick start
@@ -127,7 +127,10 @@ permission.** A reply reaches the user two ways:
   emailed to them in full. The panel asks for one after the first message
   is sent, and again when a teammate replies. Someone who skips is not
   asked again; the envelope button in the panel's toolbar stays as the way
-  back for as long as no address is on file.
+  back for as long as no address is on file. Replies are only ever emailed
+  from a domain you verified in the dashboard (Settings → Email domain);
+  until one is verified the panel does not ask for an address at all, and
+  replies reach the user in the app only.
 
 Local notifications were tried and removed in 0.3.0: they can only be
 posted while the app is in the foreground, and iOS does not present a
