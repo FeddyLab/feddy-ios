@@ -61,13 +61,6 @@ struct NewConversationView: View {
                     .accessibilityLabel(Strings.cancel)
                 }
                 ToolbarItemGroup(placement: .keyboard) {
-                    // On the keyboard bar rather than beside Send: it belongs
-                    // with writing the message, and it is within thumb reach
-                    // exactly while the keyboard is up.
-                    if #available(iOS 16.0, *) {
-                        AttachmentPickerButton(model: tray, disabled: model.isSubmitting)
-                            .accessibilityLabel(Strings.attach)
-                    }
                     Spacer()
                     Button(Strings.done) { editorFocused = false }
                 }
@@ -96,7 +89,7 @@ struct NewConversationView: View {
                 }
             }
             editor
-            AttachmentTray(model: tray, disabled: model.isSubmitting)
+            AttachmentArea(model: tray, disabled: model.isSubmitting)
             if let error = model.submitError {
                 Text(error)
                     .font(.footnote)

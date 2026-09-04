@@ -156,8 +156,9 @@ struct ConversationDetailView: View {
                     .foregroundStyle(.red)
                     .padding(.top, 6)
             }
-            AttachmentTray(model: tray, disabled: model.isSending)
+            AttachmentArea(model: tray, disabled: model.isSending)
                 .padding(.horizontal, 12)
+                .padding(.top, 8)
             composer
         }
         .background(.bar)
@@ -175,13 +176,6 @@ struct ConversationDetailView: View {
 
     private var composer: some View {
         HStack(alignment: .bottom, spacing: 8) {
-            if #available(iOS 16.0, *) {
-                AttachmentPickerButton(model: tray, disabled: model.isSending)
-                    .foregroundStyle(Color(.secondaryLabel))
-                    .frame(width: 26, height: 26)
-                    .padding(.vertical, 6)
-                    .accessibilityLabel(Strings.attach)
-            }
             replyField
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
@@ -246,21 +240,36 @@ private struct AttachmentThumbnail: View {
     let attachment: Attachment
     @State private var url: URL?
     @State private var failed = false
+    @State private var showFullScreen = false
+
+    // Capped, not framed square. A screenshot cropped to a tile loses the
+    // very thing it was sent to show, so the aspect ratio is kept and only
+    // the extent is limited.
+    private let maxWidth: CGFloat = 200
+    private let maxHeight: CGFloat = 260
 
     var body: some View {
         Group {
             if failed {
-                // A screenshot that will not load is not worth a broken-image
+                // A picture that will not load is not worth a broken-image
                 // icon in the middle of a conversation.
                 EmptyView()
             } else if let url {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    placeholder
+                Button {
+                    showFullScreen = true
+                } label: {
+                    AsyncImage(url: url) { image in
+                        image.resizable().scaledToFit()
+                    } placeholder: {
+                        placeholder.frame(width: 140, height: 140)
+                    }
+                    .frame(maxWidth: maxWidth, maxHeight: maxHeight)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
-                .frame(width: 140, height: 140)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .buttonStyle(.plain)
+                .fullScreenCover(isPresented: $showFullScreen) {
+                    AttachmentFullScreen(url: url, filename: attachment.filename)
+                }
             } else {
                 placeholder
                     .frame(width: 140, height: 140)
@@ -280,6 +289,49 @@ private struct AttachmentThumbnail: View {
 
     private var placeholder: some View {
         Theme.surface.overlay(ProgressView().controlSize(.small))
+    }
+}
+
+/// The picture on its own, over black, pinch to zoom. Nothing else on
+/// screen: whatever the person is trying to read in the screenshot is the
+/// only thing that matters here.
+private struct AttachmentFullScreen: View {
+    let url: URL
+    let filename: String
+    @Environment(\.dismiss) private var dismiss
+    @State private var zoom: CGFloat = 1
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            AsyncImage(url: url) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .scaleEffect(zoom)
+                    .gesture(
+                        MagnificationGesture()
+                            .onChanged { zoom = max(1, min(4, $0)) }
+                            .onEnded { _ in if zoom < 1.05 { zoom = 1 } }
+                    )
+            } placeholder: {
+                ProgressView().tint(.white)
+            }
+            .accessibilityLabel(filename)
+        }
+        .overlay(alignment: .topLeading) {
+            Button { dismiss() } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .padding(10)
+                    .background(.black.opacity(0.45), in: Circle())
+            }
+            .padding(16)
+            .accessibilityLabel(Strings.close)
+        }
+        // A tap anywhere is the gesture people try first.
+        .onTapGesture { dismiss() }
     }
 }
 

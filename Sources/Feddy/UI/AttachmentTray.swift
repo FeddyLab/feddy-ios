@@ -1,6 +1,7 @@
-#if canImport(SwiftUI)
+#if canImport(UIKit)
 import PhotosUI
 import SwiftUI
+import UIKit
 
 /// Images picked but not yet sent, shared by the compose screen and the
 /// reply composer.
@@ -67,26 +68,34 @@ final class AttachmentTrayModel: ObservableObject {
     }
 }
 
-/// The picker button and the strip of thumbnails under whichever field it
-/// belongs to. `PhotosPicker` is iOS 16+; on 15 the button is simply absent
-/// rather than the package dropping its deployment target.
+/// The image area: what has been picked, plus the tile that picks more.
+///
+/// Deliberately an area rather than a paperclip tucked in beside Send. A
+/// paperclip is the icon for "file", and this only ever takes pictures; more
+/// to the point, an icon crowded in with the buttons is not where anyone
+/// looks for it — on the compose screen it was in the keyboard toolbar,
+/// which meant it did not exist until the keyboard was already up.
 @available(iOS 15.0, macOS 12.0, *)
-struct AttachmentTray: View {
+struct AttachmentArea: View {
     @ObservedObject var model: AttachmentTrayModel
     var disabled: Bool
 
+    private let side: CGFloat = 64
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            if !model.items.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(model.items) { item in
-                            thumbnail(item)
-                        }
+        VStack(alignment: .leading, spacing: 6) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(model.items) { item in
+                        thumbnail(item)
+                    }
+                    if !model.isFull {
+                        addTile
                     }
                 }
-                .frame(height: 56)
+                .padding(.vertical, 1)
             }
+            .frame(height: side + 2)
             if let error = model.error {
                 Text(error)
                     .font(.footnote)
@@ -95,18 +104,38 @@ struct AttachmentTray: View {
         }
     }
 
+    @ViewBuilder
+    private var addTile: some View {
+        if #available(iOS 16.0, macOS 13.0, *) {
+            AttachmentPicker(model: model, disabled: disabled) {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(
+                        Color(.separator),
+                        style: StrokeStyle(lineWidth: 1, dash: [4, 3])
+                    )
+                    .frame(width: side, height: side)
+                    .overlay {
+                        Image(systemName: "photo")
+                            .font(.system(size: 20))
+                            .foregroundStyle(Color(.secondaryLabel))
+                    }
+            }
+            .accessibilityLabel(Strings.attach)
+        }
+    }
+
     private func thumbnail(_ item: AttachmentTrayModel.Item) -> some View {
         item.image
             .resizable()
             .scaledToFill()
-            .frame(width: 52, height: 52)
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .frame(width: side, height: side)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay(alignment: .topTrailing) {
                 Button {
                     model.remove(item.id)
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 15))
+                        .font(.system(size: 16))
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(.white, .black.opacity(0.55))
                 }
@@ -117,12 +146,14 @@ struct AttachmentTray: View {
     }
 }
 
-/// The button that opens the photo library. Kept apart from the strip so
-/// each writing surface can put it where its own toolbar wants it.
+/// Wraps `PhotosPicker` so the caller decides what the control looks like —
+/// the compose screen wants a tile, and nothing else should have to know
+/// that the picker is what sits underneath.
 @available(iOS 16.0, macOS 13.0, *)
-struct AttachmentPickerButton: View {
+struct AttachmentPicker<Label: View>: View {
     @ObservedObject var model: AttachmentTrayModel
     var disabled: Bool
+    @ViewBuilder var label: () -> Label
     @State private var selection: [PhotosPickerItem] = []
 
     var body: some View {
@@ -131,9 +162,9 @@ struct AttachmentPickerButton: View {
             maxSelectionCount: AttachmentLimits.maxPerMessage,
             matching: .images
         ) {
-            Image(systemName: "paperclip")
-                .font(.system(size: 17))
+            label()
         }
+        .buttonStyle(.plain)
         .disabled(disabled || model.isFull)
         .onChange(of: selection) { picked in
             guard !picked.isEmpty else { return }
