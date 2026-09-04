@@ -89,9 +89,9 @@ struct AttachmentArea: View {
                     ForEach(model.items) { item in
                         thumbnail(item)
                     }
-                    if !model.isFull {
-                        addTile
-                    }
+                    // Stays put when full rather than disappearing — a
+                    // control that vanishes explains nothing.
+                    addTile
                 }
                 .padding(.vertical, 1)
             }
@@ -115,9 +115,18 @@ struct AttachmentArea: View {
                     )
                     .frame(width: side, height: side)
                     .overlay {
-                        Image(systemName: "photo")
-                            .font(.system(size: 20))
-                            .foregroundStyle(Color(.secondaryLabel))
+                        VStack(spacing: 2) {
+                            Image(systemName: "photo")
+                                .font(.system(size: 18))
+                            // Digits only: "2/5" needs no translation, and
+                            // it is the answer to "how many more?" right
+                            // where that question gets asked.
+                            Text("\(model.items.count)/\(AttachmentLimits.maxPerMessage)")
+                                .font(.system(size: 10, weight: .medium))
+                                .monospacedDigit()
+                        }
+                        .foregroundStyle(Color(.secondaryLabel))
+                        .opacity(model.isFull ? 0.45 : 1)
                     }
             }
             .accessibilityLabel(Strings.attach)
