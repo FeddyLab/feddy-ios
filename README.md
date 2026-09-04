@@ -173,5 +173,4 @@ no analytics.
 ## Example app
 
 Open `Example/FeddyExample.xcodeproj`, paste a project ID into
-`FeddyExampleApp.swift`, and run. Point `apiURL` at your own deployment
-or `http://localhost:3000` for local development.
+`FeddyExampleApp.swift`, and run.
