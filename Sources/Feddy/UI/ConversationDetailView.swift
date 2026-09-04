@@ -236,15 +236,55 @@ struct ConversationDetailView: View {
 /// asking for it proves this contact owns the attachment and yields a URL
 /// good for a minute. Requested when the bubble appears rather than when the
 /// thread loads, so nothing long-lived is held.
+/// However many pictures came with one message, laid out so the bubble can
+/// never grow wider than the screen.
+///
+/// A single image keeps its shape — that is the common case and cropping it
+/// would hide what the sender was pointing at. Several become a grid of
+/// equal tiles: ragged heights read as a mistake, and an unbounded row is
+/// what pushed the message text off the right edge entirely. Cropping is
+/// confined to the grid, and tapping any tile opens the picture whole.
+private struct AttachmentRow: View {
+    let attachments: [Attachment]
+
+    private let tile: CGFloat = 84
+    private let spacing: CGFloat = 6
+    private let perRow = 3
+
+    private var rows: [[Attachment]] {
+        stride(from: 0, to: attachments.count, by: perRow).map {
+            Array(attachments[$0..<min($0 + perRow, attachments.count)])
+        }
+    }
+
+    var body: some View {
+        if attachments.count == 1, let only = attachments.first {
+            AttachmentThumbnail(attachment: only, tile: nil)
+        } else {
+            VStack(alignment: .leading, spacing: spacing) {
+                ForEach(rows.indices, id: \.self) { index in
+                    HStack(spacing: spacing) {
+                        ForEach(rows[index]) { file in
+                            AttachmentThumbnail(attachment: file, tile: tile)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 private struct AttachmentThumbnail: View {
     let attachment: Attachment
+    /// Side length when this is one tile of a grid; nil when it is the only
+    /// picture and may keep its own proportions.
+    let tile: CGFloat?
     @State private var url: URL?
     @State private var failed = false
     @State private var showFullScreen = false
 
-    // Capped, not framed square. A screenshot cropped to a tile loses the
-    // very thing it was sent to show, so the aspect ratio is kept and only
-    // the extent is limited.
+    // Capped, not framed square. A lone screenshot cropped to a tile loses
+    // the very thing it was sent to show.
     private let maxWidth: CGFloat = 200
     private let maxHeight: CGFloat = 260
 
@@ -259,11 +299,14 @@ private struct AttachmentThumbnail: View {
                     showFullScreen = true
                 } label: {
                     AsyncImage(url: url) { image in
-                        image.resizable().scaledToFit()
+                        if let tile {
+                            image.resizable().scaledToFill().frame(width: tile, height: tile)
+                        } else {
+                            image.resizable().scaledToFit().frame(maxWidth: maxWidth, maxHeight: maxHeight)
+                        }
                     } placeholder: {
-                        placeholder.frame(width: 140, height: 140)
+                        placeholder
                     }
-                    .frame(maxWidth: maxWidth, maxHeight: maxHeight)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
                 .buttonStyle(.plain)
@@ -272,7 +315,6 @@ private struct AttachmentThumbnail: View {
                 }
             } else {
                 placeholder
-                    .frame(width: 140, height: 140)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
         }
@@ -287,8 +329,13 @@ private struct AttachmentThumbnail: View {
         }
     }
 
+    // Exactly the size the loaded picture will take, so nothing reflows when
+    // it arrives — the placeholders being larger than the images is what
+    // made the first paint push the text off screen.
     private var placeholder: some View {
-        Theme.surface.overlay(ProgressView().controlSize(.small))
+        Theme.surface
+            .frame(width: tile ?? maxWidth, height: tile ?? maxWidth)
+            .overlay(ProgressView().controlSize(.small))
     }
 }
 
@@ -366,12 +413,8 @@ private struct MessageBubble: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             if let attachments = part.attachments, !attachments.isEmpty {
-                HStack(spacing: 6) {
-                    ForEach(attachments) { file in
-                        AttachmentThumbnail(attachment: file)
-                    }
-                }
-                .padding(.leading, part.isFromContact ? 0 : 34)
+                AttachmentRow(attachments: attachments)
+                    .padding(.leading, part.isFromContact ? 0 : 34)
             }
             Text(Self.timeFormatter.string(from: part.createdAt))
                 .font(.caption2)
