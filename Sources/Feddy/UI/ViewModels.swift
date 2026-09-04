@@ -144,7 +144,7 @@ final class ConversationDetailModel: ObservableObject {
         await reportRead()
     }
 
-    func send(_ text: String) async -> Bool {
+    func send(_ text: String, tray: AttachmentTrayModel? = nil) async -> Bool {
         guard let client = FeddyCore.shared.client, !isSending else { return false }
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return false }
@@ -154,10 +154,15 @@ final class ConversationDetailModel: ObservableObject {
         let key = pendingIdempotencyKey ?? UUID().uuidString
         pendingIdempotencyKey = key
         do {
+            // Uploaded before the message is written, and left in the tray if
+            // it fails: the reply can then be retried whole rather than
+            // costing the words that were typed with the screenshot.
+            let files = try await tray?.upload(using: client) ?? []
             let result = try await client.appendPart(
-                conversationId: conversationId, body: trimmed, idempotencyKey: key
+                conversationId: conversationId, body: trimmed, attachments: files, idempotencyKey: key
             )
             pendingIdempotencyKey = nil
+            tray?.clear()
             if result.conversationId != conversationId {
                 // Closed for 7+ days: the server started a fresh conversation.
                 conversationId = result.conversationId
@@ -206,7 +211,7 @@ final class ComposeModel: ObservableObject {
 
     private var pendingIdempotencyKey: String?
 
-    func submit() async {
+    func submit(tray: AttachmentTrayModel? = nil) async {
         guard let client = FeddyCore.shared.client, !isSubmitting else { return }
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
@@ -216,10 +221,12 @@ final class ComposeModel: ObservableObject {
         let key = pendingIdempotencyKey ?? UUID().uuidString
         pendingIdempotencyKey = key
         do {
+            let files = try await tray?.upload(using: client) ?? []
             let created = try await client.createConversation(
-                body: trimmed, categoryCode: categoryCode, idempotencyKey: key
+                body: trimmed, categoryCode: categoryCode, attachments: files, idempotencyKey: key
             )
             pendingIdempotencyKey = nil
+            tray?.clear()
             createdConversationId = created.id
         } catch let error as APIError {
             submitError = error.isRateLimited ? Strings.rateLimited : Strings.errorGeneric

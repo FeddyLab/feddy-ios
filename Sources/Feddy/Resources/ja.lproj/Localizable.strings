@@ -31,3 +31,7 @@
 "feedback_no" = "いいえ";
 "feedback_thanks" = "ご回答ありがとうございます。";
 "resolved_notice" = "お役に立ててうれしいです。この会話は終了しました。7 日以内に返信すると続けられます。それ以降は新しい会話が始まります。";
+"attach" = "画像を添付";
+"attach_type_error" = "添付できるのは画像のみです。";
+"attach_size_error" = "画像が大きすぎます（最大 10 MB）。";
+"attach_count_error" = "1 件のメッセージにつき画像は 5 枚までです。";

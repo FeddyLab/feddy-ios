@@ -56,6 +56,40 @@ struct ConversationList: Decodable {
     let conversations: [ConversationSummary]
 }
 
+/// An image on a message. `url` is an API path rather than a picture:
+/// fetching it proves this contact owns the attachment and returns a URL
+/// that is good for a minute.
+struct Attachment: Decodable, Identifiable {
+    let id: String
+    let filename: String
+    let mimeType: String
+    let sizeBytes: Int
+    let url: String
+}
+
+/// What the client reports about a file it has already put in the bucket.
+/// The key is a claim the server re-checks against the project.
+struct UploadedAttachment {
+    let key: String
+    let filename: String
+    let mimeType: String
+    let sizeBytes: Int
+
+    var payload: [String: Any] {
+        ["key": key, "filename": filename, "mime_type": mimeType, "size_bytes": sizeBytes]
+    }
+}
+
+struct UploadSlot: Decodable {
+    let key: String
+    let uploadUrl: String
+}
+
+struct AttachmentURL: Decodable {
+    let url: String
+    let expiresIn: Int
+}
+
 struct Part: Decodable, Identifiable {
     let seq: Int
     let authorType: String
@@ -63,6 +97,7 @@ struct Part: Decodable, Identifiable {
     let createdAt: Date
     let authorName: String?
     let authorAvatarUrl: String?
+    let attachments: [Attachment]?
     /// Auto-replies only: "helpful", "not_helpful", or nil until the user
     /// answers. Mutable so a rating shows at once, before the next poll.
     var botFeedback: String?

@@ -29,6 +29,10 @@ enum Strings {
     static var newReply: String { localized("new_reply") }
     static var errorGeneric: String { localized("error_generic") }
     static var rateLimited: String { localized("rate_limited") }
+    static var attach: String { localized("attach") }
+    static var attachTypeError: String { localized("attach_type_error") }
+    static var attachSizeError: String { localized("attach_size_error") }
+    static var attachCountError: String { localized("attach_count_error") }
     static var close: String { localized("close") }
     static var cancel: String { localized("cancel") }
     static var done: String { localized("done") }

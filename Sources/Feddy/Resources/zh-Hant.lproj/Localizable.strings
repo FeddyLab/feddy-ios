@@ -31,3 +31,7 @@
 "feedback_no" = "沒幫助";
 "feedback_thanks" = "感謝你的回饋。";
 "resolved_notice" = "很高興幫到你——本對話已結束。7 天內回覆可以繼續，超過後將另開新對話。";
+"attach" = "新增圖片";
+"attach_type_error" = "只能新增圖片。";
+"attach_size_error" = "圖片太大了（最大 10 MB）。";
+"attach_count_error" = "每則訊息最多 5 張圖片。";

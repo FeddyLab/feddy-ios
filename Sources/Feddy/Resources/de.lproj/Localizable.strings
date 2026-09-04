@@ -31,3 +31,7 @@
 "feedback_no" = "Nein";
 "feedback_thanks" = "Danke für die Rückmeldung.";
 "resolved_notice" = "Schön, dass es geholfen hat – diese Unterhaltung ist jetzt abgeschlossen. Antworte innerhalb von 7 Tagen, um sie fortzusetzen; danach beginnt eine neue.";
+"attach" = "Bild anhängen";
+"attach_type_error" = "Es können nur Bilder angehängt werden.";
+"attach_size_error" = "Dieses Bild ist zu groß (max. 10 MB).";
+"attach_count_error" = "Höchstens 5 Bilder pro Nachricht.";

@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ConversationDetailView: View {
     @StateObject private var model: ConversationDetailModel
+    @StateObject private var tray = AttachmentTrayModel()
     @State private var draft = ""
     /// Mirrors of state that lives in `UserDefaults`, which publishes
     /// nothing: without them a save or a skip would not redraw the view
@@ -155,6 +156,8 @@ struct ConversationDetailView: View {
                     .foregroundStyle(.red)
                     .padding(.top, 6)
             }
+            AttachmentTray(model: tray, disabled: model.isSending)
+                .padding(.horizontal, 12)
             composer
         }
         .background(.bar)
@@ -172,6 +175,13 @@ struct ConversationDetailView: View {
 
     private var composer: some View {
         HStack(alignment: .bottom, spacing: 8) {
+            if #available(iOS 16.0, *) {
+                AttachmentPickerButton(model: tray, disabled: model.isSending)
+                    .foregroundStyle(Color(.secondaryLabel))
+                    .frame(width: 26, height: 26)
+                    .padding(.vertical, 6)
+                    .accessibilityLabel(Strings.attach)
+            }
             replyField
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
@@ -221,10 +231,55 @@ struct ConversationDetailView: View {
             // Clearing unconditionally would swallow anything typed while the
             // request was in flight; a failure leaves the draft alone so the
             // message is never lost.
-            if await model.send(text), draft == text {
+            if await model.send(text, tray: tray), draft == text {
                 draft = ""
             }
         }
+    }
+}
+
+/// One image on a message. The thread carries an API path, not a picture:
+/// asking for it proves this contact owns the attachment and yields a URL
+/// good for a minute. Requested when the bubble appears rather than when the
+/// thread loads, so nothing long-lived is held.
+private struct AttachmentThumbnail: View {
+    let attachment: Attachment
+    @State private var url: URL?
+    @State private var failed = false
+
+    var body: some View {
+        Group {
+            if failed {
+                // A screenshot that will not load is not worth a broken-image
+                // icon in the middle of a conversation.
+                EmptyView()
+            } else if let url {
+                AsyncImage(url: url) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    placeholder
+                }
+                .frame(width: 140, height: 140)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            } else {
+                placeholder
+                    .frame(width: 140, height: 140)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
+        }
+        .task {
+            guard url == nil, let client = FeddyCore.shared.client else { return }
+            do {
+                let signed = try await client.attachmentURL(id: attachment.id)
+                url = URL(string: signed.url)
+            } catch {
+                failed = true
+            }
+        }
+    }
+
+    private var placeholder: some View {
+        Theme.surface.overlay(ProgressView().controlSize(.small))
     }
 }
 
@@ -257,6 +312,14 @@ private struct MessageBubble: View {
                     .background(part.isFromContact ? Theme.ownBubble : Theme.surface)
                     .foregroundStyle(Color.primary)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
+            if let attachments = part.attachments, !attachments.isEmpty {
+                HStack(spacing: 6) {
+                    ForEach(attachments) { file in
+                        AttachmentThumbnail(attachment: file)
+                    }
+                }
+                .padding(.leading, part.isFromContact ? 0 : 34)
             }
             Text(Self.timeFormatter.string(from: part.createdAt))
                 .font(.caption2)

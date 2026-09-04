@@ -62,12 +62,14 @@ final class APIClient: @unchecked Sendable {
     func createConversation(
         body text: String,
         categoryCode: String?,
+        attachments: [UploadedAttachment] = [],
         idempotencyKey: String
     ) async throws -> CreatedConversation {
         var body: [String: Any] = [
             "body": text,
             "platform": "ios",
             "context": DeviceContext.build(),
+            "attachments": attachments.map(\.payload),
         ]
         if let categoryCode { body["category_code"] = categoryCode }
         return try await request(
@@ -78,12 +80,14 @@ final class APIClient: @unchecked Sendable {
     func appendPart(
         conversationId: String,
         body text: String,
+        attachments: [UploadedAttachment] = [],
         idempotencyKey: String
     ) async throws -> AppendedPart {
         let body: [String: Any] = [
             "body": text,
             "platform": "ios",
             "context": DeviceContext.build(),
+            "attachments": attachments.map(\.payload),
         ]
         return try await request(
             "v1/conversations/\(conversationId)/parts",
@@ -113,6 +117,40 @@ final class APIClient: @unchecked Sendable {
 
     func unreadCount() async throws -> UnreadCount {
         try await request("v1/unread_count")
+    }
+
+    /// Permission to write one object, of one type, for one hour. The
+    /// bucket credential never leaves the server.
+    func createUpload(filename: String, mimeType: String, sizeBytes: Int) async throws -> UploadSlot {
+        try await request(
+            "v1/uploads",
+            method: "POST",
+            body: ["filename": filename, "mime_type": mimeType, "size_bytes": sizeBytes]
+        )
+    }
+
+    /// A signed URL good for a minute, issued only after this contact is
+    /// shown to own the attachment. Asked for when the image is displayed,
+    /// not when the thread is loaded.
+    func attachmentURL(id: String) async throws -> AttachmentURL {
+        try await request("v1/attachments/\(id)")
+    }
+
+    /// Puts the bytes straight into the bucket with the signed URL. Not
+    /// through `request`: this one talks to R2, not to Feddy, and carries
+    /// none of our headers.
+    func upload(data: Data, to urlString: String, mimeType: String) async throws {
+        guard let url = URL(string: urlString) else {
+            throw APIError(status: 0, message: "invalid upload URL")
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue(mimeType, forHTTPHeaderField: "Content-Type")
+        let (_, response) = try await session.upload(for: request, from: data)
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        guard (200..<300).contains(status) else {
+            throw APIError(status: status, message: "upload failed")
+        }
     }
 
     // MARK: - Transport

@@ -31,3 +31,7 @@
 "feedback_no" = "Não";
 "feedback_thanks" = "Obrigado por nos avisar.";
 "resolved_notice" = "Que bom que ajudou — esta conversa foi encerrada. Responda em até 7 dias para continuá-la; depois disso, uma nova conversa começa.";
+"attach" = "Anexar imagem";
+"attach_type_error" = "Só é possível anexar imagens.";
+"attach_size_error" = "Esta imagem é muito grande (máximo de 10 MB).";
+"attach_count_error" = "No máximo 5 imagens por mensagem.";

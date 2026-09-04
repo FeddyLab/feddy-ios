@@ -31,3 +31,7 @@
 "feedback_no" = "没帮助";
 "feedback_thanks" = "感谢你的反馈。";
 "resolved_notice" = "很高兴帮到你——本会话已关闭。7 天内回复可以继续，超过后将新建会话。";
+"attach" = "添加图片";
+"attach_type_error" = "只能添加图片。";
+"attach_size_error" = "图片太大了（最大 10 MB）。";
+"attach_count_error" = "每条消息最多 5 张图片。";
