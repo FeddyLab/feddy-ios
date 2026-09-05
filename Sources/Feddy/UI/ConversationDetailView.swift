@@ -235,7 +235,8 @@ struct ConversationDetailView: View {
 /// One image on a message. The thread carries an API path, not a picture:
 /// asking for it proves this contact owns the attachment and yields a URL
 /// good for a minute. Requested when the bubble appears rather than when the
-/// thread loads, so nothing long-lived is held.
+/// thread loads, so nothing long-lived is held — see `AttachmentImageStore`,
+/// which owns the signing, the retry and the cache.
 /// However many pictures came with one message, laid out so the bubble can
 /// never grow wider than the screen.
 ///
@@ -280,8 +281,6 @@ private struct AttachmentThumbnail: View {
     /// Side length when this is one tile of a grid; nil when it is the only
     /// picture and may keep its own proportions.
     let tile: CGFloat?
-    @State private var url: URL?
-    @State private var failed = false
     @State private var showFullScreen = false
 
     // Capped, not framed square. A lone screenshot cropped to a tile loses
@@ -290,43 +289,37 @@ private struct AttachmentThumbnail: View {
     private let maxHeight: CGFloat = 260
 
     var body: some View {
-        Group {
-            if failed {
-                // A picture that will not load is not worth a broken-image
-                // icon in the middle of a conversation.
-                EmptyView()
-            } else if let url {
+        AttachmentImageView(id: attachment.id) { phase in
+            switch phase {
+            case .loaded(let image):
                 Button {
                     showFullScreen = true
                 } label: {
-                    AsyncImage(url: url) { image in
-                        if let tile {
-                            image.resizable().scaledToFill().frame(width: tile, height: tile)
-                        } else {
-                            image.resizable().scaledToFit().frame(maxWidth: maxWidth, maxHeight: maxHeight)
-                        }
-                    } placeholder: {
-                        placeholder
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    sized(image)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
                 .buttonStyle(.plain)
                 .fullScreenCover(isPresented: $showFullScreen) {
-                    AttachmentFullScreen(url: url, filename: attachment.filename)
+                    AttachmentFullScreen(attachment: attachment)
                 }
-            } else {
+            case .loading:
                 placeholder
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            case .failed:
+                // A picture that will not load is not worth a broken-image
+                // icon in the middle of a conversation. Scrolling it out of
+                // view and back rebuilds this and tries again.
+                EmptyView()
             }
         }
-        .task {
-            guard url == nil, let client = FeddyCore.shared.client else { return }
-            do {
-                let signed = try await client.attachmentURL(id: attachment.id)
-                url = URL(string: signed.url)
-            } catch {
-                failed = true
-            }
+    }
+
+    @ViewBuilder
+    private func sized(_ image: Image) -> some View {
+        if let tile {
+            image.resizable().scaledToFill().frame(width: tile, height: tile)
+        } else {
+            image.resizable().scaledToFit().frame(maxWidth: maxWidth, maxHeight: maxHeight)
         }
     }
 
@@ -340,32 +333,46 @@ private struct AttachmentThumbnail: View {
     }
 }
 
-/// The picture on its own, over black, pinch to zoom. Nothing else on
-/// screen: whatever the person is trying to read in the screenshot is the
-/// only thing that matters here.
+/// The picture on its own, over black. Nothing else on screen: whatever the
+/// person is trying to read in the screenshot is the only thing that matters
+/// here.
+///
+/// No zoom. What was here magnified but could not pan, so anything the
+/// magnification brought within reading distance was pushed off the edges —
+/// half a gesture is worse than none. A portrait screenshot fills a portrait
+/// screen at its own proportions anyway, and it arrives at the size it was
+/// taken (`AttachmentUpload.maxEdge`), so there is nothing to zoom towards.
 private struct AttachmentFullScreen: View {
-    let url: URL
-    let filename: String
+    let attachment: Attachment
     @Environment(\.dismiss) private var dismiss
-    @State private var zoom: CGFloat = 1
 
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            AsyncImage(url: url) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(zoom)
-                    .gesture(
-                        MagnificationGesture()
-                            .onChanged { zoom = max(1, min(4, $0)) }
-                            .onEnded { _ in if zoom < 1.05 { zoom = 1 } }
-                    )
-            } placeholder: {
-                ProgressView().tint(.white)
+            AttachmentImageView(id: attachment.id) { phase in
+                switch phase {
+                case .loaded(let image):
+                    image
+                        .resizable()
+                        .scaledToFit()
+                case .loading:
+                    ProgressView().tint(.white)
+                case .failed:
+                    // Said out loud rather than spun forever. This is where
+                    // an expired signature used to land, and the whole
+                    // screen was black with a turning spinner on it.
+                    VStack(spacing: 10) {
+                        Image(systemName: "photo")
+                            .font(.system(size: 30))
+                        Text(Strings.errorGeneric)
+                            .font(.footnote)
+                            .multilineTextAlignment(.center)
+                    }
+                    .foregroundStyle(.white.opacity(0.7))
+                    .padding(32)
+                }
             }
-            .accessibilityLabel(filename)
+            .accessibilityLabel(attachment.filename)
         }
         .overlay(alignment: .topLeading) {
             Button { dismiss() } label: {

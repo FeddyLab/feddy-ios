@@ -36,6 +36,16 @@ final class APIClient: @unchecked Sendable {
         signedURLs[id] = (url, until)
     }
 
+    /// Drops a cached signature so the next ask re-signs. For the one case
+    /// the margin above cannot cover: a URL handed out while the thread was
+    /// open, then used minutes later when someone finally tapped the
+    /// picture.
+    func forgetAttachmentURL(id: String) {
+        signedURLsLock.lock()
+        defer { signedURLsLock.unlock() }
+        signedURLs[id] = nil
+    }
+
     init(projectId: String, baseURL: URL, anonId: String, session: URLSession = .shared) {
         self.projectId = projectId
         self.baseURL = baseURL
@@ -166,6 +176,22 @@ final class APIClient: @unchecked Sendable {
         let ttl = max(0, Double(fresh.expiresIn - 15))
         cacheURL(id, url: fresh.url, until: Date().addingTimeInterval(ttl))
         return fresh
+    }
+
+    /// Fetches an attachment's bytes from its signed URL. Like `upload`,
+    /// this one talks to R2 rather than to Feddy, so the status is worth
+    /// keeping: 403 there means the signature aged out, which is a retry,
+    /// not a failure.
+    func download(from urlString: String) async throws -> Data {
+        guard let url = URL(string: urlString) else {
+            throw APIError(status: 0, message: "invalid attachment URL")
+        }
+        let (data, response) = try await session.data(from: url)
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        guard (200..<300).contains(status) else {
+            throw APIError(status: status, message: "attachment fetch failed")
+        }
+        return data
     }
 
     /// Puts the bytes straight into the bucket with the signed URL. Not
