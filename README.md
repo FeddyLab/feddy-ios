@@ -9,7 +9,7 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.5.0")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.6.0")
 ```
 
 ## Quick start
@@ -150,6 +150,18 @@ leaves it open and flags the reply in the dashboard. The question goes away
 once answered or once a person has replied. Nothing to configure on the app
 side: the strings ship in the SDK's ten languages.
 
+## Images
+
+Users can attach up to five images to a message, picked with the system
+photo picker — no photo library permission prompt, because the picker runs
+out of process and hands over only what was chosen. Each image is
+downscaled on the device to 2000px on its long edge and re-encoded as JPEG
+before it is uploaded, so a full-resolution screenshot does not cost your
+user their data plan.
+
+Images sent from the dashboard appear the same way in the thread. Tapping
+one opens it full screen, where it can be pinched to zoom.
+
 ## Localization
 
 The panel follows the device language and ships in ten: English, 简体中文,
@@ -166,9 +178,9 @@ that language, falling back to the default text otherwise.
 ## Privacy
 
 The package ships a `PrivacyInfo.xcprivacy` declaring only what the SDK
-needs to function: the user's email (optional), a user identifier, and
-the feedback content itself. Nothing is used for tracking and there are
-no analytics.
+needs to function: the user's email (optional), a user identifier, the
+feedback content itself, and any images the user chooses to attach.
+Nothing is used for tracking and there are no analytics.
 
 ## Example app
 
