@@ -16,6 +16,25 @@ final class APIClient: @unchecked Sendable {
     private let anonId: String
     private let session: URLSession
     private let decoder = FeddyDecoding.decoder()
+    /// Signed attachment URLs, kept until just before they expire. Guarded
+    /// by a lock because the class is `@unchecked Sendable` and SwiftUI asks
+    /// for these from whichever task drew the bubble. `NSLock` rather than
+    /// `Mutex`, which needs iOS 18; the package targets 15.
+    private let signedURLsLock = NSLock()
+    private var signedURLs: [String: (url: String, until: Date)] = [:]
+
+    private func cachedURL(_ id: String) -> String? {
+        signedURLsLock.lock()
+        defer { signedURLsLock.unlock() }
+        guard let hit = signedURLs[id], hit.until > Date() else { return nil }
+        return hit.url
+    }
+
+    private func cacheURL(_ id: String, url: String, until: Date) {
+        signedURLsLock.lock()
+        defer { signedURLsLock.unlock() }
+        signedURLs[id] = (url, until)
+    }
 
     init(projectId: String, baseURL: URL, anonId: String, session: URLSession = .shared) {
         self.projectId = projectId
@@ -132,8 +151,21 @@ final class APIClient: @unchecked Sendable {
     /// A signed URL good for a minute, issued only after this contact is
     /// shown to own the attachment. Asked for when the image is displayed,
     /// not when the thread is loaded.
+    ///
+    /// Cached until shortly before it expires. Scrolling a thread back and
+    /// forth otherwise asks again every time the bubble is rebuilt, and each
+    /// answer is a different URL, so nothing downstream can cache it either
+    /// — one billed read per view of the same picture.
     func attachmentURL(id: String) async throws -> AttachmentURL {
-        try await request("v1/attachments/\(id)")
+        if let cached = cachedURL(id) {
+            return AttachmentURL(url: cached, expiresIn: 0)
+        }
+        let fresh: AttachmentURL = try await request("v1/attachments/\(id)")
+        // A margin off the end so a URL handed out here never expires
+        // mid-load.
+        let ttl = max(0, Double(fresh.expiresIn - 15))
+        cacheURL(id, url: fresh.url, until: Date().addingTimeInterval(ttl))
+        return fresh
     }
 
     /// Puts the bytes straight into the bucket with the signed URL. Not
