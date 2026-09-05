@@ -246,6 +246,7 @@ struct ConversationDetailView: View {
 /// confined to the grid, and tapping any tile opens the picture whole.
 private struct AttachmentRow: View {
     let attachments: [Attachment]
+    let alignment: HorizontalAlignment
 
     private let tile: CGFloat = 84
     private let spacing: CGFloat = 6
@@ -261,7 +262,7 @@ private struct AttachmentRow: View {
         if attachments.count == 1, let only = attachments.first {
             AttachmentThumbnail(attachment: only, tile: nil)
         } else {
-            VStack(alignment: .leading, spacing: spacing) {
+            VStack(alignment: alignment, spacing: spacing) {
                 ForEach(rows.indices, id: \.self) { index in
                     HStack(spacing: spacing) {
                         ForEach(rows[index]) { file in
@@ -413,8 +414,14 @@ private struct MessageBubble: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             if let attachments = part.attachments, !attachments.isEmpty {
-                AttachmentRow(attachments: attachments)
-                    .padding(.leading, part.isFromContact ? 0 : 34)
+                AttachmentRow(
+                    attachments: attachments,
+                    // Follows the message, not a fixed side: a last row that
+                    // is not full has to hug the same edge the bubble does,
+                    // or it hangs off the far side of its own block.
+                    alignment: part.isFromContact ? .trailing : .leading
+                )
+                .padding(.leading, part.isFromContact ? 0 : 34)
             }
             Text(Self.timeFormatter.string(from: part.createdAt))
                 .font(.caption2)
