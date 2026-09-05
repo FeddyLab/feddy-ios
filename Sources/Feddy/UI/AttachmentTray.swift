@@ -23,9 +23,21 @@ final class AttachmentTrayModel: ObservableObject {
     @Published private(set) var items: [Item] = []
     @Published var error: String?
 
+    /// Names are handed out here rather than taken from the picker.
+    /// `PhotosPickerItem.itemIdentifier` is nil for every item the
+    /// out-of-process picker returns — no photo library access, no
+    /// identifier — so the old fallback ran every time and every attachment
+    /// anyone ever sent was called `image.jpg`. Counts up rather than using
+    /// the current item count so that removing one and picking another
+    /// cannot reuse a name.
+    private var nextIndex = 1
+
     var isFull: Bool { items.count >= AttachmentLimits.maxPerMessage }
 
-    func add(_ data: Data, filename: String) {
+    /// How many more the picker should let someone choose.
+    var remaining: Int { max(0, AttachmentLimits.maxPerMessage - items.count) }
+
+    func add(_ data: Data) {
         guard !isFull else {
             error = Strings.attachCountError
             return
@@ -44,7 +56,8 @@ final class AttachmentTrayModel: ObservableObject {
         let preview = Image(systemName: "photo")
         #endif
         error = nil
-        items.append(Item(data: data, filename: filename, image: preview))
+        items.append(Item(data: data, filename: "image-\(nextIndex).jpg", image: preview))
+        nextIndex += 1
     }
 
     func remove(_ id: UUID) {
@@ -54,6 +67,7 @@ final class AttachmentTrayModel: ObservableObject {
     func clear() {
         items = []
         error = nil
+        nextIndex = 1
     }
 
     /// Uploads in order and returns the descriptors the message write needs.
@@ -77,6 +91,23 @@ final class AttachmentTrayModel: ObservableObject {
 /// which meant it did not exist until the keyboard was already up.
 @available(iOS 15.0, macOS 12.0, *)
 struct AttachmentArea: View {
+    @ObservedObject var model: AttachmentTrayModel
+    var disabled: Bool
+
+    var body: some View {
+        // `PhotosPicker` is iOS 16. On 15 there is no way to attach a
+        // picture at all — the only alternative, `UIImagePickerController`,
+        // would make every host app declare photo library access — so the
+        // strip has to go too. It used to keep its 66pt height with nothing
+        // inside it, which reads as something that failed to load.
+        if #available(iOS 16.0, macOS 13.0, *) {
+            AttachmentStrip(model: model, disabled: disabled)
+        }
+    }
+}
+
+@available(iOS 16.0, macOS 13.0, *)
+private struct AttachmentStrip: View {
     @ObservedObject var model: AttachmentTrayModel
     var disabled: Bool
 
@@ -104,33 +135,30 @@ struct AttachmentArea: View {
         }
     }
 
-    @ViewBuilder
     private var addTile: some View {
-        if #available(iOS 16.0, macOS 13.0, *) {
-            AttachmentPicker(model: model, disabled: disabled) {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(
-                        Color(.separator),
-                        style: StrokeStyle(lineWidth: 1, dash: [4, 3])
-                    )
-                    .frame(width: side, height: side)
-                    .overlay {
-                        VStack(spacing: 2) {
-                            Image(systemName: "photo")
-                                .font(.system(size: 18))
-                            // Digits only: "2/5" needs no translation, and
-                            // it is the answer to "how many more?" right
-                            // where that question gets asked.
-                            Text("\(model.items.count)/\(AttachmentLimits.maxPerMessage)")
-                                .font(.system(size: 10, weight: .medium))
-                                .monospacedDigit()
-                        }
-                        .foregroundStyle(Color(.secondaryLabel))
-                        .opacity(model.isFull ? 0.45 : 1)
+        AttachmentPicker(model: model, disabled: disabled) {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(
+                    Color(.separator),
+                    style: StrokeStyle(lineWidth: 1, dash: [4, 3])
+                )
+                .frame(width: side, height: side)
+                .overlay {
+                    VStack(spacing: 2) {
+                        Image(systemName: "photo")
+                            .font(.system(size: 18))
+                        // Digits only: "2/5" needs no translation, and
+                        // it is the answer to "how many more?" right
+                        // where that question gets asked.
+                        Text("\(model.items.count)/\(AttachmentLimits.maxPerMessage)")
+                            .font(.system(size: 10, weight: .medium))
+                            .monospacedDigit()
                     }
-            }
-            .accessibilityLabel(Strings.attach)
+                    .foregroundStyle(Color(.secondaryLabel))
+                    .opacity(model.isFull ? 0.45 : 1)
+                }
         }
+        .accessibilityLabel(Strings.attach)
     }
 
     private func thumbnail(_ item: AttachmentTrayModel.Item) -> some View {
@@ -167,8 +195,14 @@ struct AttachmentPicker<Label: View>: View {
 
     var body: some View {
         PhotosPicker(
+            // What is left, not the ceiling. Offering five when three are
+            // already in the tray let someone pick five, then silently
+            // dropped three of them behind a "five at most" message that
+            // arrived after the choice was made.
             selection: $selection,
-            maxSelectionCount: AttachmentLimits.maxPerMessage,
+            // Never 0: PhotosUI reads a zero selection limit as "no limit".
+            // The control is disabled once the tray is full anyway.
+            maxSelectionCount: max(1, model.remaining),
             matching: .images
         ) {
             label()
@@ -184,7 +218,7 @@ struct AttachmentPicker<Label: View>: View {
                         model.error = Strings.attachTypeError
                         continue
                     }
-                    model.add(data, filename: item.itemIdentifier ?? "image.jpg")
+                    model.add(data)
                 }
             }
         }
