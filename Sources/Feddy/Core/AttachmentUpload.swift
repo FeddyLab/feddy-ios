@@ -26,10 +26,16 @@ enum AttachmentRejection {
 /// read the label on a button, so the ceiling is far above the 256px an
 /// avatar gets.
 enum AttachmentUpload {
-    /// Long edge in pixels. Covers a retina phone screenshot and a full iPad
-    /// window, and keeps text legible when the reader zooms in.
-    static let maxEdge = 2000
-    static let quality = 0.85
+    /// Long edge in pixels. Sized so a phone screenshot arrives at the size
+    /// it was taken: the tallest of them is 2868 (16 Pro Max), and 2556 to
+    /// 2752 covers everything else down to an iPad Pro. Capping at 2000, as
+    /// this once did, shrank every single modern screenshot by a quarter and
+    /// then re-encoded the result — and a screenshot is sent so someone can
+    /// read a line of text in it.
+    static let maxEdge = 3000
+    /// Higher than a photo would need. JPEG spends its error budget on hard
+    /// edges, which in a screenshot is all of the text.
+    static let quality = 0.9
 
     /// Downscales and re-encodes as JPEG. Returns nil when the data is not a
     /// readable image, which is the only case worth refusing outright.
@@ -58,8 +64,6 @@ enum AttachmentUpload {
             [kCGImageDestinationLossyCompressionQuality: quality] as CFDictionary
         )
         guard CGImageDestinationFinalize(destination) else { return nil }
-        // Re-encoding can lose to the original on an already-small image;
-        // keep whichever is smaller as long as the original is a JPEG too.
         return out as Data
     }
 
