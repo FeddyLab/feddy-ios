@@ -154,13 +154,17 @@ side: the strings ship in the SDK's ten languages.
 
 Users can attach up to five images to a message, picked with the system
 photo picker — no photo library permission prompt, because the picker runs
-out of process and hands over only what was chosen. Each image is
-downscaled on the device to 2000px on its long edge and re-encoded as JPEG
-before it is uploaded, so a full-resolution screenshot does not cost your
-user their data plan.
+out of process and hands over only what was chosen. There is nothing to add
+to your `Info.plist`. Each image is capped at 3000px on its long edge and
+re-encoded as JPEG before it is uploaded, so a full-resolution photo does
+not cost your user their data plan while a screenshot still arrives at the
+size it was taken and stays readable.
 
 Images sent from the dashboard appear the same way in the thread. Tapping
-one opens it full screen, where it can be pinched to zoom.
+one opens it full screen.
+
+The picker is iOS 16 and later. On iOS 15 the panel works as it always has,
+without the image row.
 
 ## Localization
 
