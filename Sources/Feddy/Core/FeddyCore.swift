@@ -95,6 +95,13 @@ final class FeddyCore: @unchecked Sendable {
     /// arrived, matching what a server without the field means.
     var emailCaptureEnabled: Bool { config?.emailCaptureEnabled ?? true }
 
+    /// Plan-dependent switches from the config. Both default to the
+    /// conservative reading while the config has not arrived: the line is
+    /// shown, attachments are offered (and refused server-side if not
+    /// included).
+    var brandingEnabled: Bool { config?.brandingEnabled ?? true }
+    var attachmentsEnabled: Bool { config?.attachmentsEnabled ?? true }
+
     var emailKnown: Bool {
         UserDefaults.standard.bool(forKey: Self.emailKnownKey)
     }

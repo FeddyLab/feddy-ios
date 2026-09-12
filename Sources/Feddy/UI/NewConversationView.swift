@@ -89,7 +89,9 @@ struct NewConversationView: View {
                 }
             }
             editor
-            AttachmentArea(model: tray, disabled: model.isSubmitting)
+            if FeddyCore.shared.attachmentsEnabled {
+                AttachmentArea(model: tray, disabled: model.isSubmitting)
+            }
             if let error = model.submitError {
                 Text(error)
                     .font(.footnote)

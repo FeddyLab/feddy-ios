@@ -156,9 +156,11 @@ struct ConversationDetailView: View {
                     .foregroundStyle(.red)
                     .padding(.top, 6)
             }
-            AttachmentArea(model: tray, disabled: model.isSending)
-                .padding(.horizontal, 12)
-                .padding(.top, 8)
+            if FeddyCore.shared.attachmentsEnabled {
+                AttachmentArea(model: tray, disabled: model.isSending)
+                    .padding(.horizontal, 12)
+                    .padding(.top, 8)
+            }
             composer
         }
         .background(.bar)

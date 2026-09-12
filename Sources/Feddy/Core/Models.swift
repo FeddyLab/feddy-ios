@@ -24,10 +24,18 @@ struct FeddyConfig: Decodable {
     /// domain). Optional so a server that predates the field decodes; see
     /// `emailCaptureEnabled` for the default.
     let emailCapture: Bool?
+    /// Whether the "Powered by Feddy" line is shown. Decided by the
+    /// project's plan on the server; absent (an older server) means shown.
+    let branding: Bool?
+    /// Whether images can be attached. Decided by the plan on the server;
+    /// absent means yes (an older server refuses the upload instead).
+    let attachments: Bool?
 
     /// False hides every email ask: a project that cannot mail replies must
     /// not collect addresses it will never write to. Absent means true.
     var emailCaptureEnabled: Bool { emailCapture ?? true }
+    var brandingEnabled: Bool { branding ?? true }
+    var attachmentsEnabled: Bool { attachments ?? true }
 
     /// Mirrors the topics every project is seeded with. A topic is
     /// required, so the form needs something to offer even when the

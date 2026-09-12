@@ -73,6 +73,26 @@ final class ModelsTests: XCTestCase {
         XCTAssertTrue(legacy.emailCaptureEnabled)
     }
 
+    func testConfigPlanSwitchesDefaultToShownAndOffered() throws {
+        let gated = """
+        { "brand": { "name": "Acme", "color": null, "logo_url": null },
+          "reply_sla_text": null, "categories": [], "branding": false, "attachments": false }
+        """
+        let business = try FeddyDecoding.decoder()
+            .decode(FeddyConfig.self, from: Data(gated.utf8))
+        XCTAssertFalse(business.brandingEnabled)
+        XCTAssertFalse(business.attachmentsEnabled)
+
+        let older = """
+        { "brand": { "name": "Acme", "color": null, "logo_url": null },
+          "reply_sla_text": null, "categories": [] }
+        """
+        let legacy = try FeddyDecoding.decoder()
+            .decode(FeddyConfig.self, from: Data(older.utf8))
+        XCTAssertTrue(legacy.brandingEnabled)
+        XCTAssertTrue(legacy.attachmentsEnabled)
+    }
+
     func testRejectsMalformedDates() {
         let json = """
         { "unread_count": 1 }

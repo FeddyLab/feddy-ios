@@ -15,6 +15,7 @@ struct FeddyRootView: View {
     var body: some View {
         NavigationView {
             content
+                .safeAreaInset(edge: .bottom, spacing: 0) { poweredBy }
                 .navigationTitle(FeddyCore.shared.config?.brand.name ?? Strings.messages)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -66,6 +67,23 @@ struct FeddyRootView: View {
             }
         }
         .onDisappear { FeddyCore.shared.refresh() }
+    }
+
+    /// The line the free and Pro plans carry; Business turns it off through
+    /// the config. Re-evaluated on every render, so it disappears the
+    /// moment the config lands.
+    @ViewBuilder
+    private var poweredBy: some View {
+        if FeddyCore.shared.brandingEnabled {
+            Link(destination: URL(string: "https://feddy.app")!) {
+                Text("Powered by Feddy")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(.bar)
+        }
     }
 
     @ViewBuilder
