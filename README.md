@@ -1,3 +1,10 @@
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/lockup-dark.svg">
+    <img src=".github/lockup.svg" alt="Feddy" width="160">
+  </picture>
+</p>
+
 # Feddy iOS SDK
 
 In-app support for your users: submit feedback, get replies, done.
