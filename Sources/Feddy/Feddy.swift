@@ -28,19 +28,23 @@ public enum Feddy {
         FeddyCore.shared.configure(projectId: projectId, apiURL: apiURL)
     }
 
-    /// Optionally bind the logged-in user. Attribute values may be
-    /// `String`, `Bool`, numbers, or `Date`; other types are dropped.
+    /// Optionally bind the logged-in user. `avatarUrl` is an absolute http(s)
+    /// URL of a picture your app already has of them, shown in the dashboard.
+    /// Attribute values may be `String`, `Bool`, numbers, or `Date`; other
+    /// types are dropped.
     public static func identify(
         userId: String,
         email: String? = nil,
         name: String? = nil,
+        avatarUrl: String? = nil,
         attributes: [String: Any] = [:]
     ) {
         guard let client = FeddyCore.shared.client else { return }
         if email != nil { FeddyCore.shared.markEmailKnown() }
         Task {
             _ = try? await client.identify(
-                externalId: userId, email: email, name: name, attributes: attributes
+                externalId: userId, email: email, name: name, avatarUrl: avatarUrl,
+                attributes: attributes
             )
         }
     }

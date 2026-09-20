@@ -63,6 +63,7 @@ final class APIClient: @unchecked Sendable {
         externalId: String,
         email: String?,
         name: String?,
+        avatarUrl: String?,
         attributes: [String: Any]
     ) async throws -> IdentifyResponse {
         var body: [String: Any] = [
@@ -72,6 +73,7 @@ final class APIClient: @unchecked Sendable {
         ]
         if let email { body["email"] = email }
         if let name { body["name"] = name }
+        if let avatarUrl { body["avatar_url"] = avatarUrl }
         return try await request("v1/contacts/identify", method: "POST", body: body)
     }
 
