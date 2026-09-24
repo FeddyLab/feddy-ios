@@ -75,7 +75,7 @@ struct FeddyRootView: View {
     @ViewBuilder
     private var poweredBy: some View {
         if FeddyCore.shared.brandingEnabled {
-            Link(destination: URL(string: "https://feddy.app")!) {
+            Link(destination: URL(string: "https://feddy.app/?utm_source=ios-sdk&utm_medium=powered-by")!) {
                 Text("Powered by Feddy")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
