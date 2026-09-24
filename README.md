@@ -10,6 +10,8 @@
 In-app support for your users: submit feedback, get replies, done.
 Swift Package, iOS 15+, zero third-party dependencies.
 
+[Website](https://feddy.app) · [Documentation](https://feddy.app/docs) · [iOS quickstart](https://feddy.app/docs/quickstart/ios/swiftui) · [SDK reference](https://feddy.app/docs/reference/ios) · [Dashboard](https://dash.feddy.app)
+
 ## Installation
 
 Add the package in Xcode (**File → Add Package Dependencies…**) or in
@@ -21,7 +23,8 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 
 ## Quick start
 
-Copy your project's ID from the Feddy dashboard (**Settings → Project ID**).
+Copy your project's ID from the [Feddy dashboard](https://dash.feddy.app)
+(**Settings → Project ID**). New to Feddy? [Create a project](https://feddy.app/docs/getting-started/create-a-project) first.
 It ships inside your binary, so it is public by design — checking it into
 source control is fine.
 
@@ -73,7 +76,7 @@ Feddy.identify(
 Attribute values may be `String`, `Bool`, numbers, or `Date`; anything
 else is dropped. Anonymous users work fine without `identify` — their
 identity is a generated id stored in the Keychain, so history survives
-reinstalls.
+reinstalls. More in [Identify users](https://feddy.app/docs/guides/identify-users).
 
 ## Unread badge
 
@@ -119,7 +122,9 @@ Feddy.unreadCount { count in badge.isHidden = count == 0 }
 Feddy.onUnreadCountChanged = { count in badge.isHidden = count == 0 }
 ```
 
-Call `Feddy.refresh()` when your app enters the foreground.
+Call `Feddy.refresh()` when your app enters the foreground. See the
+[unread badge guide](https://feddy.app/docs/guides/unread-badge) for more
+placements.
 
 ## Reply notifications
 
@@ -197,3 +202,12 @@ Nothing is used for tracking and there are no analytics.
 
 Open `Example/FeddyExample.xcodeproj`, paste a project ID into
 `FeddyExampleApp.swift`, and run.
+
+## Documentation
+
+Full guides and the API reference live at [feddy.app/docs](https://feddy.app/docs).
+For websites there is a [JavaScript SDK](https://feddy.app/docs/quickstart/web/javascript).
+
+## License
+
+MIT
