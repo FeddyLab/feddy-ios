@@ -18,7 +18,7 @@ struct PoweredByFeddy: View {
                 Text("Feddy")
                     .fontWeight(.bold)
             }
-            .font(.footnote)
+            .font(.subheadline)
             .foregroundColor(.primary)
         }
         .buttonStyle(.plain)
