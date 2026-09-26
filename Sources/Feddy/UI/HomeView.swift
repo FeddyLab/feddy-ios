@@ -44,6 +44,7 @@ struct HomeView: View {
             .padding(.top, 20)
             .padding(.bottom, 32)
         }
+        .bounceOnlyWhenScrollable()
         .background(Theme.page)
     }
 
@@ -175,6 +176,20 @@ struct ConversationListView: View {
             } else {
                 Task { await model.load() }
             }
+        }
+    }
+}
+
+private extension View {
+    /// The home screen fits on one screen almost always; it scrolls only
+    /// for large text or a small phone, and should not rubber-band as a
+    /// whole otherwise. iOS 15 has no way to say so and keeps the bounce.
+    @ViewBuilder
+    func bounceOnlyWhenScrollable() -> some View {
+        if #available(iOS 16.4, *) {
+            scrollBounceBehavior(.basedOnSize)
+        } else {
+            self
         }
     }
 }
