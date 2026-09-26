@@ -4,8 +4,6 @@
 "compose_placeholder" = "描述遇到的问题，或说说你的想法…";
 "reply_placeholder" = "写下回复…";
 "topic" = "分类";
-"empty_title" = "还没有消息";
-"empty_body" = "有疑问、发现问题，或者有好点子，都可以发消息给我们，我们会回复你。";
 "submitted_fallback" = "已收到！我们通常在 24–48 小时内回复。";
 "email_prompt_title" = "回复时用邮件通知你？";
 "email_placeholder" = "you@example.com";
@@ -35,3 +33,8 @@
 "attach_type_error" = "只能添加图片。";
 "attach_size_error" = "图片太大了（最大 10 MB）。";
 "attach_count_error" = "每条消息最多 5 张图片。";
+"home_greeting" = "有什么可以帮你？";
+"send_us_message" = "给我们发消息";
+"your_messages" = "你的消息";
+"see_all" = "查看全部";
+"you" = "我";

@@ -10,8 +10,11 @@ enum Strings {
     static var replyPlaceholder: String { localized("reply_placeholder") }
     static var categoryHint: String { localized("topic") }
     static var categoryChoose: String { localized("topic_choose") }
-    static var emptyTitle: String { localized("empty_title") }
-    static var emptyBody: String { localized("empty_body") }
+    static var homeGreeting: String { localized("home_greeting") }
+    static var sendUsAMessage: String { localized("send_us_message") }
+    static var yourMessages: String { localized("your_messages") }
+    static var seeAll: String { localized("see_all") }
+    static var you: String { localized("you") }
     static var submittedFallback: String { localized("submitted_fallback") }
     static var emailPromptTitle: String { localized("email_prompt_title") }
     static var emailPlaceholder: String { localized("email_placeholder") }

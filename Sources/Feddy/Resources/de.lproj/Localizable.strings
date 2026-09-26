@@ -4,8 +4,6 @@
 "compose_placeholder" = "Beschreibe das Problem oder teile eine Idee …";
 "reply_placeholder" = "Antwort schreiben …";
 "topic" = "Thema";
-"empty_title" = "Noch keine Nachrichten";
-"empty_body" = "Fragen, Fehler, Ideen – schreib uns, wir melden uns bei dir.";
 "submitted_fallback" = "Angekommen! Wir antworten normalerweise innerhalb von 24–48 Stunden.";
 "email_prompt_title" = "E-Mail erhalten, sobald wir antworten?";
 "email_placeholder" = "you@example.com";
@@ -35,3 +33,8 @@
 "attach_type_error" = "Es können nur Bilder angehängt werden.";
 "attach_size_error" = "Dieses Bild ist zu groß (max. 10 MB).";
 "attach_count_error" = "Höchstens 5 Bilder pro Nachricht.";
+"home_greeting" = "Wie können wir helfen?";
+"send_us_message" = "Schreib uns eine Nachricht";
+"your_messages" = "Deine Nachrichten";
+"see_all" = "Alle anzeigen";
+"you" = "Du";

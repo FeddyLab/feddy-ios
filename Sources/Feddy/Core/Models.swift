@@ -56,6 +56,11 @@ struct ConversationSummary: Decodable, Identifiable {
     let lastSeq: Int
     let lastMessageAt: Date
     var seenSeq: Int
+    /// The latest thing said and who said it. Optional so a server that
+    /// predates them decodes; rows then fall back to the subject.
+    let lastMessage: String?
+    let lastAuthorType: String?
+    let lastAuthorName: String?
 
     var hasUnread: Bool { lastSeq > seenSeq }
 }

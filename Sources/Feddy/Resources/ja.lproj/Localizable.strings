@@ -4,8 +4,6 @@
 "compose_placeholder" = "問題の内容やご意見をお書きください…";
 "reply_placeholder" = "返信を入力…";
 "topic" = "種類";
-"empty_title" = "メッセージはまだありません";
-"empty_body" = "ご質問、不具合、ご要望など、お気軽にお送りください。折り返しご連絡します。";
 "submitted_fallback" = "受け付けました。通常 24〜48 時間以内に返信します。";
 "email_prompt_title" = "返信をメールでお知らせしますか？";
 "email_placeholder" = "you@example.com";
@@ -35,3 +33,8 @@
 "attach_type_error" = "添付できるのは画像のみです。";
 "attach_size_error" = "画像が大きすぎます（最大 10 MB）。";
 "attach_count_error" = "1 件のメッセージにつき画像は 5 枚までです。";
+"home_greeting" = "どのようなご用件ですか？";
+"send_us_message" = "メッセージを送る";
+"your_messages" = "メッセージ";
+"see_all" = "すべて表示";
+"you" = "自分";
