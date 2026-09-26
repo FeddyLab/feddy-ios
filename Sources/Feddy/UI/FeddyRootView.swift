@@ -64,15 +64,11 @@ struct FeddyRootView: View {
     @ViewBuilder
     private var poweredBy: some View {
         if FeddyCore.shared.brandingEnabled {
-            // Plain text on the page, no bar: it is a footnote, not a toolbar.
-            Link(destination: URL(string: "https://feddy.app/?utm_source=ios-sdk&utm_medium=powered-by")!) {
-                Text("Powered by Feddy")
-                    .font(.caption2)
-            }
-            .tint(.secondary)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
-            .background(Theme.page)
+            PoweredByFeddy()
+                .frame(maxWidth: .infinity)
+                .padding(.top, 8)
+                .padding(.bottom, 12)
+                .background(Theme.page)
         }
     }
 
