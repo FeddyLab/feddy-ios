@@ -28,7 +28,7 @@ struct HomeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 28) {
+            VStack(alignment: .leading, spacing: 36) {
                 ForEach(HomeSection.defaultOrder, id: \.self) { section in
                     switch section {
                     case .greeting:
@@ -40,52 +40,60 @@ struct HomeView: View {
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 24)
+            .padding(.horizontal, 24)
+            .padding(.top, 20)
+            .padding(.bottom, 32)
         }
         .background(Theme.page)
     }
 
+    /// The mark and the name say who you are writing to; the question is
+    /// the headline. Nothing here is grey: it is the first thing read.
     private var greeting: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            BrandMark(size: 48)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(config?.brand.name ?? Strings.messages)
-                    .font(.title.weight(.bold))
-                Text(Strings.homeGreeting)
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 12) {
+                BrandMark(size: 44)
+                if let name = config?.brand.name {
+                    Text(name)
+                        .font(.headline)
+                        .lineLimit(1)
+                }
             }
+            Text(Strings.homeGreeting)
+                .font(.largeTitle.weight(.bold))
+                .fixedSize(horizontal: false, vertical: true)
         }
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isHeader)
     }
 
+    /// The one action on the screen, so it carries the brand colour; the
+    /// reply time rides along underneath instead of on a line of its own.
     private var newMessageCard: some View {
-        Button(action: onNewMessage) {
+        let onAccent = Theme.onAccent(config)
+        return Button(action: onNewMessage) {
             HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(Strings.sendUsAMessage)
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(.primary)
                     if let sla = config?.replySlaText, !sla.isEmpty {
                         Text(sla)
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .opacity(0.85)
                     }
                 }
                 Spacer(minLength: 8)
                 Image(systemName: "paperplane.fill")
                     .font(.body.weight(.semibold))
-                    .foregroundStyle(accent)
             }
+            .foregroundStyle(onAccent)
             .multilineTextAlignment(.leading)
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Theme.surface)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .padding(.horizontal, 18)
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity, minHeight: 60, alignment: .leading)
+            .background(accent)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(PressableCardStyle())
         .accessibilityElement(children: .combine)
@@ -99,7 +107,7 @@ struct HomeView: View {
             ProgressView()
                 .frame(maxWidth: .infinity)
         } else if !model.conversations.isEmpty {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .firstTextBaseline) {
                     Text(Strings.yourMessages)
                         .font(.headline)
@@ -122,17 +130,17 @@ struct HomeView: View {
                             ConversationDetailView(conversationId: conversation.id)
                         } label: {
                             ConversationRow(conversation: conversation, accent: accent)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
                         }
                         .buttonStyle(.plain)
                         if conversation.id != recent.last?.id {
-                            Divider().padding(.leading, 62)
+                            Divider().padding(.leading, 64)
                         }
                     }
                 }
-                .background(Theme.surface)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .background(Theme.ownBubble)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
         } else if model.loadFailed {
             Text(Strings.errorGeneric)

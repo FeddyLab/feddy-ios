@@ -22,7 +22,7 @@ struct FeddyRootView: View {
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         presentationMode.wrappedValue.dismiss()
                     } label: {
@@ -64,14 +64,15 @@ struct FeddyRootView: View {
     @ViewBuilder
     private var poweredBy: some View {
         if FeddyCore.shared.brandingEnabled {
+            // Plain text on the page, no bar: it is a footnote, not a toolbar.
             Link(destination: URL(string: "https://feddy.app/?utm_source=ios-sdk&utm_medium=powered-by")!) {
                 Text("Powered by Feddy")
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
             }
+            .tint(.secondary)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .background(.bar)
+            .padding(.vertical, 10)
+            .background(Theme.page)
         }
     }
 
