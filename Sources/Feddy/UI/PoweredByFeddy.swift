@@ -6,9 +6,12 @@ import SwiftUI
 /// shows is meant to come from the server later, alongside the home blocks.
 struct PoweredByFeddy: View {
     private static let url = URL(string: "https://feddy.app/?utm_source=ios-sdk&utm_medium=powered-by")!
+    @Environment(\.openURL) private var openURL
 
+    // A plain button, not a Link: Link paints its label in the accent
+    // colour and a foregroundStyle inside it does not win.
     var body: some View {
-        Link(destination: Self.url) {
+        Button { openURL(Self.url) } label: {
             HStack(spacing: 4) {
                 Text("Powered by")
                     .fontWeight(.medium)
@@ -16,9 +19,11 @@ struct PoweredByFeddy: View {
                     .fontWeight(.bold)
             }
             .font(.footnote)
-            .foregroundStyle(.primary)
+            .foregroundColor(.primary)
         }
+        .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isLink)
     }
 }
 #endif
