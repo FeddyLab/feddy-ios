@@ -184,8 +184,8 @@ The panel follows the device language and ships in ten: English, 简体中文,
 繁體中文, 日本語, 한국어, Deutsch, Français, Español, Português (Brasil),
 and Русский. Anything else falls back to English.
 
-The four topics every project starts with — Bug, Feature request,
-Question, Other — are translated by the SDK. Topics you add in the
+The five topics every project starts with — Bug, Feature, Question,
+Billing, Other — are translated by the SDK. Topics you add in the
 dashboard, the reply-time promise and auto-reply answers are translated
 server-side: the SDK sends the device language as `X-Feddy-Locale`, and
 whatever you filled in under Translations in the dashboard comes back in

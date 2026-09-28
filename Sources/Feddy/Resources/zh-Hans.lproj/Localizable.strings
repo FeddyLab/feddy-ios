@@ -22,6 +22,7 @@
 "category.bug" = "问题";
 "category.feature" = "功能建议";
 "category.question" = "咨询";
+"category.billing" = "账单";
 "category.other" = "其他";
 "topic_choose" = "选择一个分类";
 "feedback_prompt" = "这个回答有帮助吗？";

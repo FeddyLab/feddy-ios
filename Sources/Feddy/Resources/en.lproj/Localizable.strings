@@ -20,8 +20,9 @@
 "cancel" = "Cancel";
 "done" = "Done";
 "category.bug" = "Bug";
-"category.feature" = "Feature request";
+"category.feature" = "Feature";
 "category.question" = "Question";
+"category.billing" = "Billing";
 "category.other" = "Other";
 "topic_choose" = "Choose a topic";
 "feedback_prompt" = "Was this helpful?";

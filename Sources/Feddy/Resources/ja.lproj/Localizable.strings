@@ -22,6 +22,7 @@
 "category.bug" = "不具合";
 "category.feature" = "機能のご要望";
 "category.question" = "質問";
+"category.billing" = "請求";
 "category.other" = "その他";
 "topic_choose" = "種類を選択";
 "feedback_prompt" = "この回答は役に立ちましたか？";

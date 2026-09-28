@@ -22,6 +22,7 @@
 "category.bug" = "오류";
 "category.feature" = "기능 제안";
 "category.question" = "문의";
+"category.billing" = "결제";
 "category.other" = "기타";
 "topic_choose" = "유형 선택";
 "feedback_prompt" = "이 답변이 도움이 되었나요?";

@@ -40,13 +40,13 @@ enum Strings {
     static var cancel: String { localized("cancel") }
     static var done: String { localized("done") }
 
-    /// The four topics every project is seeded with. Their labels live in
+    /// The topics every project is seeded with. Their labels live in
     /// the project row as English text, which cannot follow the user's
     /// language, so the SDK supplies its own translation for the seeded
     /// codes. Topics the developer added keep the label they typed.
     static func builtInCategoryLabel(_ code: String) -> String? {
         switch code {
-        case "bug", "feature", "question", "other":
+        case "bug", "feature", "question", "billing", "other":
             return localized("category.\(code)")
         default:
             return nil

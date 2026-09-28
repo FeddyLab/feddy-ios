@@ -40,11 +40,12 @@ struct FeddyConfig: Decodable {
     /// Mirrors the topics every project is seeded with. A topic is
     /// required, so the form needs something to offer even when the
     /// config fetch failed; unknown codes are ignored server-side, and
-    /// these four resolve for any project that has not replaced them.
+    /// these five resolve for any project that has not replaced them.
     static let fallbackCategories = [
         Category(code: "bug", label: "Bug"),
-        Category(code: "feature", label: "Feature request"),
+        Category(code: "feature", label: "Feature"),
         Category(code: "question", label: "Question"),
+        Category(code: "billing", label: "Billing"),
         Category(code: "other", label: "Other"),
     ]
 }

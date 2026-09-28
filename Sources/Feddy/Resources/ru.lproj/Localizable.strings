@@ -22,6 +22,7 @@
 "category.bug" = "Ошибка";
 "category.feature" = "Предложение";
 "category.question" = "Вопрос";
+"category.billing" = "Оплата";
 "category.other" = "Другое";
 "topic_choose" = "Выберите тему";
 "feedback_prompt" = "Этот ответ помог?";

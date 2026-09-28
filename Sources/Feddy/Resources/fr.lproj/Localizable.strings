@@ -22,6 +22,7 @@
 "category.bug" = "Bug";
 "category.feature" = "Suggestion";
 "category.question" = "Question";
+"category.billing" = "Facturation";
 "category.other" = "Autre";
 "topic_choose" = "Choisir un sujet";
 "feedback_prompt" = "Cette réponse vous a-t-elle aidé ?";
