@@ -18,7 +18,7 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.7.1")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.8.0")
 ```
 
 ## Quick start
@@ -51,7 +51,7 @@ func application(_ application: UIApplication,
 ```
 
 ```swift
-Feddy.present()                    // conversation list
+Feddy.present()                    // home: greeting, new message, recent conversations
 Feddy.presentNewConversation()     // straight into the compose form
 ```
 
