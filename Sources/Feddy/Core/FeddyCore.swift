@@ -6,6 +6,7 @@ final class FeddyCore: @unchecked Sendable {
     static let shared = FeddyCore()
 
     private(set) var client: APIClient?
+    private(set) var identityQueue: IdentityQueue?
     private(set) var config: FeddyConfig?
     private(set) var unreadCount = 0
 
@@ -29,7 +30,14 @@ final class FeddyCore: @unchecked Sendable {
 
     func configure(projectId: String, apiURL: URL) {
         guard client == nil else { return }
-        client = APIClient(projectId: projectId, baseURL: apiURL, anonId: AnonIdStore.anonId())
+        let client = APIClient(projectId: projectId, baseURL: apiURL, anonId: AnonIdStore.anonId())
+        self.client = client
+        identityQueue = IdentityQueue { payload in
+            _ = try await client.identify(
+                externalId: payload.externalId, email: payload.email, name: payload.name,
+                avatarUrl: payload.avatarUrl, attributes: payload.attributes
+            )
+        }
         Task { await self.loadConfig() }
         refresh()
         startPolling()
@@ -53,9 +61,12 @@ final class FeddyCore: @unchecked Sendable {
 
     // MARK: - Unread
 
-    /// Pulls the unread count that feeds the entry-point badge.
+    /// Pulls the unread count that feeds the entry-point badge. Also resends
+    /// an identify that failed earlier, so the foreground poll doubles as
+    /// its retry.
     func refresh() {
         guard let client else { return }
+        identityQueue?.flush()
         refreshTask?.cancel()
         refreshTask = Task {
             if let unread = try? await client.unreadCount() {

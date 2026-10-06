@@ -32,6 +32,11 @@ public enum Feddy {
     /// URL of a picture your app already has of them, shown in the dashboard.
     /// Attribute values may be `String`, `Bool`, numbers, or `Date`; other
     /// types are dropped.
+    ///
+    /// Calls take effect in the order you make them, and the last one wins:
+    /// each call replaces the whole attribute set. Calling again whenever a
+    /// value changes is fine; calls made while one is still sending collapse
+    /// into the newest.
     public static func identify(
         userId: String,
         email: String? = nil,
@@ -39,14 +44,13 @@ public enum Feddy {
         avatarUrl: String? = nil,
         attributes: [String: Any] = [:]
     ) {
-        guard let client = FeddyCore.shared.client else { return }
+        guard let queue = FeddyCore.shared.identityQueue else { return }
         if email != nil { FeddyCore.shared.markEmailKnown() }
-        Task {
-            _ = try? await client.identify(
-                externalId: userId, email: email, name: name, avatarUrl: avatarUrl,
-                attributes: attributes
-            )
-        }
+        let payload = IdentityPayload(
+            externalId: userId, email: email, name: name, avatarUrl: avatarUrl,
+            attributes: attributes
+        )
+        queue.submit(payload)
     }
 
     /// Fetches the current unread count (completion on the main thread).
