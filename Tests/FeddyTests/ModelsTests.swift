@@ -140,6 +140,7 @@ final class DeviceContextTests: XCTestCase {
         XCTAssertEqual(context["sdk_version"], DeviceContext.sdkVersion)
         XCTAssertNotNil(context["locale"])
         XCTAssertNotNil(context["os_version"])
+        XCTAssertEqual(context["timezone"], TimeZone.current.identifier)
         XCTAssertFalse(DeviceContext.modelIdentifier().isEmpty)
     }
 }

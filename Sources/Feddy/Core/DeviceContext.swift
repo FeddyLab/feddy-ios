@@ -4,7 +4,7 @@ import UIKit
 #endif
 
 enum DeviceContext {
-    static let sdkVersion = "0.8.1"
+    static let sdkVersion = "0.8.2"
 
     /// Context keys for platform "ios" (server renders them by a fixed
     /// key order; unknown keys are listed verbatim).
@@ -15,6 +15,8 @@ enum DeviceContext {
             "build": info["CFBundleVersion"] as? String ?? "",
             "device_model": modelIdentifier(),
             "locale": Locale.preferredLanguages.first ?? Locale.current.identifier,
+            // IANA name ("Europe/Berlin"): the dashboard shows the user's local time.
+            "timezone": TimeZone.current.identifier,
             "sdk_version": sdkVersion,
         ]
         #if canImport(UIKit)
