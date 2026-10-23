@@ -228,9 +228,21 @@ struct ReplyPopupView: View {
         return text.isEmpty ? Strings.newReply : text
     }
 
+    /// "now" for the first minute, the way a system banner says it; the
+    /// card usually appears seconds after the reply, and "12 sec. ago"
+    /// reads like a stopwatch.
     private var time: String {
-        ConversationRow.relativeFormatter.localizedString(for: pick.sentAt, relativeTo: Date())
+        let now = Date()
+        let sentAt = now.timeIntervalSince(pick.sentAt) < 60 ? now : pick.sentAt
+        return Self.timeFormatter.localizedString(for: sentAt, relativeTo: now)
     }
+
+    private static let timeFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .short
+        formatter.dateTimeStyle = .named
+        return formatter
+    }()
 
     var spokenSummary: String {
         "\(spokenTitle). \(message)"

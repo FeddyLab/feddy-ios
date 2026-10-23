@@ -58,7 +58,7 @@ struct ConversationRow: View {
         }
     }
 
-    static let relativeFormatter: RelativeDateTimeFormatter = {
+    private static let relativeFormatter: RelativeDateTimeFormatter = {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .short
         return formatter
