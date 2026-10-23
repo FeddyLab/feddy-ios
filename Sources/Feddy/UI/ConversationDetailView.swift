@@ -41,7 +41,10 @@ struct ConversationDetailView: View {
                 }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button(Strings.done) { replyFocused = false }
+                    Button { replyFocused = false } label: {
+                        Image(systemName: "keyboard.chevron.compact.down")
+                    }
+                    .accessibilityLabel(Strings.done)
                 }
             }
             .sheet(isPresented: $showEmailSheet) {

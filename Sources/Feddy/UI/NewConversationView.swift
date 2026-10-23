@@ -62,7 +62,10 @@ struct NewConversationView: View {
                 }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button(Strings.done) { editorFocused = false }
+                    Button { editorFocused = false } label: {
+                        Image(systemName: "keyboard.chevron.compact.down")
+                    }
+                    .accessibilityLabel(Strings.done)
                 }
             }
         }
