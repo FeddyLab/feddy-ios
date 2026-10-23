@@ -228,18 +228,19 @@ struct ReplyPopupView: View {
         return text.isEmpty ? Strings.newReply : text
     }
 
-    /// "now" for the first minute, the way a system banner says it; the
-    /// card usually appears seconds after the reply, and "12 sec. ago"
-    /// reads like a stopwatch.
+    /// Compact, like a system banner: "now", then 5m, 3h, 2d. The card
+    /// usually appears seconds after the reply, and "12 sec. ago" reads
+    /// like a stopwatch.
     private var time: String {
-        let now = Date()
-        let sentAt = now.timeIntervalSince(pick.sentAt) < 60 ? now : pick.sentAt
-        return Self.timeFormatter.localizedString(for: sentAt, relativeTo: now)
+        let minutes = Int(Date().timeIntervalSince(pick.sentAt) / 60)
+        if minutes < 1 { return Self.nowFormatter.localizedString(fromTimeInterval: 0) }
+        if minutes < 60 { return "\(minutes)m" }
+        if minutes < 24 * 60 { return "\(minutes / 60)h" }
+        return "\(minutes / (24 * 60))d"
     }
 
-    private static let timeFormatter: RelativeDateTimeFormatter = {
+    private static let nowFormatter: RelativeDateTimeFormatter = {
         let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .short
         formatter.dateTimeStyle = .named
         return formatter
     }()
