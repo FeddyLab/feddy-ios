@@ -18,7 +18,7 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.8.2")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.8.3")
 ```
 
 ## Quick start
@@ -132,9 +132,15 @@ The SDK does not use remote push, so there is no APNs key to configure.
 **The SDK posts no notifications and asks for no notification
 permission.** A reply reaches the user two ways:
 
-- **In the app** — `unreadCount`, `onUnreadCountChanged`, and the
-  `FeddyUnreadDot` / `.feddyUnreadBadge()` views mark your entry point,
-  refreshed by a foreground poll and by `refresh()`.
+- **In the app** — when the user comes back with a reply they have not
+  seen, a card slides in at the top of the screen; tapping it opens the
+  conversation. Each reply shows at most once, and only replies from the
+  last 14 days. It is drawn by the SDK over your screen, not posted as a
+  notification. Set `Feddy.replyPopupsEnabled = false` around screens that
+  must not be interrupted (a paywall, a game level) and back to `true`
+  afterwards. `unreadCount`, `onUnreadCountChanged`, and the
+  `FeddyUnreadDot` / `.feddyUnreadBadge()` views mark your entry point as
+  well, refreshed by a foreground poll and by `refresh()`.
 - **Away from the app** — if the user left an email address, the reply is
   emailed to them in full. The panel asks for one after the first message
   is sent, and again when a teammate replies. Someone who skips is not
