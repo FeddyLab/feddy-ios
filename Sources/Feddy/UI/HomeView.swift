@@ -46,6 +46,28 @@ struct HomeView: View {
         }
         .bounceOnlyWhenScrollable()
         .background(Theme.page)
+        .background(offListLink)
+    }
+
+    /// Opens a thread the recent rows do not show. Arriving from the reply
+    /// popup normally lands on one of them, but a newer thread of the
+    /// user's own can push the replied one past the first three.
+    @ViewBuilder
+    private var offListLink: some View {
+        let recentIds = model.conversations.prefix(Self.recentLimit).map(\.id)
+        if let id = selectedConversationId, !recentIds.contains(id) {
+            NavigationLink(
+                isActive: Binding(
+                    get: { selectedConversationId == id },
+                    set: { if !$0 { selectedConversationId = nil } }
+                )
+            ) {
+                ConversationDetailView(conversationId: id)
+            } label: {
+                EmptyView()
+            }
+            .hidden()
+        }
     }
 
     /// The mark and the name say who you are writing to; the question is

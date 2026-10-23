@@ -14,6 +14,7 @@
 "closed_notice" = "종료된 대화입니다. 7일 이내에 답장하면 이어서 진행되고, 이후에는 새 대화가 시작됩니다.";
 "status_closed" = "종료됨";
 "new_reply" = "새 답장";
+"reply_popup_more" = "%d개 더 있음";
 "error_generic" = "문제가 발생했습니다. 다시 시도해주세요.";
 "rate_limited" = "메시지를 너무 자주 보냈습니다. 잠시 후 다시 시도해주세요.";
 "close" = "닫기";

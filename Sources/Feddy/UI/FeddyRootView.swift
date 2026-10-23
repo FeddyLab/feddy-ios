@@ -3,6 +3,8 @@ import SwiftUI
 
 struct FeddyRootView: View {
     let startInCompose: Bool
+    /// A thread to open on arrival, as when the reply popup is tapped.
+    var initialConversationId: String?
 
     @StateObject private var model = ConversationListModel()
     @State private var showCompose = false
@@ -43,6 +45,7 @@ struct FeddyRootView: View {
             if startInCompose { showCompose = true }
             await FeddyCore.shared.loadConfig()
             await model.load()
+            if let id = initialConversationId { selectedConversationId = id }
             await model.pollLoop()
         }
         .onChange(of: selectedConversationId) { id in

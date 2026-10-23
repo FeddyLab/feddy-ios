@@ -14,6 +14,7 @@
 "closed_notice" = "Esta conversación está cerrada. Responde en un plazo de 7 días para continuarla; después se abrirá una nueva.";
 "status_closed" = "Cerrada";
 "new_reply" = "Nueva respuesta";
+"reply_popup_more" = "%d más";
 "error_generic" = "Algo salió mal. Inténtalo de nuevo.";
 "rate_limited" = "Demasiados mensajes. Inténtalo más tarde.";
 "close" = "Cerrar";

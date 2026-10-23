@@ -41,6 +41,9 @@ final class FeddyCore: @unchecked Sendable {
         Task { await self.loadConfig() }
         refresh()
         startPolling()
+        #if canImport(UIKit)
+        Task { @MainActor in ReplyPopupCoordinator.shared.start() }
+        #endif
     }
 
     private func startPolling() {
@@ -88,15 +91,20 @@ final class FeddyCore: @unchecked Sendable {
     }
 
     func setUnread(_ count: Int) {
-        let changed = stateQueue.sync { () -> Bool in
-            guard unreadCount != count else { return false }
+        let previous = stateQueue.sync { () -> Int in
+            let previous = unreadCount
             unreadCount = count
-            return true
+            return previous
         }
-        guard changed else { return }
+        guard previous != count else { return }
         Task { @MainActor in
             FeddyUnread.shared.update(count)
             Feddy.onUnreadCountChanged?(count)
+            #if canImport(UIKit)
+            // A reply arrived (or the first count after launch came in):
+            // the popup decides whether there is anything new to show.
+            if count > previous { ReplyPopupCoordinator.shared.scheduleCheck() }
+            #endif
         }
     }
 

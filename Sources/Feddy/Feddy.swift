@@ -77,5 +77,19 @@ public enum Feddy {
     public static func presentNewConversation() {
         Presenter.present(startInCompose: true)
     }
+
+    /// When the user comes back to your app with a reply they have not
+    /// seen, a card slides in at the top of the screen; tapping it opens
+    /// the conversation. Each reply shows at most once, and only replies
+    /// from the last 14 days. No notification permission is involved.
+    ///
+    /// On by default. Set it to `false` around screens that must not be
+    /// interrupted, such as a paywall or a game level, and back to `true`
+    /// afterwards; a waiting reply then shows.
+    @MainActor
+    public static var replyPopupsEnabled: Bool {
+        get { ReplyPopupCoordinator.shared.enabled }
+        set { ReplyPopupCoordinator.shared.enabled = newValue }
+    }
     #endif
 }

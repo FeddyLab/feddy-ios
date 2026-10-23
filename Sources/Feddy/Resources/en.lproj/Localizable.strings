@@ -14,6 +14,7 @@
 "closed_notice" = "This conversation is closed. Reply within 7 days to continue it; after that a new conversation starts.";
 "status_closed" = "Closed";
 "new_reply" = "New reply";
+"reply_popup_more" = "%d more";
 "error_generic" = "Something went wrong. Please try again.";
 "rate_limited" = "Too many messages. Please try again later.";
 "close" = "Close";

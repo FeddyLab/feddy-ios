@@ -30,6 +30,8 @@ enum Strings {
     static var feedbackThanks: String { localized("feedback_thanks") }
     static var statusClosed: String { localized("status_closed") }
     static var newReply: String { localized("new_reply") }
+    /// A format string taking the number of other unread threads.
+    static var replyPopupMore: String { localized("reply_popup_more") }
     static var errorGeneric: String { localized("error_generic") }
     static var rateLimited: String { localized("rate_limited") }
     static var attach: String { localized("attach") }
