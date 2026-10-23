@@ -14,7 +14,7 @@
 "closed_notice" = "Diese Unterhaltung ist abgeschlossen. Antworte innerhalb von 7 Tagen, um sie fortzusetzen; danach beginnt eine neue.";
 "status_closed" = "Abgeschlossen";
 "new_reply" = "Neue Antwort";
-"reply_popup_more" = "%d weitere";
+"replied_format" = "%@ hat geantwortet";
 "error_generic" = "Etwas ist schiefgelaufen. Bitte versuche es erneut.";
 "rate_limited" = "Zu viele Nachrichten. Bitte versuche es später erneut.";
 "close" = "Schließen";

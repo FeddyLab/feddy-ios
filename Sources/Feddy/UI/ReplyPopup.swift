@@ -160,14 +160,9 @@ final class ReplyPopupCoordinator {
         }
     }
 
-    /// One reply opens its thread; a card standing for several opens the
-    /// home screen, where all of them are listed.
     private func open(_ pick: ReplyPopupPick) {
         hide()
-        Presenter.present(
-            startInCompose: false,
-            conversationId: pick.otherCount == 0 ? pick.conversationId : nil
-        )
+        Presenter.present(startInCompose: false, conversationId: pick.conversationId)
     }
 }
 
@@ -198,6 +193,9 @@ final class ReplyPopupHostingController: UIHostingController<ReplyPopupView> {
     }
 }
 
+/// Reads like a system notification banner, which every iPhone user
+/// already knows how to read and dismiss: who, when, two lines, swipe up.
+/// No app name (it is the app the user is in) and no close button.
 struct ReplyPopupView: View {
     let pick: ReplyPopupPick
     @ObservedObject var state: ReplyPopupState
@@ -209,10 +207,20 @@ struct ReplyPopupView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var dragOffset: CGFloat = 0
 
-    private var config: FeddyConfig? { FeddyCore.shared.config }
+    /// "Yu replied" with the name in bold. The sentence is a localized
+    /// format so each language puts the name where it belongs.
+    private var title: Text {
+        guard let name = pick.authorName, !name.isEmpty else {
+            return Text(Strings.newReply).fontWeight(.semibold)
+        }
+        let parts = Strings.repliedFormat.components(separatedBy: "%@")
+        guard parts.count == 2 else { return Text(name).fontWeight(.semibold) }
+        return Text(parts[0]) + Text(name).fontWeight(.semibold) + Text(parts[1])
+    }
 
-    private var title: String {
-        pick.authorName ?? config?.brand.name ?? Strings.newReply
+    private var spokenTitle: String {
+        guard let name = pick.authorName, !name.isEmpty else { return Strings.newReply }
+        return String(format: Strings.repliedFormat, name)
     }
 
     private var message: String {
@@ -220,12 +228,12 @@ struct ReplyPopupView: View {
         return text.isEmpty ? Strings.newReply : text
     }
 
-    private var more: String? {
-        pick.otherCount > 0 ? String(format: Strings.replyPopupMore, pick.otherCount) : nil
+    private var time: String {
+        ConversationRow.relativeFormatter.localizedString(for: pick.sentAt, relativeTo: Date())
     }
 
     var spokenSummary: String {
-        [title, message, more].compactMap { $0 }.joined(separator: ". ")
+        "\(spokenTitle). \(message)"
     }
 
     var body: some View {
@@ -246,50 +254,41 @@ struct ReplyPopupView: View {
     }
 
     private var card: some View {
-        HStack(alignment: .top, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                BrandMark(size: 36)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.subheadline.weight(.semibold))
-                        .lineLimit(1)
-                    Text(message)
+        HStack(alignment: .center, spacing: 12) {
+            BrandMark(size: 40)
+            VStack(alignment: .leading, spacing: 1) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    title
                         .font(.subheadline)
-                        .lineLimit(2)
-                    if let more {
-                        Text(more)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .padding(.top, 2)
-                    }
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                    Text(time)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                Text(message)
+                    .font(.subheadline)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .contentShape(Rectangle())
-            .onTapGesture(perform: onOpen)
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(.isButton)
-            .accessibilityAction(.default, onOpen)
-
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 28, height: 28)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Strings.close)
         }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(.regularMaterial)
-                .shadow(color: .black.opacity(0.15), radius: 16, y: 6)
-        )
+        .padding(.vertical, 14)
+        .padding(.leading, 14)
+        .padding(.trailing, 16)
         .frame(maxWidth: 500)
-        .padding(.horizontal, 12)
-        .padding(.top, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .fill(Color(.secondarySystemGroupedBackground))
+                .shadow(color: .black.opacity(0.14), radius: 16, y: 8)
+        )
+        .contentShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .onTapGesture(perform: onOpen)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction(.default, onOpen)
+        .accessibilityAction(named: Text(Strings.close), onClose)
+        .padding(.horizontal, 10)
+        .padding(.top, 6)
         .background(
             GeometryReader { proxy in
                 Color.clear.preference(key: CardFrameKey.self, value: proxy.frame(in: .global))

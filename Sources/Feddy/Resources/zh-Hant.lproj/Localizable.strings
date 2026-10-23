@@ -14,7 +14,7 @@
 "closed_notice" = "此對話已結束。7 天內回覆可以繼續，超過後將另開新對話。";
 "status_closed" = "已結束";
 "new_reply" = "新回覆";
-"reply_popup_more" = "還有 %d 則";
+"replied_format" = "%@ 回覆了你";
 "error_generic" = "出了點問題，請再試一次。";
 "rate_limited" = "訊息傳送太頻繁，請稍後再試。";
 "close" = "關閉";

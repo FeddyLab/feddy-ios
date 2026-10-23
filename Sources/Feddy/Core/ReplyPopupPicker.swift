@@ -1,22 +1,20 @@
 import Foundation
 
-/// What the reply popup shows: the newest unseen reply, plus how many
-/// other unread threads it stands in for.
+/// What the reply popup shows: the newest reply the user has not seen.
 struct ReplyPopupPick: Equatable {
     let conversationId: String
     let authorName: String?
     let message: String?
-    let otherCount: Int
-    /// Every thread this popup surfaces, with the seq it surfaced at.
-    /// Recorded as shown together: a thread folded into "N more" was
-    /// put in front of the user too, and popping it on the next launch
-    /// would drip a backlog out one card at a time.
+    let sentAt: Date
+    /// Every eligible thread, with the seq it was surfaced at. One card
+    /// stands for all of them, so all are recorded as shown together:
+    /// otherwise a backlog would drip out one card per launch.
     let surfaced: [String: Int]
 }
 
 /// Chooses what, if anything, the reply popup shows. Pure so the rules
 /// are testable without UIKit: each reply pops at most once, only replies
-/// from the last 14 days pop, one card stands for all of them.
+/// from the last 14 days pop, and one card is shown at a time.
 enum ReplyPopupPicker {
     /// Older replies keep only the badge: one surfacing months late reads
     /// as noise, and shipping the popup must not dump a backlog on anyone.
@@ -44,7 +42,7 @@ enum ReplyPopupPicker {
             conversationId: newest.id,
             authorName: newest.lastAuthorName,
             message: newest.lastMessage,
-            otherCount: eligible.count - 1,
+            sentAt: newest.lastMessageAt,
             surfaced: Dictionary(uniqueKeysWithValues: eligible.map { ($0.id, $0.lastSeq) })
         )
     }

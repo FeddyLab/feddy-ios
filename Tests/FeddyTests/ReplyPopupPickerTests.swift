@@ -25,7 +25,7 @@ final class ReplyPopupPickerTests: XCTestCase {
         )
     }
 
-    func testPicksNewestUnreadReplyAndCountsTheRest() {
+    func testPicksNewestUnreadReplyAndSurfacesTheRest() {
         let list = [
             conversation("older", daysAgo: 3),
             conversation("newest", daysAgo: 0.5),
@@ -34,7 +34,7 @@ final class ReplyPopupPickerTests: XCTestCase {
         let pick = ReplyPopupPicker.pick(from: list, shown: [:], now: now)
         XCTAssertEqual(pick?.conversationId, "newest")
         XCTAssertEqual(pick?.message, "Reply in newest")
-        XCTAssertEqual(pick?.otherCount, 1)
+        XCTAssertEqual(pick?.sentAt, now.addingTimeInterval(-0.5 * 86_400))
         XCTAssertEqual(pick?.surfaced, ["older": 4, "newest": 4])
     }
 
@@ -52,7 +52,7 @@ final class ReplyPopupPickerTests: XCTestCase {
         let list = [conversation("stale", daysAgo: 14.5), conversation("recent", daysAgo: 13.5)]
         let pick = ReplyPopupPicker.pick(from: list, shown: [:], now: now)
         XCTAssertEqual(pick?.conversationId, "recent")
-        XCTAssertEqual(pick?.otherCount, 0)
+        XCTAssertEqual(pick?.surfaced, ["recent": 4])
         XCTAssertNil(ReplyPopupPicker.pick(from: [list[0]], shown: [:], now: now))
     }
 
@@ -68,11 +68,10 @@ final class ReplyPopupPickerTests: XCTestCase {
         XCTAssertEqual(ReplyPopupPicker.pick(from: bot, shown: [:], now: now)?.conversationId, "bot")
     }
 
-    func testShownThreadsStillCountInTheTotal() {
+    func testSkipsThreadsAlreadyShown() {
         let list = [conversation("seen-card", daysAgo: 2), conversation("fresh", daysAgo: 1)]
         let pick = ReplyPopupPicker.pick(from: list, shown: ["seen-card": 4], now: now)
         XCTAssertEqual(pick?.conversationId, "fresh")
-        XCTAssertEqual(pick?.otherCount, 1)
     }
 
     func testRecordMarksEverySurfacedThreadAndDropsUnlisted() {

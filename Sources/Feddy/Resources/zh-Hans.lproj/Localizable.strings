@@ -14,7 +14,7 @@
 "closed_notice" = "此会话已结束。7 天内回复可以继续，超过后将新建会话。";
 "status_closed" = "已结束";
 "new_reply" = "新回复";
-"reply_popup_more" = "还有 %d 条";
+"replied_format" = "%@ 回复了你";
 "error_generic" = "出了点问题，请再试一次。";
 "rate_limited" = "消息发送太频繁，请稍后再试。";
 "close" = "关闭";
