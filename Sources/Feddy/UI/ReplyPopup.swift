@@ -95,8 +95,10 @@ final class ReplyPopupCoordinator {
         guard !Task.isCancelled, canShow else { return }
         let shown = loadShown()
         let pick = ReplyPopupPicker.pick(from: list, shown: shown)
+        // Recorded only once it is on screen: a reply marked as shown but
+        // never drawn would never get another chance.
+        if let pick, !show(pick) { return }
         saveShown(ReplyPopupPicker.record(pick, into: shown, listed: list))
-        if let pick { show(pick) }
     }
 
     private func loadShown() -> [String: Int] {
@@ -109,8 +111,9 @@ final class ReplyPopupCoordinator {
 
     // MARK: - Presentation
 
-    private func show(_ pick: ReplyPopupPick) {
-        guard let scene = Presenter.activeScene else { return }
+    @discardableResult
+    private func show(_ pick: ReplyPopupPick) -> Bool {
+        guard let scene = Presenter.activeScene else { return false }
         let state = ReplyPopupState()
         let window = ReplyPopupWindow(windowScene: scene)
         // Above the host's screens, below the keyboard and system alerts.
@@ -139,6 +142,7 @@ final class ReplyPopupCoordinator {
         } else {
             scheduleAutoDismiss()
         }
+        return true
     }
 
     /// A timed card cannot be read in time with VoiceOver, so it stays
