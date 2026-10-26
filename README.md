@@ -18,7 +18,7 @@ Add the package in Xcode (**File → Add Package Dependencies…**) or in
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.8.3")
+.package(url: "https://github.com/FeddyLab/feddy-ios", from: "0.8.4")
 ```
 
 ## Quick start
