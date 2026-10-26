@@ -35,7 +35,6 @@ final class ReplyPopupCoordinator {
     private var checkTask: Task<Void, Never>?
     private var dismissTask: Task<Void, Never>?
     private var window: ReplyPopupWindow?
-    private var state: ReplyPopupState?
     private var interacting = false
 
     private init() {}
@@ -66,14 +65,9 @@ final class ReplyPopupCoordinator {
     func hide() {
         dismissTask?.cancel()
         interacting = false
-        guard let window, let state else { return }
-        state.visible = false
+        guard let window else { return }
         self.window = nil
-        self.state = nil
-        Task {
-            try? await Task.sleep(nanoseconds: Self.exitDuration)
-            window.isHidden = true
-        }
+        window.controller.slideOut { window.isHidden = true }
     }
 
     // MARK: - Check
@@ -114,31 +108,20 @@ final class ReplyPopupCoordinator {
     @discardableResult
     private func show(_ pick: ReplyPopupPick) -> Bool {
         guard let scene = Presenter.activeScene else { return false }
-        let state = ReplyPopupState()
-        let window = ReplyPopupWindow(windowScene: scene)
+        let controller = ReplyPopupViewController(pick: pick)
+        controller.onOpen = { [weak self] in self?.open(pick) }
+        controller.onClose = { [weak self] in self?.hide() }
+        controller.onInteracting = { [weak self] in self?.interacting = $0 }
+        let window = ReplyPopupWindow(windowScene: scene, controller: controller)
         // Above the host's screens, below the keyboard and system alerts.
         window.windowLevel = UIWindow.Level(rawValue: UIWindow.Level.normal.rawValue + 1)
-        window.backgroundColor = .clear
-        let view = ReplyPopupView(
-            pick: pick,
-            state: state,
-            onOpen: { [weak self] in self?.open(pick) },
-            onClose: { [weak self] in self?.hide() },
-            onInteracting: { [weak self] in self?.interacting = $0 },
-            onCardFrame: { [weak window] in window?.cardFrame = $0 }
-        )
-        let host = ReplyPopupHostingController(rootView: view)
-        host.view.backgroundColor = .clear
-        window.rootViewController = host
         // Visible but never key: the host keeps its keyboard and focus.
         window.isHidden = false
         self.window = window
-        self.state = state
-        // One runloop later, so the card animates in instead of appearing.
-        DispatchQueue.main.async { state.visible = true }
+        controller.slideIn()
 
         if UIAccessibility.isVoiceOverRunning {
-            UIAccessibility.post(notification: .announcement, argument: view.spokenSummary)
+            UIAccessibility.post(notification: .announcement, argument: controller.spokenSummary)
         } else {
             scheduleAutoDismiss()
         }
@@ -166,24 +149,53 @@ final class ReplyPopupCoordinator {
     }
 }
 
-@MainActor
-final class ReplyPopupState: ObservableObject {
-    @Published var visible = false
-}
-
 /// Takes touches only on the card; everywhere else falls through to the
 /// host's window underneath.
 final class ReplyPopupWindow: UIWindow {
-    var cardFrame: CGRect = .zero
+    let controller: ReplyPopupViewController
+
+    init(windowScene: UIWindowScene, controller: ReplyPopupViewController) {
+        self.controller = controller
+        super.init(windowScene: windowScene)
+        backgroundColor = .clear
+        rootViewController = controller
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        cardFrame.contains(point)
+        controller.cardContains(convert(point, to: controller.view))
     }
+
+    override var canBecomeKey: Bool { false }
 }
 
-/// Defers the status bar to whatever the host is showing, so the card
-/// coming and going never flips it.
-final class ReplyPopupHostingController: UIHostingController<ReplyPopupView> {
+/// Reads like a system notification banner, which every iPhone user
+/// already knows how to read and dismiss: who, when, two lines, swipe up.
+/// No app name (it is the app the user is in) and no close button.
+final class ReplyPopupViewController: UIViewController {
+    var onOpen: () -> Void = {}
+    var onClose: () -> Void = {}
+    var onInteracting: (Bool) -> Void = { _ in }
+
+    private let pick: ReplyPopupPick
+    private let card = ReplyPopupCardView()
+
+    init(pick: ReplyPopupPick) {
+        self.pick = pick
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    /// Defers the status bar to whatever the host is showing, so the card
+    /// coming and going never flips it.
     override var preferredStatusBarStyle: UIStatusBarStyle {
         Presenter.topViewController()?.preferredStatusBarStyle ?? .default
     }
@@ -191,31 +203,136 @@ final class ReplyPopupHostingController: UIHostingController<ReplyPopupView> {
     override var prefersStatusBarHidden: Bool {
         Presenter.topViewController()?.prefersStatusBarHidden ?? false
     }
-}
 
-/// Reads like a system notification banner, which every iPhone user
-/// already knows how to read and dismiss: who, when, two lines, swipe up.
-/// No app name (it is the app the user is in) and no close button.
-struct ReplyPopupView: View {
-    let pick: ReplyPopupPick
-    @ObservedObject var state: ReplyPopupState
-    let onOpen: () -> Void
-    let onClose: () -> Void
-    let onInteracting: (Bool) -> Void
-    let onCardFrame: (CGRect) -> Void
+    var spokenSummary: String {
+        "\(spokenTitle). \(message)"
+    }
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var dragOffset: CGFloat = 0
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .clear
+        card.configure(title: heading, time: time, message: message)
+        card.isAccessibilityElement = true
+        card.accessibilityLabel = spokenSummary
+        card.accessibilityTraits = .button
+        card.onActivate = { [weak self] in self?.onOpen() }
+        card.accessibilityCustomActions = [
+            UIAccessibilityCustomAction(name: Strings.close) { [weak self] _ in
+                self?.onClose()
+                return true
+            },
+        ]
+        card.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapped)))
+        card.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(panned)))
+
+        card.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(card)
+        let fill = card.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20)
+        fill.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            card.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 6),
+            card.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            card.widthAnchor.constraint(lessThanOrEqualToConstant: 500),
+            card.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, constant: -20),
+            fill,
+        ])
+    }
+
+    /// The card's resting frame: a moving card still answers where it is
+    /// headed, which is where the finger is aiming.
+    /// Built from center and bounds because `frame` is undefined while a
+    /// transform is set.
+    func cardContains(_ point: CGPoint) -> Bool {
+        let size = card.bounds.size
+        let center = card.center
+        return CGRect(
+            x: center.x - size.width / 2, y: center.y - size.height / 2,
+            width: size.width, height: size.height
+        ).contains(point)
+    }
+
+    // MARK: Motion
+
+    private var reduceMotion: Bool { UIAccessibility.isReduceMotionEnabled }
+
+    /// Fully above the top edge, shadow included.
+    private var offscreen: CGAffineTransform {
+        CGAffineTransform(translationX: 0, y: -(card.center.y + card.bounds.height / 2 + 24))
+    }
+
+    func slideIn() {
+        view.layoutIfNeeded()
+        card.alpha = 0
+        if !reduceMotion { card.transform = offscreen }
+        UIView.animate(
+            withDuration: 0.45, delay: 0,
+            usingSpringWithDamping: 0.85, initialSpringVelocity: 0,
+            options: [.allowUserInteraction]
+        ) {
+            self.card.alpha = 1
+            self.card.transform = .identity
+        }
+    }
+
+    func slideOut(completion: @escaping () -> Void) {
+        UIView.animate(
+            withDuration: 0.3, delay: 0, options: [.curveEaseIn, .beginFromCurrentState]
+        ) {
+            self.card.alpha = 0
+            if !self.reduceMotion { self.card.transform = self.offscreen }
+        } completion: { _ in
+            completion()
+        }
+    }
+
+    @objc private func tapped() {
+        onOpen()
+    }
+
+    /// Up dismisses, the way a system banner does; down only gives a
+    /// little, so the card still feels attached to the top edge.
+    @objc private func panned(_ pan: UIPanGestureRecognizer) {
+        let y = pan.translation(in: view).y
+        switch pan.state {
+        case .began, .changed:
+            onInteracting(true)
+            card.transform = CGAffineTransform(translationX: 0, y: y < 0 ? y : y / 6)
+        case .ended, .cancelled, .failed:
+            onInteracting(false)
+            if pan.state == .ended, y < -30 || pan.velocity(in: view).y < -500 {
+                onClose()
+            } else {
+                UIView.animate(
+                    withDuration: 0.3, delay: 0,
+                    usingSpringWithDamping: 0.8, initialSpringVelocity: 0,
+                    options: [.allowUserInteraction]
+                ) {
+                    self.card.transform = .identity
+                }
+            }
+        default:
+            break
+        }
+    }
+
+    // MARK: Text
 
     /// "Yu replied" with the name in bold. The sentence is a localized
     /// format so each language puts the name where it belongs.
-    private var title: Text {
+    private var heading: NSAttributedString {
+        let regular = ReplyPopupCardView.font(.subheadline)
+        let bold = ReplyPopupCardView.font(.subheadline, weight: .semibold)
         guard let name = pick.authorName, !name.isEmpty else {
-            return Text(Strings.newReply).fontWeight(.semibold)
+            return NSAttributedString(string: Strings.newReply, attributes: [.font: bold])
         }
         let parts = Strings.repliedFormat.components(separatedBy: "%@")
-        guard parts.count == 2 else { return Text(name).fontWeight(.semibold) }
-        return Text(parts[0]) + Text(name).fontWeight(.semibold) + Text(parts[1])
+        guard parts.count == 2 else {
+            return NSAttributedString(string: name, attributes: [.font: bold])
+        }
+        let title = NSMutableAttributedString(string: parts[0], attributes: [.font: regular])
+        title.append(NSAttributedString(string: name, attributes: [.font: bold]))
+        title.append(NSAttributedString(string: parts[1], attributes: [.font: regular]))
+        return title
     }
 
     private var spokenTitle: String {
@@ -244,97 +361,120 @@ struct ReplyPopupView: View {
         formatter.dateTimeStyle = .named
         return formatter
     }()
-
-    var spokenSummary: String {
-        "\(spokenTitle). \(message)"
-    }
-
-    var body: some View {
-        VStack(spacing: 0) {
-            if state.visible {
-                card
-                    .offset(y: dragOffset)
-                    .transition(
-                        reduceMotion
-                            ? .opacity
-                            : .move(edge: .top).combined(with: .opacity)
-                    )
-            }
-            Spacer(minLength: 0)
-        }
-        .animation(.spring(response: 0.4, dampingFraction: 0.85), value: state.visible)
-        .onPreferenceChange(CardFrameKey.self, perform: onCardFrame)
-    }
-
-    private var card: some View {
-        HStack(alignment: .center, spacing: 12) {
-            BrandMark(size: 40)
-            VStack(alignment: .leading, spacing: 1) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    title
-                        .font(.subheadline)
-                        .lineLimit(1)
-                    Spacer(minLength: 0)
-                    Text(time)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-                Text(message)
-                    .font(.subheadline)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-        .padding(.vertical, 14)
-        .padding(.leading, 14)
-        .padding(.trailing, 16)
-        .frame(maxWidth: 500)
-        .background(
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .fill(Color(.secondarySystemGroupedBackground))
-                .shadow(color: .black.opacity(0.14), radius: 16, y: 8)
-        )
-        .contentShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
-        .onTapGesture(perform: onOpen)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isButton)
-        .accessibilityAction(.default, onOpen)
-        .accessibilityAction(named: Text(Strings.close), onClose)
-        .padding(.horizontal, 10)
-        .padding(.top, 6)
-        .background(
-            GeometryReader { proxy in
-                Color.clear.preference(key: CardFrameKey.self, value: proxy.frame(in: .global))
-            }
-        )
-        .gesture(swipeUp)
-    }
-
-    /// Up dismisses, the way a system banner does; down only gives a
-    /// little, so the card still feels attached to the top edge.
-    private var swipeUp: some Gesture {
-        DragGesture(minimumDistance: 8)
-            .onChanged { value in
-                onInteracting(true)
-                let y = value.translation.height
-                dragOffset = y < 0 ? y : y / 6
-            }
-            .onEnded { value in
-                onInteracting(false)
-                if value.translation.height < -30 || value.predictedEndTranslation.height < -80 {
-                    onClose()
-                } else {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { dragOffset = 0 }
-                }
-            }
-    }
 }
 
-private struct CardFrameKey: PreferenceKey {
-    static let defaultValue: CGRect = .zero
+/// Brand mark, who and when, two lines of the reply.
+final class ReplyPopupCardView: UIView {
+    var onActivate: () -> Void = {}
 
-    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
-        value = nextValue()
+    private static let cornerRadius: CGFloat = 18
+    private static let markSize: CGFloat = 40
+
+    private let mark = UIView()
+    private let titleLabel = UILabel()
+    private let timeLabel = UILabel()
+    private let messageLabel = UILabel()
+
+    static func font(_ style: UIFont.TextStyle, weight: UIFont.Weight = .regular) -> UIFont {
+        let size = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style).pointSize
+        return UIFont.systemFont(ofSize: size, weight: weight)
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .secondarySystemGroupedBackground
+        layer.cornerRadius = Self.cornerRadius
+        layer.cornerCurve = .continuous
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.14
+        layer.shadowRadius = 8
+        layer.shadowOffset = CGSize(width: 0, height: 8)
+
+        titleLabel.numberOfLines = 1
+        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.textColor = .label
+        timeLabel.font = Self.font(.footnote)
+        timeLabel.textColor = .secondaryLabel
+        timeLabel.setContentHuggingPriority(.required, for: .horizontal)
+        timeLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        messageLabel.font = Self.font(.subheadline)
+        messageLabel.textColor = .label
+        messageLabel.numberOfLines = 2
+
+        let header = UIStackView(arrangedSubviews: [titleLabel, timeLabel])
+        header.alignment = .firstBaseline
+        header.spacing = 8
+        let text = UIStackView(arrangedSubviews: [header, messageLabel])
+        text.axis = .vertical
+        text.spacing = 1
+        let row = UIStackView(arrangedSubviews: [mark, text])
+        row.alignment = .center
+        row.spacing = 12
+        row.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(row)
+
+        NSLayoutConstraint.activate([
+            mark.widthAnchor.constraint(equalToConstant: Self.markSize),
+            mark.heightAnchor.constraint(equalToConstant: Self.markSize),
+            row.topAnchor.constraint(equalTo: topAnchor, constant: 14),
+            row.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -14),
+            row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 14),
+            row.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+        ])
+        buildMark()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configure(title: NSAttributedString, time: String, message: String) {
+        titleLabel.attributedText = title
+        timeLabel.text = time
+        messageLabel.text = message
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.shadowPath = UIBezierPath(
+            roundedRect: bounds, cornerRadius: Self.cornerRadius
+        ).cgPath
+    }
+
+    override func accessibilityActivate() -> Bool {
+        onActivate()
+        return true
+    }
+
+    /// The same mark the panel uses: the project logo, or its initial on
+    /// the brand colour.
+    private func buildMark() {
+        let config = FeddyCore.shared.config
+        mark.layer.cornerRadius = Self.markSize * 0.25
+        mark.layer.cornerCurve = .continuous
+        mark.clipsToBounds = true
+
+        if let logo = config?.brand.logoUrl, let url = URL(string: logo) {
+            mark.backgroundColor = UIColor(Theme.surface)
+            let image = UIImageView(frame: CGRect(origin: .zero, size: CGSize(width: Self.markSize, height: Self.markSize)))
+            image.contentMode = .scaleAspectFill
+            mark.addSubview(image)
+            Task { @MainActor [weak image] in
+                guard let (data, _) = try? await URLSession.shared.data(from: url),
+                      let loaded = UIImage(data: data)
+                else { return }
+                image?.image = loaded
+            }
+        } else {
+            mark.backgroundColor = UIColor(Theme.accent(config))
+            let initial = UILabel(frame: CGRect(origin: .zero, size: CGSize(width: Self.markSize, height: Self.markSize)))
+            initial.text = (config?.brand.name.first).map { String($0).uppercased() } ?? "F"
+            initial.font = .systemFont(ofSize: Self.markSize * 0.45, weight: .semibold)
+            initial.textColor = UIColor(Theme.onAccent(config))
+            initial.textAlignment = .center
+            mark.addSubview(initial)
+        }
     }
 }
 #endif
